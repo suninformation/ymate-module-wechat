@@ -1,0 +1,555 @@
+/*
+ * Copyright 2007-2107 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package net.ymate.platform.module.wechat;
+
+import java.io.File;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import net.ymate.platform.module.wechat.message.OutMessage;
+import net.ymate.platform.module.wechat.support.DefaultMessageProcessor;
+import net.ymate.platform.module.wechat.support.HttpClientHelper;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
+
+
+/**
+ * <p>
+ * WeChat
+ * </p>
+ * <p>
+ * 微信公众平台服务接入框架管理器；
+ * </p>
+ * 
+ * @author 刘镇(suninformation@163.com)
+ * @version 0.0.0
+ *          <table style="border:1px solid gray;">
+ *          <tr>
+ *          <th width="100px">版本号</th><th width="100px">动作</th><th
+ *          width="100px">修改人</th><th width="100px">修改时间</th>
+ *          </tr>
+ *          <!-- 以 Table 方式书写修改历史 -->
+ *          <tr>
+ *          <td>0.0.0</td>
+ *          <td>创建类</td>
+ *          <td>刘镇</td>
+ *          <td>2014年3月13日上午1:14:17</td>
+ *          </tr>
+ *          </table>
+ */
+public class WeChat {
+
+	private static final Log _LOG = LogFactory.getLog(WeChat.class);
+
+	/**
+	 * 当前微信公众平台服务接入框架初始化配置对象
+	 */
+	private static IWeChatConfig __CFG_CONFIG;
+
+	private static boolean __IS_INITED;
+
+	private static IMessageProcessor __messageProcessor;
+
+	private static Map<String, Object> __CACHES = new ConcurrentHashMap<String, Object>();
+
+	private static Object __LOCK = new Object();
+
+	/**
+	 * 初始化微信公众平台服务接入框架管理器
+	 * 
+	 * @param config
+	 * @throws WeChatException
+	 */
+	public static void initialize(IWeChatConfig config) throws WeChatException {
+		if (!__IS_INITED) {
+			if (StringUtils.isBlank(config.getAppId())) {
+				throw new WeChatException("appid parameter can not null");
+			}
+			if (StringUtils.isBlank(config.getAppSecret())) {
+				throw new WeChatException("app_secret parameter can not null");
+			}
+			if (StringUtils.isBlank(config.getRedirectURI())) {
+				throw new WeChatException("redirect_uri parameter can not null");
+			}
+			if ((__messageProcessor = config.getMessageProcessorImpl()) == null) {
+				_LOG.debug("Default Message Processor Used");
+				if (config.getMessageHandlerImpl() == null) {
+					throw new WeChatException("message_handler_impl parameter can not null");
+				}
+				__messageProcessor = new DefaultMessageProcessor(config.getMessageHandlerImpl());
+			}
+			__CFG_CONFIG = config;
+			__IS_INITED = true;
+		}
+	}
+
+	/**
+	 * @return 获取微信开放平台服务接入框架初始化配置对象
+	 */
+	public static IWeChatConfig getConfig() throws Exception {
+		__doCheckModuleInited();
+		return __CFG_CONFIG;
+	}
+
+	/**
+	 * 销毁模块
+	 */
+	public static void destroy() {
+		if (__IS_INITED) {
+			__IS_INITED = false;
+		}
+	}
+
+	/**
+	 * @return 返回消息处理器
+	 */
+	public static IMessageProcessor getMessageProcessor() throws Exception {
+		__doCheckModuleInited();
+		return __messageProcessor;
+	}
+
+	private static void __doCheckModuleInited() throws Exception {
+		if (!__IS_INITED) {
+			throw new Exception("YMP Module WeChat was not Inited");
+		}
+	}
+
+	private static JSONObject __doCheckJsonResult(String jsonStr) throws Exception {
+		if (StringUtils.isBlank(jsonStr)) {
+			return null;
+		}
+		JSONObject _result = new JSONObject(jsonStr);
+		if (_result.has("errcode") && _result.getInt("errcode") != 0) {
+			throw new Exception("[" + _result.getInt("errcode") + "]" + _result.getString("errmsg"));
+		}
+		return _result;
+	}
+
+	/**
+     * @param token
+     * @param signature
+     * @param timestamp
+     * @param nonce
+     * @return 返回签名检查结果
+     */
+    public static boolean checkSignature(String token, String signature, String timestamp, String nonce) {
+    	List<String> _params = new ArrayList<String>();
+		_params.add(token);
+		_params.add(timestamp);
+		_params.add(nonce);
+		Collections.sort(_params, new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
+			}
+		});
+		return DigestUtils.shaHex(_params.get(0) + _params.get(1) + _params.get(2)).equals(signature);
+    }
+   
+	/**
+	 * @return 获取AccessToken，在有效期内将被缓存，过期后会重新获取新的Token
+	 * @throws Exception
+	 */
+	public static String wxGetAccessToken() throws Exception {
+		__doCheckModuleInited();
+		// {"access_token":"ACCESS_TOKEN","expires_in":7200}
+		JSONObject _accessToken = null;
+		synchronized (__LOCK) {
+			_accessToken = (JSONObject) __CACHES.get("WX_ACCESS_TOKEN");
+			//
+			_LOG.debug("Get AccessToken From Cache: " + _accessToken);
+			//
+			long _currentTime = System.currentTimeMillis();
+			if (_accessToken == null || (_currentTime >= _accessToken.getLong("expires_time"))) {
+				_accessToken = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getConfig().getAppId() + "&secret=" + getConfig().getAppSecret(), true));
+				_accessToken.put("expires_time", _currentTime + _accessToken.getInt("expires_in") * 1000);
+				__CACHES.put("WX_ACCESS_TOKEN", _accessToken);
+				//
+				_LOG.debug("AccessToken Has Expired, Get From Remote: " + _accessToken);
+			}
+		}
+		return _accessToken.getString("access_token");
+	}
+
+	/**
+	 * @param accessToken
+	 * @param mediaId
+	 * @return 获取媒体资源
+	 * @throws Exception
+	 */
+	public static IMediaFileWrapper wxMediaGetFile(String accessToken, String mediaId) throws Exception {
+		__doCheckModuleInited();
+		IMediaFileWrapper _wrapper = HttpClientHelper.doDownload(WX_API.MEDIA_GET + accessToken + "&media_id=" + mediaId);
+		if (_wrapper.getErrorMsg() != null && StringUtils.isNotEmpty(_wrapper.getErrorMsg())) {
+			__doCheckJsonResult(_wrapper.getErrorMsg());
+		}
+		return _wrapper;
+	}
+
+	/**
+	 * 上传的多媒体文件有格式和大小限制，如下：
+	 * 		图片（image）: 128K，支持JPG格式
+	 * 		语音（voice）：256K，播放长度不超过60s，支持AMR\MP3格式
+	 * 		视频（video）：1MB，支持MP4格式
+	 * 		缩略图（thumb）：64KB，支持JPG格式
+	 * 	媒体文件在后台保存时间为3天，即3天后media_id失效
+	 * @param accessToken
+	 * @param type
+	 * @param file
+	 * @return 上传媒体文件
+	 * @throws Exception
+	 */
+	public static JSONObject wxMediaUploadFile(String accessToken, WxMediaType type, File file) throws Exception {
+		__doCheckModuleInited();
+		String _result = HttpClientHelper.doUpload(WX_API.MEDIA_UPLOAD + accessToken + "&type=" + type.toString().toLowerCase(), false, file);
+		return __doCheckJsonResult(_result);
+	}
+
+	/**
+	 * @param accessToken
+	 * @param message
+	 * @return 发送客服消息
+	 * @throws Exception
+	 */
+	public static String wxMessageSendCustom(String accessToken, OutMessage message) throws Exception {
+		__doCheckModuleInited();
+		return HttpClientHelper.doPost(WX_API.MESSAGE_SEND.concat(accessToken), true, message.toJSON());
+	}
+
+	/**
+	 * @param accessToken
+	 * @param openid
+	 * @param lang
+	 * @return 获取用户基本信息
+	 * @throws Exception
+	 */
+	public static JSONObject wxUserGetInfo(String accessToken, String openid, WxLangType lang) throws Exception {
+		__doCheckModuleInited();
+		Map<String, String> _params = new HashMap<String, String>();
+		_params.put("access_token", accessToken);
+		_params.put("openid", openid);
+		if (lang != null) {
+			_params.put("lang", lang.toString());
+		}
+		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_INFO, true, _params));
+	}
+
+	/**
+	 * @param accessToken
+	 * @param next_openid
+	 * @return 获取关注者列表
+	 * @throws Exception
+	 */
+	public static JSONObject wxUserGetList(String accessToken, String next_openid) throws Exception {
+		__doCheckModuleInited();
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("access_token", accessToken);
+		params.put("next_openid", next_openid);
+		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_GET, true, params));
+	}
+
+	/**
+	 * @param accessToken
+	 * @param name
+	 * @return 创建分组
+	 * @throws Exception
+	 */
+	public static JSONObject wxGroupCreate(String accessToken, String name) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _groupJSON = new JSONObject();
+		JSONObject _nameJSON = new JSONObject();
+		_nameJSON.put("name", name);
+		_groupJSON.put("group", _nameJSON);
+		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_CREATE.concat(accessToken), true, _groupJSON.toString()));
+	}
+	
+	/**
+	 * @param accessToken
+	 * @return 查询所有分组
+	 * @throws Exception
+	 */
+	public static JSONObject wxGroupGetList(String accessToken) throws Exception {
+		__doCheckModuleInited();
+    	return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.GROUP_GET.concat(accessToken), true));
+	}
+	
+	/**
+	 * @param accessToken
+	 * @param openid
+	 * @return 查询用户所在分组
+	 * @throws Exception
+	 */
+	public static JSONObject wxGroupGetId(String accessToken, String openid) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _openidJSON = new JSONObject();
+		_openidJSON.put("openid", openid);
+		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_GET_ID.concat(accessToken), true, _openidJSON.toString()));
+	}
+
+	/**
+	 * @param accessToken
+	 * @param id
+	 * @param name
+	 * @return 修改分组名
+	 * @throws Exception
+	 */
+	public static JSONObject wxGroupUpdate(String accessToken, String id, String name) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _groupJSON = new JSONObject();
+		_groupJSON.put("id", id);
+		_groupJSON.put("name", name);
+		JSONObject _paramJSON = new JSONObject();
+		_paramJSON.put("group", _groupJSON);
+		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_UPDATE.concat(accessToken), true, _paramJSON.toString()));
+	}
+
+	/**
+	 * @param accessToken
+	 * @param openid
+	 * @param to_groupid
+	 * @return 移动用户分组
+	 * @throws Exception
+	 */
+	public static JSONObject wxGroupMembersMove(String accessToken, String openid, String to_groupid) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _paramJSON = new JSONObject();
+		_paramJSON.put("openid", openid);
+		_paramJSON.put("to_groupid", to_groupid);
+		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_MEMBERS_UPDATE.concat(accessToken), true, _paramJSON.toString()));
+	}
+
+	/**
+	 * @param accessToken
+	 * @param params
+	 * @return 创建菜单
+	 * @throws Exception
+	 */
+	public static boolean wxMenuCreate(String accessToken, String params) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MENU_CREATE.concat(accessToken), true, params));
+		return 0 == _result.getInt("errcode");
+	}
+
+	/**
+	 * @param accessToken
+	 * @return 查询菜单
+	 * @throws Exception
+	 */
+	public static JSONObject wxMenuGet(String accessToken) throws Exception {
+		__doCheckModuleInited();
+		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_GET.concat(accessToken), true));
+	}
+
+	/**
+	 * @param accessToken
+	 * @return 删除自定义菜单
+	 * @throws Exception
+	 */
+	public static boolean wxMenuDelete(String accessToken) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_DELETE.concat(accessToken), true));
+		return 0 == _result.getInt("errcode");
+	}
+
+	/**
+	 * @param accessToken
+	 * @param scene_id 场景ID，场景ID若大于100000时自动转换成为临时二维码
+	 * @param expire_seconds 二维码有效时间，0表示永久保存，最大1800，单位：秒
+	 * @return 创建二维码Ticket
+	 * @throws Exception
+	 */
+	public static JSONObject wxQRCodeCreate(String accessToken, int scene_id, int expire_seconds) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _paramJSON = new JSONObject();
+		if (expire_seconds > 0 || scene_id > 100000) {
+			_paramJSON.put("action_name", "QR_SCENE");
+			_paramJSON.put("expire_seconds", expire_seconds <= 0 ? 1800 : expire_seconds);
+		}
+		JSONObject _sceneJSON = new JSONObject();
+		_sceneJSON.put("scene_id", scene_id);
+		JSONObject _infoJSON = new JSONObject();
+		_infoJSON.put("scene", _sceneJSON);
+		_paramJSON.put("action_info", _infoJSON);
+		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.QRCODE_CREATE.concat(accessToken), true, _paramJSON.toString()));
+	}
+
+	/**
+	 * @param ticket
+	 * @return 返回二维码访问URL地址
+	 */
+	public static String wxQRCodeShowURL(String ticket) {
+		return WX_API.QRCODE_SHOW.concat(ticket);
+	}
+
+	/**
+	 * @param need_userinfo 是否弹出授权页面
+	 * @param state 自定义参数(a-zA-Z0-9)
+	 * @return 返回微信用户授权URL地址
+	 */
+	public static String wxOAuthGetCodeURL(boolean need_userinfo, String state) throws Exception {
+		__doCheckModuleInited();
+		Map<String, String> _params = new HashMap<String, String>();
+		_params.put("appid", getConfig().getAppId());
+		_params.put("response_type", "code");
+		_params.put("redirect_uri", URLEncoder.encode(getConfig().getRedirectURI(), HttpClientHelper.DEFAULT_CHARSET));
+		_params.put("scope", need_userinfo ? "snsapi_userinfo" : "snsapi_base");
+		_params.put("state", StringUtils.defaultIfEmpty(state, "") + "#wechat_redirect");
+		return WX_API.OAUTH_GET_CODE.concat(HttpClientHelper.doParamSignatureSort(_params, false));
+	}
+
+	/**
+	 * { "access_token":"ACCESS_TOKEN", "expires_in":7200, "refresh_token":"REFRESH_TOKEN", "openid":"OPENID", "scope":"SCOPE" }
+	 * 
+	 * @param code
+	 * @return 通过Code换取网页授权的AccessToken
+	 * @throws Exception
+	 */
+	public static JSONObject wxOAuthGetToken(String code) throws Exception {
+		__doCheckModuleInited();
+		Map<String, String> _params = new HashMap<String, String>();
+		_params.put("appid", getConfig().getAppId());
+		_params.put("secret", getConfig().getRedirectURI());
+		_params.put("code", code);
+		_params.put("grant_type", "authorization_code");
+		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_ACCESS_TOKEN, true, _params));
+	}
+
+	/**
+	 * @param refreshToken 哪个想刷就刷哪个~
+	 * @return 刷新AccessToken
+	 * @throws Exception
+	 */
+	public static JSONObject wxOAuthRefreshToken(String refreshToken) throws Exception {
+		__doCheckModuleInited();
+		Map<String, String> _params = new HashMap<String, String>();
+		_params.put("appid", getConfig().getAppId());
+		_params.put("grant_type", "refresh_token");
+		_params.put("refresh_token", refreshToken);
+		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+	}
+
+	public static JSONObject wxOAuthUserGetInfo(String oauthAccessToken, String openid, WxLangType lang) throws Exception {
+		__doCheckModuleInited();
+		Map<String, String> _params = new HashMap<String, String>();
+		_params.put("access_token", oauthAccessToken);
+		_params.put("openid", openid);
+		if (lang != null) {
+			_params.put("lang", lang.toString());
+		}
+		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * WX_MESSAGE
+	 * </p>
+	 * <p>
+	 * 微信消息类型
+	 * </p>
+	 */
+	public static class WX_MESSAGE {
+		public final static String TYPE_TEXT = "text";
+		public final static String TYPE_LOCATION = "location";
+		public final static String TYPE_IMAGE = "image";
+		public final static String TYPE_LINK = "link";
+		public final static String TYPE_VOICE = "voice";
+		public final static String TYPE_EVENT = "event";
+		public final static String TYPE_VIDEO = "video";
+
+		public final static String TYPE_NEWS = "news";
+		public final static String TYPE_MUSIC = "music";
+	
+		public final static String EVENT_LOCATION = "LOCATION";
+		public final static String EVENT_SCAN = "SCAN";
+		public final static String EVENT_SUBSCRIBE = "subscribe";
+		public final static String EVENT_UNSUBSCRIBE = "unsubscribe";
+		
+		public final static String EVENT_CLICK = "CLICK";
+	}
+
+	/**
+	 * <p>
+	 * WxMediaType
+	 * </p>
+	 * <p>
+	 * 微信媒体资源类型
+	 * </p>
+	 */
+	public static enum WxMediaType {
+		IMAGE, VOICE, VIDEO, THUMB
+	}
+
+	/**
+	 * <p>
+	 * WxLangType
+	 * </p>
+	 * <p>
+	 * 微信支持的语言
+	 * </p>
+	 */
+	public static enum WxLangType {
+		zh_CN, zh_TW, en
+	}
+
+	/**
+	 * <p>
+	 * WX_API
+	 * </p>
+	 * <p>
+	 * 微信API地址
+	 * </p>
+	 */
+	public static class WX_API {
+		public static final String WX_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
+
+		public static final String MEDIA_GET = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=";
+		public static final String MEDIA_UPLOAD = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=";
+
+		public static final String GROUP_CREATE = "https://api.weixin.qq.com/cgi-bin/groups/create?access_token=";
+		public static final String GROUP_GET = "https://api.weixin.qq.com/cgi-bin/groups/get?access_token=";
+		public static final String GROUP_GET_ID = "https://api.weixin.qq.com/cgi-bin/groups/getid?access_token=";
+		public static final String GROUP_UPDATE = "https://api.weixin.qq.com/cgi-bin/groups/update?access_token=";
+		public static final String GROUP_MEMBERS_UPDATE = "https://api.weixin.qq.com/cgi-bin/groups/members/update?access_token=";
+
+		public static final String USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info";
+		public static final String USER_GET = "https://api.weixin.qq.com/cgi-bin/user/get";
+
+		public static final String MENU_CREATE = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=";
+		public static final String MENU_GET = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=";
+		public static final String MENU_DELETE = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=";
+
+		public static final String QRCODE_CREATE = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=";
+		public static final String QRCODE_SHOW = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+
+		public static final String MESSAGE_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
+
+		public static final String OAUTH_GET_CODE = "https://open.weixin.qq.com/connect/oauth2/authorize?";
+		public static final String OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";
+		public static final String OAUTH_REFRESH_TOKEN = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
+		public static final String OAUTH_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?access_token=";
+	}
+
+}
