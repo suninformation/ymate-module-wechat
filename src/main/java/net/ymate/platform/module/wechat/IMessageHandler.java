@@ -21,6 +21,7 @@ import net.ymate.platform.module.wechat.message.event.ILocationEvent;
 import net.ymate.platform.module.wechat.message.event.IScanEvent;
 import net.ymate.platform.module.wechat.message.event.ISubscribeEvent;
 import net.ymate.platform.module.wechat.message.event.IUnsubscribeEvent;
+import net.ymate.platform.module.wechat.message.event.IViewEvent;
 import net.ymate.platform.module.wechat.message.in.IImageMessage;
 import net.ymate.platform.module.wechat.message.in.ILinkMessage;
 import net.ymate.platform.module.wechat.message.in.ILocationMessage;
@@ -58,54 +59,93 @@ public interface IMessageHandler {
 	/**
 	 * @param message
 	 * @return 文字内容的消息处理
+	 * @throws Exception
 	 */
-	public OutMessage onTextMessage(ITextMessage message);
+	public OutMessage onTextMessage(ITextMessage message) throws Exception;
 
 	/**
 	 * @param message
 	 * @return 图片类型的消息处理
+	 * @throws Exception
 	 */
-	public OutMessage onImageMessage(IImageMessage message);
+	public OutMessage onImageMessage(IImageMessage message) throws Exception;
 
 	/**
 	 * @param message
 	 * @return 语音类型的消息处理
+	 * @throws Exception
 	 */
-	public OutMessage onVoiceMessage(IVoiceMessage message);
+	public OutMessage onVoiceMessage(IVoiceMessage message) throws Exception;
 
 	/**
 	 * @param message
 	 * @return 视频类型的消息处理
+	 * @throws Exception
 	 */
-	public OutMessage onVideoMessage(IVideoMessage message);
+	public OutMessage onVideoMessage(IVideoMessage message) throws Exception;
 
 	/**
 	 * @param message
 	 * @return 地理位置类型的消息处理
+	 * @throws Exception
 	 */
-	public OutMessage onLocationMessage(ILocationMessage message);
+	public OutMessage onLocationMessage(ILocationMessage message) throws Exception;
 
 	/**
 	 * @param message
 	 * @return 链接类型的消息处理
+	 * @throws Exception
 	 */
-	public OutMessage onLinkMessage(ILinkMessage message);
+	public OutMessage onLinkMessage(ILinkMessage message) throws Exception;
 
 	/**
 	 * @param message
-	 * @return 事件类型的消息处理
+	 * @return 未知类型的消息处理
+	 * @throws Exception
 	 */
 	@Deprecated
-	public OutMessage onEventMessage(InMessage message);
+	public OutMessage onEventMessage(InMessage message) throws Exception;
 
-	public OutMessage onEventSubscribe(ISubscribeEvent event);
+	/**
+	 * @param event
+	 * @return 关注事件处理
+	 * @throws Exception
+	 */
+	public OutMessage onEventSubscribe(ISubscribeEvent event) throws Exception;
 
-	public OutMessage onEventUnsubscribe(IUnsubscribeEvent event);
+	/**
+	 * @param event
+	 * @return 取消关注事件处理
+	 * @throws Exception
+	 */
+	public OutMessage onEventUnsubscribe(IUnsubscribeEvent event) throws Exception;
 
-	public OutMessage onEventClick(IClickEvent event);
+	/**
+	 * @param event
+	 * @return 菜单KEY点击事件处理
+	 * @throws Exception
+	 */
+	public OutMessage onEventClick(IClickEvent event) throws Exception;
 
-	public OutMessage onEventScan(IScanEvent event);
+	/**
+	 * @param event
+	 * @return 菜单URL地址被访问事件处理
+	 * @throws Exception
+	 */
+	public OutMessage onEventView(IViewEvent event) throws Exception;
 
-	public OutMessage onEventLocation(ILocationEvent event);
+	/**
+	 * @param event
+	 * @return 二维码扫描事件处理
+	 * @throws Exception
+	 */
+	public OutMessage onEventScan(IScanEvent event) throws Exception;
+
+	/**
+	 * @param event
+	 * @return 接收上报位置事件处理
+	 * @throws Exception
+	 */
+	public OutMessage onEventLocation(ILocationEvent event) throws Exception;
 
 }

@@ -22,6 +22,7 @@ import net.ymate.platform.module.wechat.message.event.ILocationEvent;
 import net.ymate.platform.module.wechat.message.event.IScanEvent;
 import net.ymate.platform.module.wechat.message.event.ISubscribeEvent;
 import net.ymate.platform.module.wechat.message.event.IUnsubscribeEvent;
+import net.ymate.platform.module.wechat.message.event.IViewEvent;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -53,7 +54,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class InMessage extends AbstractMessage implements ITextMessage,
 		IImageMessage, IVoiceMessage, IVideoMessage, ILocationMessage,
 		ILinkMessage, ISubscribeEvent, IUnsubscribeEvent, IScanEvent,
-		IClickEvent, ILocationEvent {
+		IClickEvent, ILocationEvent, IViewEvent {
 
 	/**
 	 * 

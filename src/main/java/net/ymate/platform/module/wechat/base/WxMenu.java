@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.ymate.platform.module.wechat.message;
+package net.ymate.platform.module.wechat.base;
 
-import net.ymate.platform.module.wechat.WeChat;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * <p>
- * VideoOutMessage
+ * Menu
  * </p>
  * <p>
  * 
@@ -40,47 +40,30 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *          <td>0.0.0</td>
  *          <td>创建类</td>
  *          <td>刘镇</td>
- *          <td>2014年3月15日下午12:54:55</td>
+ *          <td>2014年3月20日下午3:20:39</td>
  *          </tr>
  *          </table>
  */
-@XStreamAlias("xml")
-public class VideoOutMessage extends OutMessage {
+public class WxMenu {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7924522691890669551L;
+	@JSONField(name = "button")
+	private List<WxMenuItem> items = new ArrayList<WxMenuItem>();
 
-	@XStreamAlias("Video")
-	private MediaId video;
-
-	/**
-	 * 构造器
-	 * 
-	 * @param toUserName
-	 */
-	public VideoOutMessage(String toUserName) {
-		super(toUserName, WeChat.WX_MESSAGE.TYPE_VIDEO);
+	public List<WxMenuItem> getItems() {
+		return items;
 	}
 
-	public MediaId getVideo() {
-		return video;
+	public void setItems(List<WxMenuItem> items) {
+		this.items = items;
 	}
 
-	public void setVideo(MediaId video) {
-		this.video = video;
+	public static WxMenu create() {
+		return new WxMenu();
 	}
 
-	@Override
-	protected void __doSetJsonContent(JSONObject parent) throws Exception {
-		JSONObject _video = new JSONObject();
-		if (this.getVideo() != null) {
-			_video.put("media_id", this.getVideo().getMediaId());
-			_video.put("title", this.getVideo().getTitle());
-			_video.put("description", this.getVideo().getDescription());
-		}
-		parent.put("video", _video);
+	public WxMenu addItem(WxMenuItem item) {
+		items.add(item);
+		return this;
 	}
 
 }

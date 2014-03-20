@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.ymate.platform.module.wechat.message;
+package net.ymate.platform.module.wechat.base;
 
 import net.ymate.platform.module.wechat.WeChat;
 
-import com.alibaba.fastjson.JSONObject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 /**
  * <p>
- * MusicOutMessage
+ * WxQRCode
  * </p>
  * <p>
  * 
@@ -40,49 +37,38 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *          <td>0.0.0</td>
  *          <td>创建类</td>
  *          <td>刘镇</td>
- *          <td>2014年3月15日下午1:05:13</td>
+ *          <td>2014年3月20日下午7:17:28</td>
  *          </tr>
  *          </table>
  */
-@XStreamAlias("xml")
-public class MusicOutMessage extends OutMessage {
+public class WxQRCode {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7875350513434771269L;
+	private int sceneId;
 
-	@XStreamAlias("Music")
-	private MediaId music;
+	private String ticket;
 
-	/**
-	 * 构造器
-	 * 
-	 * @param toUserName
-	 */
-	public MusicOutMessage(String toUserName) {
-		super(toUserName, WeChat.WX_MESSAGE.TYPE_MUSIC);
+	private int expireSeconds;
+
+	public WxQRCode(int sceneId, String ticket, int expireSeconds) {
+		this.sceneId = sceneId;
+		this.ticket = ticket;
+		this.expireSeconds = expireSeconds;
 	}
 
-	public MediaId getMusic() {
-		return music;
+	public int getSceneId() {
+		return sceneId;
 	}
 
-	public void setMusic(MediaId music) {
-		this.music = music;
+	public String getTicket() {
+		return ticket;
 	}
 
-	@Override
-	protected void __doSetJsonContent(JSONObject parent) throws Exception {
-		JSONObject _music = new JSONObject();
-		if (this.getMusic() != null) {
-			_music.put("title", this.getMusic().getTitle());
-			_music.put("description", this.getMusic().getDescription());
-			_music.put("musicurl", this.getMusic().getMusicUrl());
-			_music.put("hqmusicurl", this.getMusic().getHqMusicUrl());
-			_music.put("thumb_media_id", this.getMusic().getThumbMediaId());
-		}
-		parent.put("music", _music);
+	public int getExpireSeconds() {
+		return expireSeconds;
+	}
+
+	public String toURL() {
+		return WeChat.wxQRCodeShowURL(getTicket());
 	}
 
 }

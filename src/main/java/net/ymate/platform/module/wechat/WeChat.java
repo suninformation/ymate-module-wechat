@@ -16,6 +16,7 @@
 package net.ymate.platform.module.wechat;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.ymate.platform.module.wechat.base.WxFollwersResult;
+import net.ymate.platform.module.wechat.base.WxGroup;
+import net.ymate.platform.module.wechat.base.WxMediaUploadResult;
+import net.ymate.platform.module.wechat.base.WxMenu;
+import net.ymate.platform.module.wechat.base.WxOAuthToken;
+import net.ymate.platform.module.wechat.base.WxOAuthUser;
+import net.ymate.platform.module.wechat.base.WxQRCode;
+import net.ymate.platform.module.wechat.base.WxUser;
 import net.ymate.platform.module.wechat.message.OutMessage;
 import net.ymate.platform.module.wechat.support.DefaultMessageProcessor;
 import net.ymate.platform.module.wechat.support.HttpClientHelper;
@@ -33,7 +42,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONObject;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 
 /**
@@ -141,9 +152,9 @@ public class WeChat {
 		if (StringUtils.isBlank(jsonStr)) {
 			return null;
 		}
-		JSONObject _result = new JSONObject(jsonStr);
-		if (_result.has("errcode") && _result.getInt("errcode") != 0) {
-			throw new Exception("[" + _result.getInt("errcode") + "]" + _result.getString("errmsg"));
+		JSONObject _result = JSON.parseObject(jsonStr);
+		if (_result.containsKey("errcode") && _result.getIntValue("errcode") != 0) {
+			throw new Exception("[" + _result.getIntValue("errcode") + "]" + _result.getString("errmsg"));
 		}
 		return _result;
 	}
@@ -184,7 +195,7 @@ public class WeChat {
 			long _currentTime = System.currentTimeMillis();
 			if (_accessToken == null || (_currentTime >= _accessToken.getLong("expires_time"))) {
 				_accessToken = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getConfig().getAppId() + "&secret=" + getConfig().getAppSecret(), true));
-				_accessToken.put("expires_time", _currentTime + _accessToken.getInt("expires_in") * 1000);
+				_accessToken.put("expires_time", _currentTime + _accessToken.getIntValue("expires_in") * 1000);
 				__CACHES.put("WX_ACCESS_TOKEN", _accessToken);
 				//
 				_LOG.debug("AccessToken Has Expired, Get From Remote: " + _accessToken);
@@ -194,14 +205,13 @@ public class WeChat {
 	}
 
 	/**
-	 * @param accessToken
 	 * @param mediaId
 	 * @return 获取媒体资源
 	 * @throws Exception
 	 */
-	public static IMediaFileWrapper wxMediaGetFile(String accessToken, String mediaId) throws Exception {
+	public static IMediaFileWrapper wxMediaGetFile(String mediaId) throws Exception {
 		__doCheckModuleInited();
-		IMediaFileWrapper _wrapper = HttpClientHelper.doDownload(WX_API.MEDIA_GET + accessToken + "&media_id=" + mediaId);
+		IMediaFileWrapper _wrapper = HttpClientHelper.doDownload(WX_API.MEDIA_GET + wxGetAccessToken() + "&media_id=" + mediaId);
 		if (_wrapper.getErrorMsg() != null && StringUtils.isNotEmpty(_wrapper.getErrorMsg())) {
 			__doCheckJsonResult(_wrapper.getErrorMsg());
 		}
@@ -215,141 +225,154 @@ public class WeChat {
 	 * 		视频（video）：1MB，支持MP4格式
 	 * 		缩略图（thumb）：64KB，支持JPG格式
 	 * 	媒体文件在后台保存时间为3天，即3天后media_id失效
-	 * @param accessToken
+	 * 
 	 * @param type
 	 * @param file
 	 * @return 上传媒体文件
 	 * @throws Exception
 	 */
-	public static JSONObject wxMediaUploadFile(String accessToken, WxMediaType type, File file) throws Exception {
+	public static WxMediaUploadResult wxMediaUploadFile(WxMediaType type, File file) throws Exception {
 		__doCheckModuleInited();
-		String _result = HttpClientHelper.doUpload(WX_API.MEDIA_UPLOAD + accessToken + "&type=" + type.toString().toLowerCase(), false, file);
-		return __doCheckJsonResult(_result);
+		// {"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
+		// {"type":"TYPE","thubm_media_id":"MEDIA_ID","created_at":123456789}
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doUpload(WX_API.MEDIA_UPLOAD + wxGetAccessToken() + "&type=" + type.toString().toLowerCase(), false, file));
+		return new WxMediaUploadResult(type, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
 	}
 
 	/**
-	 * @param accessToken
 	 * @param message
 	 * @return 发送客服消息
 	 * @throws Exception
 	 */
-	public static String wxMessageSendCustom(String accessToken, OutMessage message) throws Exception {
+	public static String wxMessageSendCustom(OutMessage message) throws Exception {
 		__doCheckModuleInited();
-		return HttpClientHelper.doPost(WX_API.MESSAGE_SEND.concat(accessToken), true, message.toJSON());
+		return HttpClientHelper.doPost(WX_API.MESSAGE_SEND.concat(wxGetAccessToken()), true, message.toJSON());
 	}
 
 	/**
-	 * @param accessToken
 	 * @param openid
 	 * @param lang
 	 * @return 获取用户基本信息
 	 * @throws Exception
 	 */
-	public static JSONObject wxUserGetInfo(String accessToken, String openid, WxLangType lang) throws Exception {
+	public static WxUser wxUserGetInfo(String openid, WxLangType lang) throws Exception {
 		__doCheckModuleInited();
 		Map<String, String> _params = new HashMap<String, String>();
-		_params.put("access_token", accessToken);
+		_params.put("access_token", wxGetAccessToken());
 		_params.put("openid", openid);
 		if (lang != null) {
 			_params.put("lang", lang.toString());
 		}
-		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_INFO, true, _params));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_INFO, true, _params));
+		return new WxUser(_json.getString("openid"),
+				_json.getString("nickname"), _json.getInteger("sex"),
+				_json.getString("city"), _json.getString("province"),
+				_json.getString("country"), _json.getString("headimgurl"),
+				_json.getInteger("subscribe"), _json.getLong("subscribe_time"));
 	}
 
 	/**
-	 * @param accessToken
 	 * @param next_openid
 	 * @return 获取关注者列表
 	 * @throws Exception
 	 */
-	public static JSONObject wxUserGetList(String accessToken, String next_openid) throws Exception {
+	public static WxFollwersResult wxUserGetList(String next_openid) throws Exception {
 		__doCheckModuleInited();
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("access_token", accessToken);
+		params.put("access_token", wxGetAccessToken());
 		params.put("next_openid", next_openid);
-		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_GET, true, params));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_GET, true, params));
+		List<String> _datas = null;
+		if (_json.containsKey("data") && _json.getJSONObject("data").containsKey("openid")) {
+			_datas = JSON.parseArray(_json.getJSONObject("data").getJSONArray("openid").toJSONString(), String.class);
+		}
+		if (_datas == null) {
+			_datas = Collections.emptyList();
+		}
+		return new WxFollwersResult(_json.getLongValue("total"), _json.getIntValue("count"), _datas, _json.getString("next_openid"));
 	}
 
 	/**
-	 * @param accessToken
 	 * @param name
 	 * @return 创建分组
 	 * @throws Exception
 	 */
-	public static JSONObject wxGroupCreate(String accessToken, String name) throws Exception {
+	public static WxGroup wxGroupCreate(String name) throws Exception {
 		__doCheckModuleInited();
 		JSONObject _groupJSON = new JSONObject();
 		JSONObject _nameJSON = new JSONObject();
 		_nameJSON.put("name", name);
 		_groupJSON.put("group", _nameJSON);
-		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_CREATE.concat(accessToken), true, _groupJSON.toString()));
+		return JSON.toJavaObject(__doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_CREATE.concat(wxGetAccessToken()), true, _groupJSON.toString())), WxGroup.class);
 	}
 	
 	/**
-	 * @param accessToken
 	 * @return 查询所有分组
 	 * @throws Exception
 	 */
-	public static JSONObject wxGroupGetList(String accessToken) throws Exception {
+	public static List<WxGroup> wxGroupGetList() throws Exception {
 		__doCheckModuleInited();
-    	return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.GROUP_GET.concat(accessToken), true));
+    	JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.GROUP_GET.concat(wxGetAccessToken()), true));
+    	if (_json.containsKey("groups")) {
+    		return JSON.parseArray(_json.getJSONArray("groups").toJSONString(), WxGroup.class);
+    	}
+    	return Collections.emptyList();
 	}
 	
 	/**
-	 * @param accessToken
 	 * @param openid
-	 * @return 查询用户所在分组
+	 * @return 查询用户所在分组ID
 	 * @throws Exception
 	 */
-	public static JSONObject wxGroupGetId(String accessToken, String openid) throws Exception {
+	public static int wxGroupGetId(String openid) throws Exception {
 		__doCheckModuleInited();
 		JSONObject _openidJSON = new JSONObject();
 		_openidJSON.put("openid", openid);
-		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_GET_ID.concat(accessToken), true, _openidJSON.toString()));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_GET_ID.concat(wxGetAccessToken()), true, _openidJSON.toString()));
+		return _json.getIntValue("groupid");
 	}
 
 	/**
-	 * @param accessToken
 	 * @param id
 	 * @param name
 	 * @return 修改分组名
 	 * @throws Exception
 	 */
-	public static JSONObject wxGroupUpdate(String accessToken, String id, String name) throws Exception {
+	public static boolean wxGroupUpdate(String id, String name) throws Exception {
 		__doCheckModuleInited();
 		JSONObject _groupJSON = new JSONObject();
 		_groupJSON.put("id", id);
 		_groupJSON.put("name", name);
 		JSONObject _paramJSON = new JSONObject();
 		_paramJSON.put("group", _groupJSON);
-		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_UPDATE.concat(accessToken), true, _paramJSON.toString()));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_UPDATE.concat(wxGetAccessToken()), true, _paramJSON.toString()));
+		return 0 == _json.getIntValue("errcode");
 	}
 
 	/**
-	 * @param accessToken
 	 * @param openid
 	 * @param to_groupid
 	 * @return 移动用户分组
 	 * @throws Exception
 	 */
-	public static JSONObject wxGroupMembersMove(String accessToken, String openid, String to_groupid) throws Exception {
+	public static boolean wxGroupMembersMove(String openid, String to_groupid) throws Exception {
 		__doCheckModuleInited();
 		JSONObject _paramJSON = new JSONObject();
 		_paramJSON.put("openid", openid);
 		_paramJSON.put("to_groupid", to_groupid);
-		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_MEMBERS_UPDATE.concat(accessToken), true, _paramJSON.toString()));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_MEMBERS_UPDATE.concat(wxGetAccessToken()), true, _paramJSON.toString()));
+		return 0 == _json.getIntValue("errcode");
 	}
 
 	/**
-	 * @param accessToken
-	 * @param params
+	 * @param menu
 	 * @return 创建菜单
 	 * @throws Exception
 	 */
-	public static boolean wxMenuCreate(String accessToken, String params) throws Exception {
+	public static boolean wxMenuCreate(WxMenu menu) throws Exception {
 		__doCheckModuleInited();
-		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MENU_CREATE.concat(accessToken), true, params));
-		return 0 == _result.getInt("errcode");
+		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MENU_CREATE.concat(wxGetAccessToken()), true, JSON.toJSONString(menu)));
+		return 0 == _result.getIntValue("errcode");
 	}
 
 	/**
@@ -357,30 +380,29 @@ public class WeChat {
 	 * @return 查询菜单
 	 * @throws Exception
 	 */
-	public static JSONObject wxMenuGet(String accessToken) throws Exception {
+	public static WxMenu wxMenuGet() throws Exception {
 		__doCheckModuleInited();
-		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_GET.concat(accessToken), true));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_GET.concat(wxGetAccessToken()), true));
+		return JSON.toJavaObject(_json.getJSONObject("menu"), WxMenu.class);
 	}
 
 	/**
-	 * @param accessToken
 	 * @return 删除自定义菜单
 	 * @throws Exception
 	 */
-	public static boolean wxMenuDelete(String accessToken) throws Exception {
+	public static boolean wxMenuDelete() throws Exception {
 		__doCheckModuleInited();
-		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_DELETE.concat(accessToken), true));
-		return 0 == _result.getInt("errcode");
+		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_DELETE.concat(wxGetAccessToken()), true));
+		return 0 == _result.getIntValue("errcode");
 	}
 
 	/**
-	 * @param accessToken
 	 * @param scene_id 场景ID，场景ID若大于100000时自动转换成为临时二维码
 	 * @param expire_seconds 二维码有效时间，0表示永久保存，最大1800，单位：秒
 	 * @return 创建二维码Ticket
 	 * @throws Exception
 	 */
-	public static JSONObject wxQRCodeCreate(String accessToken, int scene_id, int expire_seconds) throws Exception {
+	public static WxQRCode wxQRCodeCreate(int scene_id, int expire_seconds) throws Exception {
 		__doCheckModuleInited();
 		JSONObject _paramJSON = new JSONObject();
 		if (expire_seconds > 0 || scene_id > 100000) {
@@ -392,7 +414,9 @@ public class WeChat {
 		JSONObject _infoJSON = new JSONObject();
 		_infoJSON.put("scene", _sceneJSON);
 		_paramJSON.put("action_info", _infoJSON);
-		return __doCheckJsonResult(HttpClientHelper.doPost(WX_API.QRCODE_CREATE.concat(accessToken), true, _paramJSON.toString()));
+		// {"ticket":"gQG28DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0FuWC1DNmZuVEhvMVp4NDNMRnNRAAIEesLvUQMECAcAAA==","expire_seconds":1800}
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.QRCODE_CREATE.concat(wxGetAccessToken()), true, _paramJSON.toString()));
+		return new WxQRCode(scene_id, _json.getString("ticket"), _json.getIntValue("expire_seconds"));
 	}
 
 	/**
@@ -400,7 +424,12 @@ public class WeChat {
 	 * @return 返回二维码访问URL地址
 	 */
 	public static String wxQRCodeShowURL(String ticket) {
-		return WX_API.QRCODE_SHOW.concat(ticket);
+		try {
+			return WX_API.QRCODE_SHOW.concat(URLEncoder.encode(ticket, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -426,14 +455,15 @@ public class WeChat {
 	 * @return 通过Code换取网页授权的AccessToken
 	 * @throws Exception
 	 */
-	public static JSONObject wxOAuthGetToken(String code) throws Exception {
+	public static WxOAuthToken wxOAuthGetToken(String code) throws Exception {
 		__doCheckModuleInited();
 		Map<String, String> _params = new HashMap<String, String>();
 		_params.put("appid", getConfig().getAppId());
 		_params.put("secret", getConfig().getRedirectURI());
 		_params.put("code", code);
 		_params.put("grant_type", "authorization_code");
-		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_ACCESS_TOKEN, true, _params));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_ACCESS_TOKEN, true, _params));
+		return new WxOAuthToken(_json.getString("access_token"), _json.getIntValue("expires_in"), _json.getString("refresh_token"), _json.getString("openid"), _json.getString("scope"));
 	}
 
 	/**
@@ -441,16 +471,23 @@ public class WeChat {
 	 * @return 刷新AccessToken
 	 * @throws Exception
 	 */
-	public static JSONObject wxOAuthRefreshToken(String refreshToken) throws Exception {
+	public static WxOAuthToken wxOAuthRefreshToken(String refreshToken) throws Exception {
 		__doCheckModuleInited();
 		Map<String, String> _params = new HashMap<String, String>();
 		_params.put("appid", getConfig().getAppId());
 		_params.put("grant_type", "refresh_token");
 		_params.put("refresh_token", refreshToken);
-		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+		return new WxOAuthToken(_json.getString("access_token"), _json.getIntValue("expires_in"), _json.getString("refresh_token"), _json.getString("openid"), _json.getString("scope"));
 	}
 
-	public static JSONObject wxOAuthUserGetInfo(String oauthAccessToken, String openid, WxLangType lang) throws Exception {
+	/**
+	 * @param openid
+	 * @param lang
+	 * @return 拉取用户信息
+	 * @throws Exception
+	 */
+	public static WxOAuthUser wxOAuthUserGetInfo(String oauthAccessToken, String openid, WxLangType lang) throws Exception {
 		__doCheckModuleInited();
 		Map<String, String> _params = new HashMap<String, String>();
 		_params.put("access_token", oauthAccessToken);
@@ -458,7 +495,12 @@ public class WeChat {
 		if (lang != null) {
 			_params.put("lang", lang.toString());
 		}
-		return __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+		return new WxOAuthUser(_json.getString("openid"),
+				_json.getString("nickname"), _json.getInteger("sex"),
+				_json.getString("province"), _json.getString("city"),
+				_json.getString("country"), _json.getString("headimgurl"),
+				JSON.parseArray(_json.getJSONArray("privilege").toJSONString(), String.class));
 	}
 
 	/**
@@ -487,7 +529,8 @@ public class WeChat {
 		public final static String EVENT_SUBSCRIBE = "subscribe";
 		public final static String EVENT_UNSUBSCRIBE = "unsubscribe";
 		
-		public final static String EVENT_CLICK = "CLICK";
+		public final static String EVENT_CLICK = "click";
+		public final static String EVENT_VIEW = "view";
 	}
 
 	/**

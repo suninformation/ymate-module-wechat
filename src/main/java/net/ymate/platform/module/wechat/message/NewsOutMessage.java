@@ -20,9 +20,8 @@ import java.util.List;
 
 import net.ymate.platform.module.wechat.WeChat;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -99,7 +98,7 @@ public class NewsOutMessage extends OutMessage {
 				_article.put("description", _a.getDescription());
 				_article.put("url", _a.getUrl());
 				_article.put("picurl", _a.getPicUrl());
-				_articleArr.put(_article);
+				_articleArr.add(_article);
 			}
 			_news.put("articles", _articleArr);
 		}

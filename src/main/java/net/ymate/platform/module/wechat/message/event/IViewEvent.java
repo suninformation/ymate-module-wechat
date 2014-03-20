@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.ymate.platform.module.wechat.message;
-
-import net.ymate.platform.module.wechat.WeChat;
-
-import com.alibaba.fastjson.JSONObject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+package net.ymate.platform.module.wechat.message.event;
 
 /**
  * <p>
- * VideoOutMessage
+ * IViewEvent
  * </p>
  * <p>
  * 
@@ -40,47 +35,20 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  *          <td>0.0.0</td>
  *          <td>创建类</td>
  *          <td>刘镇</td>
- *          <td>2014年3月15日下午12:54:55</td>
+ *          <td>2014年3月20日下午8:56:05</td>
  *          </tr>
  *          </table>
  */
-@XStreamAlias("xml")
-public class VideoOutMessage extends OutMessage {
+public interface IViewEvent {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7924522691890669551L;
+	public Long getMsgId();
 
-	@XStreamAlias("Video")
-	private MediaId video;
+	public String getToUserName();
 
-	/**
-	 * 构造器
-	 * 
-	 * @param toUserName
-	 */
-	public VideoOutMessage(String toUserName) {
-		super(toUserName, WeChat.WX_MESSAGE.TYPE_VIDEO);
-	}
+	public String getFromUserName();
 
-	public MediaId getVideo() {
-		return video;
-	}
+	public Long getCreateTime();
 
-	public void setVideo(MediaId video) {
-		this.video = video;
-	}
-
-	@Override
-	protected void __doSetJsonContent(JSONObject parent) throws Exception {
-		JSONObject _video = new JSONObject();
-		if (this.getVideo() != null) {
-			_video.put("media_id", this.getVideo().getMediaId());
-			_video.put("title", this.getVideo().getTitle());
-			_video.put("description", this.getVideo().getDescription());
-		}
-		parent.put("video", _video);
-	}
+	public String getEventKey();
 
 }

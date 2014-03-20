@@ -82,6 +82,8 @@ public class DefaultMessageProcessor implements IMessageProcessor {
 				_returnMsg = __handler.onEventClick(message);
 			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_SCAN)) {
 				_returnMsg = __handler.onEventScan(message);
+			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_VIEW)) {
+				_returnMsg = __handler.onEventView(message);
 			} else {
 				_returnMsg = __handler.onEventMessage(message);
 			}

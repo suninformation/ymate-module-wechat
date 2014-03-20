@@ -15,10 +15,9 @@
  */
 package net.ymate.platform.module.wechat.message;
 
-import org.json.JSONObject;
-
 import net.ymate.platform.module.wechat.WeChat;
 
+import com.alibaba.fastjson.JSONObject;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
