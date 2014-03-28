@@ -21,8 +21,10 @@ import net.ymate.platform.base.AbstractModule;
 import net.ymate.platform.commons.util.ClassUtils;
 import net.ymate.platform.module.wechat.IMessageHandler;
 import net.ymate.platform.module.wechat.IMessageProcessor;
+import net.ymate.platform.module.wechat.IAccountDataProvider;
 import net.ymate.platform.module.wechat.IWeChatConfig;
 import net.ymate.platform.module.wechat.WeChat;
+import net.ymate.platform.module.wechat.support.DefaultAccountDataProvider;
 
 /**
  * <p>
@@ -56,24 +58,34 @@ public class WeChatModule extends AbstractModule {
 	public void initialize(final Map<String, String> moduleCfgs) throws Exception {
 		WeChat.initialize(new IWeChatConfig() {
 
-			public String getAppId() {
-				return moduleCfgs.get("app_id");
-			}
+			private IAccountDataProvider __dataProvider;
 
-			public String getAppSecret() {
-				return moduleCfgs.get("app_secret");
-			}
+			private IMessageProcessor __messageProcessor;
 
-			public String getRedirectURI() {
-				return moduleCfgs.get("redirect_uri");
+			private IMessageHandler __messageHandler;
+
+			public IAccountDataProvider getAccountDataProviderImpl() {
+				if (__dataProvider == null) {
+					__dataProvider = ClassUtils.impl(moduleCfgs.get("account_data_provider_impl"), IAccountDataProvider.class, WeChatModule.class);
+					if (__dataProvider == null) {
+						__dataProvider = new DefaultAccountDataProvider(moduleCfgs.get("account_id"), moduleCfgs.get("app_id"), moduleCfgs.get("app_secret"), moduleCfgs.get("redirect_uri"));
+					}
+				}
+				return __dataProvider;
 			}
 
 			public IMessageProcessor getMessageProcessorImpl() {
-				return ClassUtils.impl(moduleCfgs.get("message_processor_impl"), IMessageProcessor.class, WeChatModule.class);
+				if (__messageProcessor == null) {
+					__messageProcessor = ClassUtils.impl(moduleCfgs.get("message_processor_impl"), IMessageProcessor.class, WeChatModule.class);
+				}
+				return __messageProcessor;
 			}
 
 			public IMessageHandler getMessageHandlerImpl() {
-				return ClassUtils.impl(moduleCfgs.get("message_handler_impl"), IMessageHandler.class, WeChatModule.class);
+				if (__messageHandler == null) {
+					__messageHandler = ClassUtils.impl(moduleCfgs.get("message_handler_impl"), IMessageHandler.class, WeChatModule.class);
+				}
+				return __messageHandler;
 			}
 
 		});
