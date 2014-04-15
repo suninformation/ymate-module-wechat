@@ -100,11 +100,18 @@ public interface IMessageHandler {
 
 	/**
 	 * @param message
-	 * @return 未知类型的消息处理
+	 * @return 无效(由IAccountDataProvider的checkAccountValid接口方法验证)类型的消息处理
+	 * @throws Exception
+	 */
+	public OutMessage onInvalidMessage(InMessage message) throws Exception;
+
+	/**
+	 * @param message
+	 * @return 未知类型的消息处理(一般情况下不会发生这种事吧)
 	 * @throws Exception
 	 */
 	@Deprecated
-	public OutMessage onEventMessage(InMessage message) throws Exception;
+	public OutMessage onUnknownMessage(InMessage message) throws Exception;
 
 	/**
 	 * @param event
@@ -114,11 +121,12 @@ public interface IMessageHandler {
 	public OutMessage onEventSubscribe(ISubscribeEvent event) throws Exception;
 
 	/**
+	 * 取消关注事件处理
+	 * 
 	 * @param event
-	 * @return 取消关注事件处理
 	 * @throws Exception
 	 */
-	public OutMessage onEventUnsubscribe(IUnsubscribeEvent event) throws Exception;
+	public void onEventUnsubscribe(IUnsubscribeEvent event) throws Exception;
 
 	/**
 	 * @param event

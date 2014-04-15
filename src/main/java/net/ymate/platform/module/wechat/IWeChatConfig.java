@@ -63,4 +63,9 @@ public interface IWeChatConfig {
 	 */
 	public IMessageHandler getMessageHandlerImpl();
 
+	/**
+	 * @return 返回是否开启微信公众帐号有效性验证，默认开启
+	 */
+	public boolean isCheckAccountValid();
+
 }

@@ -59,6 +59,11 @@ public class DefaultMessageProcessor implements IMessageProcessor {
 	@SuppressWarnings("deprecation")
 	public OutMessage onMessageReceived(InMessage message) throws Exception {
 		OutMessage _returnMsg = null;
+		if (WeChat.getConfig().isCheckAccountValid() && !WeChat.getAccountDataProvider().checkAccountValid(message.getToUserName())) {
+			_returnMsg = __handler.onInvalidMessage(message);
+			return _returnMsg;
+		}
+		//
 		if (message.isText()) {
 			_returnMsg = __handler.onTextMessage(message);
 		} else if (message.isImage()) {
@@ -75,7 +80,8 @@ public class DefaultMessageProcessor implements IMessageProcessor {
 			if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_SUBSCRIBE)) {
 				_returnMsg = __handler.onEventSubscribe(message);
 			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_UNSUBSCRIBE)) {
-				_returnMsg = __handler.onEventUnsubscribe(message);
+				// 取消关注的帐号就别回复消息了，人家都不理你了~
+				__handler.onEventUnsubscribe(message);
 			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_LOCATION)) {
 				_returnMsg = __handler.onEventLocation(message);
 			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_CLICK)) {
@@ -85,8 +91,10 @@ public class DefaultMessageProcessor implements IMessageProcessor {
 			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_VIEW)) {
 				_returnMsg = __handler.onEventView(message);
 			} else {
-				_returnMsg = __handler.onEventMessage(message);
+				_returnMsg = __handler.onUnknownMessage(message);
 			}
+		} else {
+			_returnMsg = __handler.onUnknownMessage(message);
 		}
 		return _returnMsg;
 	}

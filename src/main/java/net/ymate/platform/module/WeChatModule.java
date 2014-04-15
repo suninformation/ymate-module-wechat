@@ -18,10 +18,11 @@ package net.ymate.platform.module;
 import java.util.Map;
 
 import net.ymate.platform.base.AbstractModule;
+import net.ymate.platform.commons.lang.BlurObject;
 import net.ymate.platform.commons.util.ClassUtils;
+import net.ymate.platform.module.wechat.IAccountDataProvider;
 import net.ymate.platform.module.wechat.IMessageHandler;
 import net.ymate.platform.module.wechat.IMessageProcessor;
-import net.ymate.platform.module.wechat.IAccountDataProvider;
 import net.ymate.platform.module.wechat.IWeChatConfig;
 import net.ymate.platform.module.wechat.WeChat;
 import net.ymate.platform.module.wechat.support.DefaultAccountDataProvider;
@@ -64,6 +65,8 @@ public class WeChatModule extends AbstractModule {
 
 			private IMessageHandler __messageHandler;
 
+			private Boolean __checkAccountValid;
+
 			public IAccountDataProvider getAccountDataProviderImpl() {
 				if (__dataProvider == null) {
 					__dataProvider = ClassUtils.impl(moduleCfgs.get("account_data_provider_impl"), IAccountDataProvider.class, WeChatModule.class);
@@ -86,6 +89,17 @@ public class WeChatModule extends AbstractModule {
 					__messageHandler = ClassUtils.impl(moduleCfgs.get("message_handler_impl"), IMessageHandler.class, WeChatModule.class);
 				}
 				return __messageHandler;
+			}
+
+			public boolean isCheckAccountValid() {
+				if (__checkAccountValid == null) {
+					if (moduleCfgs.containsKey("check_account_valid")) {
+						__checkAccountValid = new BlurObject(moduleCfgs.get("check_account_valid")).toBooleanValue();
+					} else {
+						__checkAccountValid = true;
+					}
+				}
+				return __checkAccountValid;
 			}
 
 		});

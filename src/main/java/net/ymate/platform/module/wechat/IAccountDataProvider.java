@@ -44,31 +44,37 @@ import java.util.Set;
 public interface IAccountDataProvider {
 
 	/**
-	 * @return 返回当前维护的微信帐号ID集合
+	 * @return 返回当前维护的微信帐号原始ID集合
 	 */
 	public Set<String> getAccountIds();
 
 	/**
-	 * @param accountId 微信帐号
+	 * @param accountId 微信帐号原始ID
+	 * @return 检测微信帐号accountId是否有效(常规实现方式为判断是否存在于当前服务的原始ID集合中)
+	 */
+	public boolean checkAccountValid(String accountId);
+
+	/**
+	 * @param accountId 微信帐号原始ID
 	 * @return 通过微信帐号获取AccessToken，在有效期内将被缓存，过期后会重新获取新的Token
 	 * @throws Exception
 	 */
 	public String getAccessToken(String accountId) throws Exception;
 
 	/**
-	 * @param accountId 微信帐号
+	 * @param accountId 微信帐号原始ID
 	 * @return 返回第三方应用唯一凭证
 	 */
 	public String getAppId(String accountId);
 
 	/**
-	 * @param accountId 微信帐号
+	 * @param accountId 微信帐号原始ID
 	 * @return 返回第三方应用唯一凭证密钥
 	 */
 	public String getAppSecret(String accountId);
 
 	/**
-	 * @param accountId 微信帐号
+	 * @param accountId 微信帐号原始ID
 	 * @return OAuth授权后重定向的URL地址
 	 */
 	public String getRedirectURI(String accountId);

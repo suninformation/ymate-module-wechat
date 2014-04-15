@@ -64,6 +64,9 @@ public class WeChatFilter implements Filter {
 
 	private static final Log _LOG = LogFactory.getLog(WeChatFilter.class);
 
+	/**
+	 * 默认Token设置, 默认值: wechat
+	 */
 	private String token;
 
 	/* (non-Javadoc)
@@ -116,8 +119,10 @@ public class WeChatFilter implements Filter {
 		String _timestamp = request.getParameter("timestamp");
 		String _nonce = request.getParameter("nonce");
 		String _echostr = request.getParameter("echostr");
+		// 尝试从请求的参数中获取Token, 若未获取到则采用框架默认值
+		String _token = StringUtils.defaultIfEmpty(request.getParameter("_t"), token);
 		//
-		if (WeChat.checkSignature(token, _signature, _timestamp, _nonce)) {
+		if (WeChat.checkSignature(_token, _signature, _timestamp, _nonce)) {
 			_echoStr = _echostr;
 		}
 		response.getWriter().write(_echoStr);

@@ -98,6 +98,13 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 	}
 
 	/* (non-Javadoc)
+	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#checkAccountValid(java.lang.String)
+	 */
+	public boolean checkAccountValid(String accountId) {
+		return __accountCahces.containsKey(accountId);
+	}
+
+	/* (non-Javadoc)
 	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAccessToken(java.lang.String)
 	 */
 	public String getAccessToken(String accountId) throws Exception {
