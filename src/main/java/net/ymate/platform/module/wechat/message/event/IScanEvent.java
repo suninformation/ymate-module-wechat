@@ -41,8 +41,6 @@ package net.ymate.platform.module.wechat.message.event;
  */
 public interface IScanEvent {
 
-	public Long getMsgId();
-
 	public String getToUserName();
 
 	public String getFromUserName();

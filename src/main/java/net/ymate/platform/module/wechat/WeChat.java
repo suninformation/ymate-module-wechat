@@ -27,6 +27,7 @@ import java.util.Map;
 
 import net.ymate.platform.module.wechat.base.WxFollwersResult;
 import net.ymate.platform.module.wechat.base.WxGroup;
+import net.ymate.platform.module.wechat.base.WxMassArticle;
 import net.ymate.platform.module.wechat.base.WxMediaUploadResult;
 import net.ymate.platform.module.wechat.base.WxMenu;
 import net.ymate.platform.module.wechat.base.WxOAuthToken;
@@ -225,10 +226,82 @@ public class WeChat {
 	 */
 	public static WxMediaUploadResult wxMediaUploadFile(String accountId, WxMediaType type, File file) throws Exception {
 		__doCheckModuleInited();
+		if (WxMediaType.NEWS.equals(type)) {
+			throw new UnsupportedOperationException("News media type need use wxMediaUploadNews method.");
+		}
 		// {"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
 		// {"type":"TYPE","thubm_media_id":"MEDIA_ID","created_at":123456789}
 		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doUpload(WX_API.MEDIA_UPLOAD + wxGetAccessToken(accountId) + "&type=" + type.toString().toLowerCase(), false, file));
 		return new WxMediaUploadResult(type, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
+	}
+
+	/**
+	 * @param accountId 微信公众帐号ID
+	 * @param articles 图文消息对象集合
+	 * @return 上传图文消息素材
+	 * @throws Exception
+	 */
+	public static WxMediaUploadResult wxMediaUploadNews(String accountId, List<WxMassArticle> articles) throws Exception {
+		__doCheckModuleInited();
+		if (articles == null || articles.isEmpty()) {
+			throw new NullArgumentException("articles");
+		}
+		StringBuilder _paramSB = new StringBuilder("{ \"articles\": [");
+		for (WxMassArticle article: articles) {
+			_paramSB.append(article.toJSON());
+		}
+		_paramSB.append("]}");
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_NEWS + wxGetAccessToken(accountId), true, _paramSB.toString()));
+		return new WxMediaUploadResult(WxMediaType.NEWS, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
+	}
+
+	/**
+	 * @param accountId
+	 * @param groupId
+	 * @param mediaId
+	 * @return 根据分组进行群发并返回消息ID
+	 * @throws Exception
+	 */
+	public static Long wxMassSendByGroupId(String accountId, String groupId, String mediaId) throws Exception {
+		__doCheckModuleInited();
+		StringBuilder _paramSB = new StringBuilder("{");
+		_paramSB.append("\"filter\": {").append("\"group_id\":").append("\"").append(groupId).append("\"},");
+		_paramSB.append("\"mpnews\": {").append("\"media_id\":").append("\"").append(mediaId).append("\"},");
+		_paramSB.append("\"msgtype\": \"mpnews\"}");
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_GROUP + wxGetAccessToken(accountId), true, _paramSB.toString()));
+		return _json.getLong("msg_id");
+	}
+
+	/**
+	 * @param accountId
+	 * @param openIds
+	 * @param mediaId
+	 * @return 根据OpenID列表群发并返回消息ID
+	 * @throws Exception
+	 */
+	public static Long wxMassSendByOpenId(String accountId, List<String> openIds, String mediaId) throws Exception {
+		__doCheckModuleInited();
+		if (openIds == null || openIds.isEmpty()) {
+			throw new NullArgumentException("openIds");
+		}
+		StringBuilder _paramSB = new StringBuilder("{");
+		_paramSB.append("\"touser\": ").append(JSON.toJSONString(openIds)).append(",");
+		_paramSB.append("\"mpnews\": {").append("\"media_id\":").append("\"").append(mediaId).append("\"},");
+		_paramSB.append("\"msgtype\": \"mpnews\"}");
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_OPENID + wxGetAccessToken(accountId), true, _paramSB.toString()));
+		return _json.getLong("msg_id");
+	}
+
+	/**
+	 * @param accountId
+	 * @param msgId
+	 * @return 删除群发(只是将消息的图文详情页失效)
+	 * @throws Exception
+	 */
+	public static boolean wxMassDelete(String accountId, Long msgId) throws Exception {
+		__doCheckModuleInited();
+		JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_DELETE.concat(wxGetAccessToken(accountId)), true, "{\"msgid\":" + msgId + "}"));
+		return 0 == _result.getIntValue("errcode");
 	}
 
 	/**
@@ -529,6 +602,7 @@ public class WeChat {
 		public final static String TYPE_VIDEO = "video";
 
 		public final static String TYPE_NEWS = "news";
+		public final static String TYPE_MP_NEWS = "mpnews"; // 此类型仅用于群发图文
 		public final static String TYPE_MUSIC = "music";
 	
 		public final static String EVENT_LOCATION = "LOCATION";
@@ -538,6 +612,8 @@ public class WeChat {
 		
 		public final static String EVENT_CLICK = "click";
 		public final static String EVENT_VIEW = "view";
+	
+		public final static String EVENT_MASS_SEND_JOB_FINISH = "MASSSENDJOBFINISH";
 	}
 
 	/**
@@ -549,7 +625,7 @@ public class WeChat {
 	 * </p>
 	 */
 	public static enum WxMediaType {
-		IMAGE, VOICE, VIDEO, THUMB
+		IMAGE, VOICE, VIDEO, THUMB, NEWS
 	}
 
 	/**
@@ -578,6 +654,8 @@ public class WeChat {
 		public static final String MEDIA_GET = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=";
 		public static final String MEDIA_UPLOAD = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=";
 
+		public static final String MEDIA_UPLOAD_NEWS = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=";
+
 		public static final String GROUP_CREATE = "https://api.weixin.qq.com/cgi-bin/groups/create?access_token=";
 		public static final String GROUP_GET = "https://api.weixin.qq.com/cgi-bin/groups/get?access_token=";
 		public static final String GROUP_GET_ID = "https://api.weixin.qq.com/cgi-bin/groups/getid?access_token=";
@@ -595,6 +673,10 @@ public class WeChat {
 		public static final String QRCODE_SHOW = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
 
 		public static final String MESSAGE_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
+
+		public static final String MASS_SEND_BY_GROUP = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=";
+		public static final String MASS_SEND_BY_OPENID = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=";
+		public static final String MASS_DELETE = "https://api.weixin.qq.com//cgi-bin/message/mass/delete?access_token=";
 
 		public static final String OAUTH_GET_CODE = "https://open.weixin.qq.com/connect/oauth2/authorize?";
 		public static final String OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";

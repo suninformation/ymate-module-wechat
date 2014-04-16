@@ -19,6 +19,7 @@ import net.ymate.platform.module.wechat.WeChat;
 import net.ymate.platform.module.wechat.message.AbstractMessage;
 import net.ymate.platform.module.wechat.message.event.IClickEvent;
 import net.ymate.platform.module.wechat.message.event.ILocationEvent;
+import net.ymate.platform.module.wechat.message.event.IMassSendJobFinishEvent;
 import net.ymate.platform.module.wechat.message.event.IScanEvent;
 import net.ymate.platform.module.wechat.message.event.ISubscribeEvent;
 import net.ymate.platform.module.wechat.message.event.IUnsubscribeEvent;
@@ -54,7 +55,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class InMessage extends AbstractMessage implements ITextMessage,
 		IImageMessage, IVoiceMessage, IVideoMessage, ILocationMessage,
 		ILinkMessage, ISubscribeEvent, IUnsubscribeEvent, IScanEvent,
-		IClickEvent, ILocationEvent, IViewEvent {
+		IClickEvent, ILocationEvent, IViewEvent, IMassSendJobFinishEvent {
 
 	/**
 	 * 
@@ -120,6 +121,26 @@ public class InMessage extends AbstractMessage implements ITextMessage,
 
 	@XStreamAlias("Precision")
 	private Double precision;
+
+	// ----
+
+	@XStreamAlias("MsgID")
+	private Long msgID;
+
+	@XStreamAlias("Status")
+	private String status;
+
+	@XStreamAlias("TotalCount")
+	private Integer totalCount;
+
+	@XStreamAlias("FilterCount")
+	private Integer filterCount;
+
+	@XStreamAlias("SendCount")
+	private Integer sendCount;
+
+	@XStreamAlias("ErrorCount")
+	private Integer errorCount;
 
 	public Long getMsgId() {
 		return msgId;
@@ -280,6 +301,60 @@ public class InMessage extends AbstractMessage implements ITextMessage,
 	public void setPrecision(Double precision) {
 		this.precision = precision;
 	}
+
+	// ----
+
+	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public Long getMsgID() {
+		return msgID;
+	}
+
+	public void setMsgID(Long msgID) {
+		this.msgID = msgID;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Integer getTotalCount() {
+		return totalCount;
+	}
+
+	public void setTotalCount(Integer totalCount) {
+		this.totalCount = totalCount;
+	}
+
+	public Integer getFilterCount() {
+		return filterCount;
+	}
+
+	public void setFilterCount(Integer filterCount) {
+		this.filterCount = filterCount;
+	}
+
+	public Integer getSendCount() {
+		return sendCount;
+	}
+
+	public void setSendCount(Integer sendCount) {
+		this.sendCount = sendCount;
+	}
+
+	public Integer getErrorCount() {
+		return errorCount;
+	}
+
+	public void setErrorCount(Integer errorCount) {
+		this.errorCount = errorCount;
+	}
+
+	// ----
 
 	public Boolean isEvent(){
 		return this.getMsgType().equalsIgnoreCase(WeChat.WX_MESSAGE.TYPE_EVENT);

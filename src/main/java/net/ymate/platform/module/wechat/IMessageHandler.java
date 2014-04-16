@@ -18,6 +18,7 @@ package net.ymate.platform.module.wechat;
 import net.ymate.platform.module.wechat.message.OutMessage;
 import net.ymate.platform.module.wechat.message.event.IClickEvent;
 import net.ymate.platform.module.wechat.message.event.ILocationEvent;
+import net.ymate.platform.module.wechat.message.event.IMassSendJobFinishEvent;
 import net.ymate.platform.module.wechat.message.event.IScanEvent;
 import net.ymate.platform.module.wechat.message.event.ISubscribeEvent;
 import net.ymate.platform.module.wechat.message.event.IUnsubscribeEvent;
@@ -155,5 +156,12 @@ public interface IMessageHandler {
 	 * @throws Exception
 	 */
 	public OutMessage onEventLocation(ILocationEvent event) throws Exception;
+
+	/**
+	 * 接收推送群发结果事件
+	 * 
+	 * @throws Exception
+	 */
+	public void onEventMassSendJobFinish(IMassSendJobFinishEvent event) throws Exception;
 
 }
