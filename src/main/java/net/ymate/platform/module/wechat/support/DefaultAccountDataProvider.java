@@ -117,7 +117,7 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 			if (_accessToken == null || (_currentTime >= _accessToken.getLong("expires_time"))) {
 				_accessToken = WeChat.__doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getAppId(accountId) + "&secret=" + getAppSecret(accountId), true));
 				_accessToken.put("expires_time", _currentTime + _accessToken.getIntValue("expires_in") * 1000);
-				__CACHES.put("WX_ACCESS_TOKEN", _accessToken);
+				__CACHES.put(accountId, _accessToken);
 				//
 				_LOG.debug("AccessToken Has Expired, Get From Remote: " + _accessToken);
 //			} else {
