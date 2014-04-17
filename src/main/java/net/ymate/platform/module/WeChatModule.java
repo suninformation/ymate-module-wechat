@@ -20,6 +20,8 @@ import java.util.Map;
 import net.ymate.platform.base.AbstractModule;
 import net.ymate.platform.commons.lang.BlurObject;
 import net.ymate.platform.commons.util.ClassUtils;
+import net.ymate.platform.commons.util.RuntimeUtils;
+import net.ymate.platform.module.wechat.AccountDataMeta;
 import net.ymate.platform.module.wechat.IAccountDataProvider;
 import net.ymate.platform.module.wechat.IMessageHandler;
 import net.ymate.platform.module.wechat.IMessageProcessor;
@@ -71,7 +73,16 @@ public class WeChatModule extends AbstractModule {
 				if (__dataProvider == null) {
 					__dataProvider = ClassUtils.impl(moduleCfgs.get("account_data_provider_impl"), IAccountDataProvider.class, WeChatModule.class);
 					if (__dataProvider == null) {
-						__dataProvider = new DefaultAccountDataProvider(moduleCfgs.get("account_id"), moduleCfgs.get("app_id"), moduleCfgs.get("app_secret"), moduleCfgs.get("redirect_uri"));
+						__dataProvider = new DefaultAccountDataProvider();
+						try {
+							__dataProvider.registerAccount(new AccountDataMeta(
+									moduleCfgs.get("account_id"), moduleCfgs
+											.get("app_id"), moduleCfgs
+											.get("app_secret"), moduleCfgs
+											.get("redirect_uri")));
+						} catch (Exception e) {
+							throw new Error(RuntimeUtils.unwrapThrow(e));
+						}
 					}
 				}
 				return __dataProvider;

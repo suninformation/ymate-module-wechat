@@ -91,9 +91,9 @@ public class WeChat {
 	 * 初始化微信公众平台服务接入框架管理器
 	 * 
 	 * @param config
-	 * @throws WeChatException
+	 * @throws Exception
 	 */
-	public static void initialize(IWeChatConfig config) throws WeChatException {
+	public static void initialize(IWeChatConfig config) throws Exception {
 		if (!__IS_INITED) {
 			if (config == null) {
 				throw new NullArgumentException("config");
@@ -101,6 +101,8 @@ public class WeChat {
 			if ((__dataProvider = config.getAccountDataProviderImpl()) == null) {
 				throw new NullArgumentException("AccountDataProviderImpl");
 			}
+			__dataProvider.initialize();
+			//
 			if ((__messageProcessor = config.getMessageProcessorImpl()) == null) {
 				_LOG.debug("Default Message Processor Used");
 				if (config.getMessageHandlerImpl() == null) {
@@ -124,9 +126,10 @@ public class WeChat {
 	/**
 	 * 销毁模块
 	 */
-	public static void destroy() {
+	public static void destroy() throws Exception {
 		if (__IS_INITED) {
 			__IS_INITED = false;
+			__dataProvider.destroy();
 		}
 	}
 

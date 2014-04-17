@@ -44,6 +44,34 @@ import java.util.Set;
 public interface IAccountDataProvider {
 
 	/**
+	 * 初始化
+	 * 
+	 * @throws Exception
+	 */
+	public void initialize() throws Exception;
+
+	/**
+	 * 销毁
+	 * 
+	 * @throws Exception
+	 */
+	public void destroy() throws Exception;
+
+	/**
+	 * 注册公众帐号
+	 * 
+	 * @param account 微信帐号数据对象
+	 * @throws Exception
+	 */
+	public void registerAccount(AccountDataMeta account) throws Exception;
+
+	/**
+	 * @param accountId 微信帐号原始ID
+	 * @return 移除并返回公众帐号数据对象，若不存在则返回空
+	 */
+	public AccountDataMeta unregisterAccount(String accountId);
+
+	/**
 	 * @return 返回当前维护的微信帐号原始ID集合
 	 */
 	public Set<String> getAccountIds();

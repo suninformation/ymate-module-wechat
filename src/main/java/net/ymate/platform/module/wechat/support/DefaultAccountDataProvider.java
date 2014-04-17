@@ -20,12 +20,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.ymate.platform.module.wechat.AccountDataMeta;
 import net.ymate.platform.module.wechat.IAccountDataProvider;
 import net.ymate.platform.module.wechat.WeChat;
 import net.ymate.platform.module.wechat.WeChat.WX_API;
 
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -67,27 +66,34 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 
 	/**
 	 * 构造器
-	 * 
-	 * @param accountId 微信公众帐号ID
-	 * @param appId 第三方应用唯一凭证
-	 * @param appSecret 第三方应用唯一凭证密钥
-	 * @param redirectURI OAuth授权后重定向的URL地址
 	 */
-	public DefaultAccountDataProvider(String accountId, String appId, String appSecret, String redirectURI) {
-		if (StringUtils.isBlank(accountId)) {
-			throw new NullArgumentException("accountId");
-		}
-		if (StringUtils.isBlank(appId)) {
-			throw new NullArgumentException("appId");
-		}
-		if (StringUtils.isBlank(appSecret)) {
-			throw new NullArgumentException("appSecret");
-		}
-		if (StringUtils.isBlank(redirectURI)) {
-			throw new NullArgumentException("redirectURI");
-		}
-		//
-		__accountCahces.put(accountId, new AccountDataMeta(accountId, appId, appSecret, redirectURI));
+	public DefaultAccountDataProvider() {
+	}
+
+	/* (non-Javadoc)
+	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#initialize()
+	 */
+	public void initialize() throws Exception {
+	}
+
+	/* (non-Javadoc)
+	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#destroy()
+	 */
+	public void destroy() throws Exception {
+	}
+
+	/* (non-Javadoc)
+	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#registerAccount(net.ymate.platform.module.wechat.AccountDataMeta)
+	 */
+	public void registerAccount(AccountDataMeta account) throws Exception {
+		__accountCahces.put(account.getAccountId(), account);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#unregisterAccount(java.lang.String)
+	 */
+	public AccountDataMeta unregisterAccount(String accountId) {
+		return __accountCahces.remove(accountId);
 	}
 
 	/* (non-Javadoc)
@@ -146,56 +152,6 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 	 */
 	public String getRedirectURI(String accountId) {
 		return __accountCahces.get(accountId).getRedirectURI();
-	}
-
-}
-
-class AccountDataMeta {
-	private String accountId;
-
-	private String appId;
-
-	private String appSecret;
-
-	private String redirectURI;
-
-	public AccountDataMeta(String accountId, String appId, String appSecret, String redirectURI) {
-		this.accountId = accountId;
-		this.appId = appId;
-		this.appSecret = appSecret;
-		this.redirectURI = redirectURI;
-	}
-
-	public String getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
-	}
-
-	public String getAppId() {
-		return appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-
-	public String getAppSecret() {
-		return appSecret;
-	}
-
-	public void setAppSecret(String appSecret) {
-		this.appSecret = appSecret;
-	}
-
-	public String getRedirectURI() {
-		return redirectURI;
-	}
-
-	public void setRedirectURI(String redirectURI) {
-		this.redirectURI = redirectURI;
 	}
 
 }
