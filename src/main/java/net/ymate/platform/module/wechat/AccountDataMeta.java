@@ -64,15 +64,6 @@ public class AccountDataMeta {
 		if (StringUtils.isBlank(accountId)) {
 			throw new NullArgumentException("accountId");
 		}
-		if (StringUtils.isBlank(appId)) {
-			throw new NullArgumentException("appId");
-		}
-		if (StringUtils.isBlank(appSecret)) {
-			throw new NullArgumentException("appSecret");
-		}
-		if (StringUtils.isBlank(redirectURI)) {
-			throw new NullArgumentException("redirectURI");
-		}
 		//
 		this.accountId = accountId;
 		this.appId = appId;

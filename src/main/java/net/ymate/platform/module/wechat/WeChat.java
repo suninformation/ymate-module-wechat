@@ -195,6 +195,9 @@ public class WeChat {
 	 */
 	public static String wxGetAccessToken(String accountId) throws Exception {
 		__doCheckModuleInited();
+		if (StringUtils.isBlank(accountId)) {
+			throw new NullArgumentException("accountId");
+		}
 		return __dataProvider.getAccessToken(accountId);
 	}
 
@@ -520,10 +523,18 @@ public class WeChat {
 	 */
 	public static String wxOAuthGetCodeURL(String accountId, boolean need_userinfo, String state) throws Exception {
 		__doCheckModuleInited();
+		String _appId = __dataProvider.getAppId(accountId);
+		if (StringUtils.isBlank(_appId)) {
+			throw new NullArgumentException("appId");
+		}
+		String _redirectURI = __dataProvider.getRedirectURI(accountId);
+		if (StringUtils.isBlank(_redirectURI)) {
+			throw new NullArgumentException("redirectURI");
+		}
 		Map<String, String> _params = new HashMap<String, String>();
-		_params.put("appid", __dataProvider.getAppId(accountId));
+		_params.put("appid", _appId);
 		_params.put("response_type", "code");
-		_params.put("redirect_uri", URLEncoder.encode(__dataProvider.getRedirectURI(accountId), HttpClientHelper.DEFAULT_CHARSET));
+		_params.put("redirect_uri", URLEncoder.encode(_redirectURI, HttpClientHelper.DEFAULT_CHARSET));
 		_params.put("scope", need_userinfo ? "snsapi_userinfo" : "snsapi_base");
 		_params.put("state", StringUtils.defaultIfEmpty(state, "") + "#wechat_redirect");
 		return WX_API.OAUTH_GET_CODE.concat(HttpClientHelper.doParamSignatureSort(_params, false));
@@ -539,9 +550,20 @@ public class WeChat {
 	 */
 	public static WxOAuthToken wxOAuthGetToken(String accountId, String code) throws Exception {
 		__doCheckModuleInited();
+		String _appId = __dataProvider.getAppId(accountId);
+		if (StringUtils.isBlank(_appId)) {
+			throw new NullArgumentException("appId");
+		}
+		String _appSecret = __dataProvider.getAppSecret(accountId);
+		if (StringUtils.isBlank(_appSecret)) {
+			throw new NullArgumentException("appSecret");
+		}
+		if (StringUtils.isBlank(code)) {
+			throw new NullArgumentException("code");
+		}
 		Map<String, String> _params = new HashMap<String, String>();
-		_params.put("appid", __dataProvider.getAppId(accountId));
-		_params.put("secret", __dataProvider.getRedirectURI(accountId));
+		_params.put("appid", _appId);
+		_params.put("secret", _appSecret);
 		_params.put("code", code);
 		_params.put("grant_type", "authorization_code");
 		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_ACCESS_TOKEN, true, _params));
@@ -556,8 +578,15 @@ public class WeChat {
 	 */
 	public static WxOAuthToken wxOAuthRefreshToken(String accountId, String refreshToken) throws Exception {
 		__doCheckModuleInited();
+		String _appId = __dataProvider.getAppId(accountId);
+		if (StringUtils.isBlank(_appId)) {
+			throw new NullArgumentException("appId");
+		}
+		if (StringUtils.isBlank(refreshToken)) {
+			throw new NullArgumentException("refreshToken");
+		}
 		Map<String, String> _params = new HashMap<String, String>();
-		_params.put("appid", __dataProvider.getAppId(accountId));
+		_params.put("appid", _appId);
 		_params.put("grant_type", "refresh_token");
 		_params.put("refresh_token", refreshToken);
 		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
@@ -572,6 +601,12 @@ public class WeChat {
 	 */
 	public static WxOAuthUser wxOAuthUserGetInfo(String oauthAccessToken, String openid, WxLangType lang) throws Exception {
 		__doCheckModuleInited();
+		if (StringUtils.isBlank(oauthAccessToken)) {
+			throw new NullArgumentException("oauthAccessToken");
+		}
+		if (StringUtils.isBlank(openid)) {
+			throw new NullArgumentException("openid");
+		}
 		Map<String, String> _params = new HashMap<String, String>();
 		_params.put("access_token", oauthAccessToken);
 		_params.put("openid", openid);
