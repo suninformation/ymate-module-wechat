@@ -25,15 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.ymate.platform.module.wechat.base.WxFollwersResult;
-import net.ymate.platform.module.wechat.base.WxGroup;
-import net.ymate.platform.module.wechat.base.WxMassArticle;
-import net.ymate.platform.module.wechat.base.WxMediaUploadResult;
-import net.ymate.platform.module.wechat.base.WxMenu;
-import net.ymate.platform.module.wechat.base.WxOAuthToken;
-import net.ymate.platform.module.wechat.base.WxOAuthUser;
-import net.ymate.platform.module.wechat.base.WxQRCode;
-import net.ymate.platform.module.wechat.base.WxUser;
+import net.ymate.platform.module.wechat.base.*;
 import net.ymate.platform.module.wechat.message.OutMessage;
 import net.ymate.platform.module.wechat.support.DefaultMessageProcessor;
 import net.ymate.platform.module.wechat.support.HttpClientHelper;
@@ -261,6 +253,18 @@ public class WeChat {
 		return new WxMediaUploadResult(WxMediaType.NEWS, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
 	}
 
+    /**
+     * @param accountId
+     * @param video
+     * @return 上传群发用的视频
+     * @throws Exception
+     */
+    public static WxMediaUploadResult wxMediaUploadVideo(String accountId, WxMassVideo video) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_VIDEO + wxGetAccessToken(accountId), true, video.toJSON()));
+        return new WxMediaUploadResult(WxMediaType.VIDEO, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
+    }
+
 	/**
 	 * @param accountId
 	 * @param groupId
@@ -273,7 +277,7 @@ public class WeChat {
 		StringBuilder _paramSB = new StringBuilder("{");
 		_paramSB.append("\"filter\": {").append("\"group_id\":").append("\"").append(groupId).append("\"},");
 		_paramSB.append("\"mpnews\": {").append("\"media_id\":").append("\"").append(mediaId).append("\"},");
-		_paramSB.append("\"msgtype\": \"mpnews\"}");
+		_paramSB.append("\"msgtype\": \"" + WX_MESSAGE.TYPE_MP_NEWS + "\"}");
 		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_GROUP + wxGetAccessToken(accountId), true, _paramSB.toString()));
 		return _json.getLong("msg_id");
 	}
@@ -293,7 +297,7 @@ public class WeChat {
 		StringBuilder _paramSB = new StringBuilder("{");
 		_paramSB.append("\"touser\": ").append(JSON.toJSONString(openIds)).append(",");
 		_paramSB.append("\"mpnews\": {").append("\"media_id\":").append("\"").append(mediaId).append("\"},");
-		_paramSB.append("\"msgtype\": \"mpnews\"}");
+		_paramSB.append("\"msgtype\": \"" + WX_MESSAGE.TYPE_MP_NEWS + "\"}");
 		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_OPENID + wxGetAccessToken(accountId), true, _paramSB.toString()));
 		return _json.getLong("msg_id");
 	}
@@ -365,6 +369,23 @@ public class WeChat {
 		}
 		return new WxFollwersResult(_json.getLongValue("total"), _json.getIntValue("count"), _datas, _json.getString("next_openid"));
 	}
+
+    /**
+     * @param accountId
+     * @param openid 用户标识
+     * @param remark 新的备注名，长度必须小于30字符
+     * @return 对指定用户设置备注名
+     * @throws Exception
+     */
+    public static boolean wxUserUpdateRemark(String accountId, String openid, String remark) throws Exception {
+        __doCheckModuleInited();
+        Map<String, String> _params = new HashMap<String, String>();
+        _params.put("access_token", wxGetAccessToken(accountId));
+        _params.put("openid", openid);
+        _params.put("remark", remark);
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_UPDATE_REMARK, true, _params));
+        return 0 == _json.getIntValue("errcode");
+    }
 
 	/**
 	 * @param accountId 微信公众帐号ID
@@ -457,7 +478,6 @@ public class WeChat {
 
 	/**
 	 * @param accountId 微信公众帐号ID
-	 * @param accessToken
 	 * @return 查询菜单
 	 * @throws Exception
 	 */
@@ -613,13 +633,25 @@ public class WeChat {
 		if (lang != null) {
 			_params.put("lang", lang.toString());
 		}
-		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+		JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_USER_INFO, true, _params));
 		return new WxOAuthUser(_json.getString("openid"),
 				_json.getString("nickname"), _json.getInteger("sex"),
 				_json.getString("province"), _json.getString("city"),
 				_json.getString("country"), _json.getString("headimgurl"),
 				JSON.parseArray(_json.getJSONArray("privilege").toJSONString(), String.class));
 	}
+
+    /**
+     * @param accountId
+     * @param longUrl 需要转换的长链接
+     * @return 长链接转成短链接
+     * @throws Exception
+     */
+    public static String wxShortUrl(String accountId, String longUrl) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.SHORT_URL.concat(wxGetAccessToken(accountId)), true));
+        return _json.getString("short_url");
+    }
 
 	/**
 	 * 
@@ -693,6 +725,7 @@ public class WeChat {
 		public static final String MEDIA_UPLOAD = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=";
 
 		public static final String MEDIA_UPLOAD_NEWS = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=";
+        public static final String MEDIA_UPLOAD_VIDEO = "https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=";
 
 		public static final String GROUP_CREATE = "https://api.weixin.qq.com/cgi-bin/groups/create?access_token=";
 		public static final String GROUP_GET = "https://api.weixin.qq.com/cgi-bin/groups/get?access_token=";
@@ -702,6 +735,7 @@ public class WeChat {
 
 		public static final String USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info";
 		public static final String USER_GET = "https://api.weixin.qq.com/cgi-bin/user/get";
+        public static final String USER_UPDATE_REMARK = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=";
 
 		public static final String MENU_CREATE = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=";
 		public static final String MENU_GET = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=";
@@ -720,6 +754,8 @@ public class WeChat {
 		public static final String OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";
 		public static final String OAUTH_REFRESH_TOKEN = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
 		public static final String OAUTH_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?access_token=";
+
+        public static final String SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?action=long2short&access_token=";
 	}
 
 }

@@ -55,6 +55,8 @@ public class WxMassArticle {
 
 	private String digest;
 
+    private boolean showCoverPic;
+
 	public String getThumbMediaId() {
 		return thumbMediaId;
 	}
@@ -103,7 +105,15 @@ public class WxMassArticle {
 		this.digest = digest;
 	}
 
-	public String toJSON() {
+    public boolean isShowCoverPic() {
+        return showCoverPic;
+    }
+
+    public void setShowCoverPic(boolean showCoverPic) {
+        this.showCoverPic = showCoverPic;
+    }
+
+    public String toJSON() {
 		JSONObject _json = new JSONObject();
 		_json.put("thumb_media_id", this.getThumbMediaId());
 		_json.put("author", this.getAuthor());
@@ -111,6 +121,7 @@ public class WxMassArticle {
 		_json.put("content_source_url", this.getContentSourceUrl());
 		_json.put("content", this.getContent());
 		_json.put("digest", this.getDigest());
+        _json.put("show_cover_pic", this.isShowCoverPic() ? "1" : "0");
 		return _json.toString();
 	}
 
