@@ -15,19 +15,14 @@
  */
 package net.ymate.platform.module;
 
-import java.util.Map;
-
 import net.ymate.platform.base.AbstractModule;
 import net.ymate.platform.commons.lang.BlurObject;
 import net.ymate.platform.commons.util.ClassUtils;
 import net.ymate.platform.commons.util.RuntimeUtils;
-import net.ymate.platform.module.wechat.AccountDataMeta;
-import net.ymate.platform.module.wechat.IAccountDataProvider;
-import net.ymate.platform.module.wechat.IMessageHandler;
-import net.ymate.platform.module.wechat.IMessageProcessor;
-import net.ymate.platform.module.wechat.IWeChatConfig;
-import net.ymate.platform.module.wechat.WeChat;
+import net.ymate.platform.module.wechat.*;
 import net.ymate.platform.module.wechat.support.DefaultAccountDataProvider;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -36,7 +31,7 @@ import net.ymate.platform.module.wechat.support.DefaultAccountDataProvider;
  * <p>
  * 微信公众平台服务接入框架模块加载器接口实现类；
  * </p>
- * 
+ *
  * @author 刘镇(suninformation@163.com)
  * @version 0.0.0
  *          <table style="border:1px solid gray;">
@@ -55,72 +50,75 @@ import net.ymate.platform.module.wechat.support.DefaultAccountDataProvider;
  */
 public class WeChatModule extends AbstractModule {
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.base.IModule#initialize(java.util.Map)
-	 */
-	public void initialize(final Map<String, String> moduleCfgs) throws Exception {
-		WeChat.initialize(new IWeChatConfig() {
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.base.IModule#initialize(java.util.Map)
+     */
+    public void initialize(final Map<String, String> moduleCfgs) throws Exception {
+        WeChat.initialize(new IWeChatConfig() {
 
-			private IAccountDataProvider __dataProvider;
+            private IAccountDataProvider __dataProvider;
 
-			private IMessageProcessor __messageProcessor;
+            private IMessageProcessor __messageProcessor;
 
-			private IMessageHandler __messageHandler;
+            private IMessageHandler __messageHandler;
 
-			private Boolean __checkAccountValid;
+            private Boolean __checkAccountValid;
 
-			public IAccountDataProvider getAccountDataProviderImpl() {
-				if (__dataProvider == null) {
-					__dataProvider = ClassUtils.impl(moduleCfgs.get("account_data_provider_impl"), IAccountDataProvider.class, WeChatModule.class);
-					if (__dataProvider == null) {
-						__dataProvider = new DefaultAccountDataProvider();
-						try {
-							__dataProvider.registerAccount(new AccountDataMeta(
-									moduleCfgs.get("account_id"), moduleCfgs
-											.get("app_id"), moduleCfgs
-											.get("app_secret"), moduleCfgs
-											.get("redirect_uri")));
-						} catch (Exception e) {
-							throw new Error(RuntimeUtils.unwrapThrow(e));
-						}
-					}
-				}
-				return __dataProvider;
-			}
+            public IAccountDataProvider getAccountDataProviderImpl() {
+                if (__dataProvider == null) {
+                    __dataProvider = ClassUtils.impl(moduleCfgs.get("account_data_provider_impl"), IAccountDataProvider.class, WeChatModule.class);
+                    if (__dataProvider == null) {
+                        __dataProvider = new DefaultAccountDataProvider();
+                        try {
+                            __dataProvider.registerAccount(new AccountDataMeta(
+                                    moduleCfgs.get("account_id"),
+                                    moduleCfgs.get("app_id"),
+                                    moduleCfgs.get("app_secret"),
+                                    moduleCfgs.get("app_aes_key"),
+                                    moduleCfgs.get("redirect_uri"),
+                                    new BlurObject(moduleCfgs.get("type")).toIntValue(),
+                                    new BlurObject(moduleCfgs.get("is_verfied")).toIntValue()));
+                        } catch (Exception e) {
+                            throw new Error(RuntimeUtils.unwrapThrow(e));
+                        }
+                    }
+                }
+                return __dataProvider;
+            }
 
-			public IMessageProcessor getMessageProcessorImpl() {
-				if (__messageProcessor == null) {
-					__messageProcessor = ClassUtils.impl(moduleCfgs.get("message_processor_impl"), IMessageProcessor.class, WeChatModule.class);
-				}
-				return __messageProcessor;
-			}
+            public IMessageProcessor getMessageProcessorImpl() {
+                if (__messageProcessor == null) {
+                    __messageProcessor = ClassUtils.impl(moduleCfgs.get("message_processor_impl"), IMessageProcessor.class, WeChatModule.class);
+                }
+                return __messageProcessor;
+            }
 
-			public IMessageHandler getMessageHandlerImpl() {
-				if (__messageHandler == null) {
-					__messageHandler = ClassUtils.impl(moduleCfgs.get("message_handler_impl"), IMessageHandler.class, WeChatModule.class);
-				}
-				return __messageHandler;
-			}
+            public IMessageHandler getMessageHandlerImpl() {
+                if (__messageHandler == null) {
+                    __messageHandler = ClassUtils.impl(moduleCfgs.get("message_handler_impl"), IMessageHandler.class, WeChatModule.class);
+                }
+                return __messageHandler;
+            }
 
-			public boolean isCheckAccountValid() {
-				if (__checkAccountValid == null) {
-					if (moduleCfgs.containsKey("check_account_valid")) {
-						__checkAccountValid = new BlurObject(moduleCfgs.get("check_account_valid")).toBooleanValue();
-					} else {
-						__checkAccountValid = true;
-					}
-				}
-				return __checkAccountValid;
-			}
+            public boolean isCheckAccountValid() {
+                if (__checkAccountValid == null) {
+                    if (moduleCfgs.containsKey("check_account_valid")) {
+                        __checkAccountValid = new BlurObject(moduleCfgs.get("check_account_valid")).toBooleanValue();
+                    } else {
+                        __checkAccountValid = true;
+                    }
+                }
+                return __checkAccountValid;
+            }
 
-		});
-	}
+        });
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.base.IModule#destroy()
-	 */
-	public void destroy() throws Exception {
-		WeChat.destroy();
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.base.IModule#destroy()
+     */
+    public void destroy() throws Exception {
+        WeChat.destroy();
+    }
 
 }

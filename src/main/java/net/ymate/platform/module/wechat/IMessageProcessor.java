@@ -45,11 +45,13 @@ import net.ymate.platform.module.wechat.message.in.InMessage;
 public interface IMessageProcessor {
 
 	/**
-	 * @param message 消息对象
-	 * @return 消息到达事件处理方法
+     * 消息到达事件处理方法
+     *
+	 * @param protocol 消息报文
+	 * @return 返回消息回消报文
 	 * @throws Exception
 	 */
-	public OutMessage onMessageReceived(InMessage message) throws Exception;
+	public String onMessageReceived(String protocol) throws Exception;
 
 	/**
 	 * 异常处理方法

@@ -54,51 +54,52 @@ public class DefaultMessageProcessor implements IMessageProcessor {
 	}
 
 	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IMessageProcessor#onMessageReceived(net.ymate.platform.module.wechat.message.InMessage)
+	 * @see net.ymate.platform.module.wechat.IMessageProcessor#onMessageReceived(java.lang.String)
 	 */
 	@SuppressWarnings("deprecation")
-	public OutMessage onMessageReceived(InMessage message) throws Exception {
+	public String onMessageReceived(String protocol) throws Exception {
+        InMessage _message = MessageHelper.parsingInMessage(protocol);
 		OutMessage _returnMsg = null;
-		if (WeChat.getConfig().isCheckAccountValid() && !WeChat.getAccountDataProvider().checkAccountValid(message.getToUserName())) {
-			_returnMsg = __handler.onInvalidMessage(message);
-			return _returnMsg;
-		}
-		//
-		if (message.isText()) {
-			_returnMsg = __handler.onTextMessage(message);
-		} else if (message.isImage()) {
-			_returnMsg = __handler.onImageMessage(message);
-		} else if (message.isVoice()) {
-			_returnMsg = __handler.onVoiceMessage(message);
-		} else if (message.isVideo()) {
-			_returnMsg = __handler.onVideoMessage(message);
-		} else if (message.isLocation()) {
-			_returnMsg = __handler.onLocationMessage(message);
-		} else if (message.isLink()) {
-			_returnMsg = __handler.onLinkMessage(message);
-		} else if (message.isEvent()) {
-			if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_SUBSCRIBE)) {
-				_returnMsg = __handler.onEventSubscribe(message);
-			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_UNSUBSCRIBE)) {
-				// 取消关注的帐号就别回复消息了，人家都不理你了~
-				__handler.onEventUnsubscribe(message);
-			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_LOCATION)) {
-				_returnMsg = __handler.onEventLocation(message);
-			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_CLICK)) {
-				_returnMsg = __handler.onEventClick(message);
-			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_SCAN)) {
-				_returnMsg = __handler.onEventScan(message);
-			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_VIEW)) {
-				_returnMsg = __handler.onEventView(message);
-			} else if (message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_MASS_SEND_JOB_FINISH)) {
-				__handler.onEventMassSendJobFinish(message);
-			} else {
-				_returnMsg = __handler.onUnknownMessage(message);
-			}
+		if (WeChat.getConfig().isCheckAccountValid() && !WeChat.getAccountDataProvider().checkAccountValid(_message.getToUserName())) {
+			_returnMsg = __handler.onInvalidMessage(_message);
 		} else {
-			_returnMsg = __handler.onUnknownMessage(message);
-		}
-		return _returnMsg;
+            //
+            if (_message.isText()) {
+                _returnMsg = __handler.onTextMessage(_message);
+            } else if (_message.isImage()) {
+                _returnMsg = __handler.onImageMessage(_message);
+            } else if (_message.isVoice()) {
+                _returnMsg = __handler.onVoiceMessage(_message);
+            } else if (_message.isVideo()) {
+                _returnMsg = __handler.onVideoMessage(_message);
+            } else if (_message.isLocation()) {
+                _returnMsg = __handler.onLocationMessage(_message);
+            } else if (_message.isLink()) {
+                _returnMsg = __handler.onLinkMessage(_message);
+            } else if (_message.isEvent()) {
+                if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_SUBSCRIBE)) {
+                    _returnMsg = __handler.onEventSubscribe(_message);
+                } else if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_UNSUBSCRIBE)) {
+                    // 取消关注的帐号就别回复消息了，人家都不理你了~
+                    __handler.onEventUnsubscribe(_message);
+                } else if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_LOCATION)) {
+                    _returnMsg = __handler.onEventLocation(_message);
+                } else if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_CLICK)) {
+                    _returnMsg = __handler.onEventClick(_message);
+                } else if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_SCAN)) {
+                    _returnMsg = __handler.onEventScan(_message);
+                } else if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_VIEW)) {
+                    _returnMsg = __handler.onEventView(_message);
+                } else if (_message.getEvent().equalsIgnoreCase(WeChat.WX_MESSAGE.EVENT_MASS_SEND_JOB_FINISH)) {
+                    __handler.onEventMassSendJobFinish(_message);
+                } else {
+                    _returnMsg = __handler.onUnknownMessage(_message);
+                }
+            } else {
+                _returnMsg = __handler.onUnknownMessage(_message);
+            }
+        }
+		return _returnMsg != null ? MessageHelper.parsingOutMessage(_returnMsg) : null;
 	}
 
 	/* (non-Javadoc)

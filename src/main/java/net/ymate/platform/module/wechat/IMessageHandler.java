@@ -57,6 +57,13 @@ import net.ymate.platform.module.wechat.message.in.InMessage;
  */
 public interface IMessageHandler {
 
+    /**
+     * @param message
+     * @return
+     * @throws Exception
+     */
+    public OutMessage onMessage(InMessage message) throws Exception;
+
 	/**
 	 * @param message
 	 * @return 文字内容的消息处理

@@ -15,7 +15,12 @@
  */
 package net.ymate.platform.module.wechat.web;
 
-import java.io.IOException;
+import net.ymate.platform.commons.util.RuntimeUtils;
+import net.ymate.platform.module.wechat.WeChat;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,16 +30,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.ymate.platform.commons.util.RuntimeUtils;
-import net.ymate.platform.module.wechat.WeChat;
-import net.ymate.platform.module.wechat.message.OutMessage;
-import net.ymate.platform.module.wechat.support.MessageHelper;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
 
 /**
  * <p>
@@ -97,10 +93,7 @@ public class WeChatFilter implements Filter {
         _LOG.debug("Message Received: [" + _protocol + "]");
         String _returnStr = null;
         try {
-        	OutMessage _outMsg = WeChat.getMessageProcessor().onMessageReceived(MessageHelper.parsingInMessage(_protocol));
-        	if (_outMsg != null) {
-        		_returnStr = MessageHelper.parsingOutMessage(_outMsg);
-        	}
+            _returnStr = WeChat.getMessageProcessor().onMessageReceived(_protocol);
 		} catch (Throwable e) {
 			try {
 				WeChat.getMessageProcessor().onExceptionCaught(e);

@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
  * AccountDataMeta
  * </p>
  * <p>
- * 
+ * <p/>
  * </p>
- * 
+ *
  * @author 刘镇(suninformation@163.com)
  * @version 0.0.0
  *          <table style="border:1px solid gray;">
@@ -44,47 +44,136 @@ import org.apache.commons.lang.StringUtils;
  */
 public class AccountDataMeta {
 
-	private String accountId;
+    private String accountId;
 
-	private String appId;
+    private String appId;
 
-	private String appSecret;
+    private String appSecret;
 
-	private String redirectURI;
+    private String appAesKey;
 
-	/**
-	 * 构造器
-	 * 
-	 * @param accountId 微信公众帐号原始ID
-	 * @param appId 第三方应用唯一凭证
-	 * @param appSecret 第三方应用唯一凭证密钥
-	 * @param redirectURI OAuth授权后重定向的URL地址
-	 */
-	public AccountDataMeta(String accountId, String appId, String appSecret, String redirectURI) {
-		if (StringUtils.isBlank(accountId)) {
-			throw new NullArgumentException("accountId");
-		}
-		//
-		this.accountId = accountId;
-		this.appId = appId;
-		this.appSecret = appSecret;
-		this.redirectURI = redirectURI;
-	}
+    private String redirectUri;
 
-	public String getAccountId() {
-		return accountId;
-	}
+    private String accessToken;
 
-	public String getAppId() {
-		return appId;
-	}
+    private long accessTokenExpires;
 
-	public String getAppSecret() {
-		return appSecret;
-	}
+    private int type;
 
-	public String getRedirectURI() {
-		return redirectURI;
-	}
+    private int isVerified;
 
+    /**
+     * 构造器
+     */
+    public AccountDataMeta() {
+    }
+
+    /**
+     * 构造器
+     *
+     * @param accountId   微信公众帐号原始ID
+     * @param appId       第三方应用唯一凭证
+     * @param appAesKey
+     * @param appSecret   第三方应用唯一凭证密钥
+     * @param redirectUri OAuth授权后重定向的URL地址
+     * @param type
+     * @param isVerfied
+     */
+    public AccountDataMeta(String accountId, String appId, String appSecret, String appAesKey, String redirectUri, int type, int isVerfied) {
+        if (StringUtils.isBlank(accountId)) {
+            throw new NullArgumentException("accountId");
+        }
+        if (StringUtils.isBlank(appId)) {
+            throw new NullArgumentException("appId");
+        }
+        if (StringUtils.isBlank(appSecret)) {
+            throw new NullArgumentException("appSecret");
+        }
+        //
+        this.accountId = accountId;
+        this.appId = appId;
+        this.appSecret = appSecret;
+        this.appAesKey = appAesKey;
+        this.redirectUri = redirectUri;
+        this.type = type;
+        this.isVerified = isVerfied;
+    }
+
+    public AccountDataMeta(String accountId, String appId, String appSecret, String appAesKey, String redirectUri, int type, int isVerfied, String accessToken, long accessTokenExpires) {
+        this(accountId, appId, appSecret, appAesKey, redirectUri, type, isVerfied);
+        this.accessToken = accessToken;
+        this.accessTokenExpires = accessTokenExpires;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public String getAppSecret() {
+        return appSecret;
+    }
+
+    public void setAppSecret(String appSecret) {
+        this.appSecret = appSecret;
+    }
+
+    public String getAppAesKey() {
+        return appAesKey;
+    }
+
+    public void setAppAesKey(String appAesKey) {
+        this.appAesKey = appAesKey;
+    }
+
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public long getAccessTokenExpires() {
+        return accessTokenExpires;
+    }
+
+    public void setAccessTokenExpires(long accessTokenExpires) {
+        this.accessTokenExpires = accessTokenExpires;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getIsVerified() {
+        return isVerified;
+    }
+
+    public void setIsVerified(int isVerified) {
+        this.isVerified = isVerified;
+    }
 }

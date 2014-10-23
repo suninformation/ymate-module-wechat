@@ -15,29 +15,25 @@
  */
 package net.ymate.platform.module.wechat.support;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.alibaba.fastjson.JSONObject;
 import net.ymate.platform.module.wechat.AccountDataMeta;
 import net.ymate.platform.module.wechat.IAccountDataProvider;
 import net.ymate.platform.module.wechat.WeChat;
 import net.ymate.platform.module.wechat.WeChat.WX_API;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.alibaba.fastjson.JSONObject;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
  * DefaultAccountDataProvider
  * </p>
  * <p>
- * 
+ * <p/>
  * </p>
- * 
+ *
  * @author 刘镇(suninformation@163.com)
  * @version 0.0.0
  *          <table style="border:1px solid gray;">
@@ -56,102 +52,113 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class DefaultAccountDataProvider implements IAccountDataProvider {
 
-	private static final Log _LOG = LogFactory.getLog(DefaultAccountDataProvider.class);
+//	private static final Log _LOG = LogFactory.getLog(DefaultAccountDataProvider.class);
 
-	private static Map<String, Object> __CACHES = new ConcurrentHashMap<String, Object>();
+//	private static Map<String, Object> __CACHES = new ConcurrentHashMap<String, Object>();
 
-	private static Map<String, AccountDataMeta> __accountCahces = new ConcurrentHashMap<String, AccountDataMeta>();
+    private static Map<String, AccountDataMeta> __accountCahces = new ConcurrentHashMap<String, AccountDataMeta>();
 
-	private static Object __LOCK = new Object();
+    private static Object __LOCK = new Object();
 
-	/**
-	 * 构造器
-	 */
-	public DefaultAccountDataProvider() {
-	}
+    /**
+     * 构造器
+     */
+    public DefaultAccountDataProvider() {
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#initialize()
-	 */
-	public void initialize() throws Exception {
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#initialize()
+     */
+    public void initialize() throws Exception {
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#destroy()
-	 */
-	public void destroy() throws Exception {
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#destroy()
+     */
+    public void destroy() throws Exception {
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#registerAccount(net.ymate.platform.module.wechat.AccountDataMeta)
-	 */
-	public void registerAccount(AccountDataMeta account) throws Exception {
-		__accountCahces.put(account.getAccountId(), account);
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#registerAccount(net.ymate.platform.module.wechat.AccountDataMeta)
+     */
+    public void registerAccount(AccountDataMeta account) throws Exception {
+        __accountCahces.put(account.getAccountId(), account);
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#unregisterAccount(java.lang.String)
-	 */
-	public AccountDataMeta unregisterAccount(String accountId) {
-		return __accountCahces.remove(accountId);
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#unregisterAccount(java.lang.String)
+     */
+    public AccountDataMeta unregisterAccount(String accountId) {
+        return __accountCahces.remove(accountId);
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAccountIds()
-	 */
-	public Set<String> getAccountIds() {
-		return Collections.unmodifiableSet(__accountCahces.keySet());
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAccountIds()
+     */
+    public Set<String> getAccountIds() {
+        return Collections.unmodifiableSet(__accountCahces.keySet());
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#checkAccountValid(java.lang.String)
-	 */
-	public boolean checkAccountValid(String accountId) {
-		return __accountCahces.containsKey(accountId);
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#checkAccountValid(java.lang.String)
+     */
+    public boolean checkAccountValid(String accountId) {
+        return __accountCahces.containsKey(accountId);
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAccessToken(java.lang.String)
-	 */
-	public String getAccessToken(String accountId) throws Exception {
-		// {"access_token":"ACCESS_TOKEN","expires_in":7200}
-		JSONObject _accessToken = null;
-		synchronized (__LOCK) {
-			_accessToken = (JSONObject) __CACHES.get(accountId);
-			//
-			long _currentTime = System.currentTimeMillis();
-			if (_accessToken == null || (_currentTime >= _accessToken.getLong("expires_time"))) {
-				_accessToken = WeChat.__doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getAppId(accountId) + "&secret=" + getAppSecret(accountId), true));
-				_accessToken.put("expires_time", _currentTime + _accessToken.getIntValue("expires_in") * 1000);
-				__CACHES.put(accountId, _accessToken);
-				//
-				_LOG.debug("AccessToken Has Expired, Get From Remote: " + _accessToken);
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAccessToken(java.lang.String)
+     */
+    public String getAccessToken(String accountId) throws Exception {
+        AccountDataMeta _accessToken = null;
+        synchronized (__LOCK) {
+            _accessToken = __accountCahces.get(accountId);
+            //
+            long _currentTime = System.currentTimeMillis();
+            if (_accessToken == null || (_currentTime >= _accessToken.getAccessTokenExpires())) {
+                // {"access_token":"ACCESS_TOKEN","expires_in":7200}
+                JSONObject _tokenJSON = WeChat.__doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getAppId(accountId) + "&secret=" + getAppSecret(accountId), true));
+                _accessToken.setAccessTokenExpires(_currentTime + _tokenJSON.getIntValue("expires_in") * 1000);
+                //
+//				_LOG.debug("AccessToken Has Expired, Get From Remote: " + _accessToken.getAccountId());
 //			} else {
 //				_LOG.debug("Get AccessToken From Cache: " + _accessToken);
-			}
-		}
-		return _accessToken.getString("access_token");
-	}
+            }
+        }
+        return _accessToken.getAccessToken();
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAppId(java.lang.String)
-	 */
-	public String getAppId(String accountId) {
-		return __accountCahces.get(accountId).getAppId();
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAppId(java.lang.String)
+     */
+    public String getAppId(String accountId) {
+        return __accountCahces.get(accountId).getAppId();
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAppSecret(java.lang.String)
-	 */
-	public String getAppSecret(String accountId) {
-		return __accountCahces.get(accountId).getAppSecret();
-	}
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAppSecret(java.lang.String)
+     */
+    public String getAppSecret(String accountId) {
+        return __accountCahces.get(accountId).getAppSecret();
+    }
 
-	/* (non-Javadoc)
-	 * @see net.ymate.platform.module.wechat.IAccountDataProvider#getRedirectURI(java.lang.String)
-	 */
-	public String getRedirectURI(String accountId) {
-		return __accountCahces.get(accountId).getRedirectURI();
-	}
+    public String getAppAesKey(String accountId) {
+        return __accountCahces.get(accountId).getAppAesKey();
+    }
+
+    /* (non-Javadoc)
+     * @see net.ymate.platform.module.wechat.IAccountDataProvider#getRedirectURI(java.lang.String)
+     */
+    public String getRedirectURI(String accountId) {
+        return __accountCahces.get(accountId).getRedirectUri();
+    }
+
+    public int getType(String accountId) {
+        return __accountCahces.get(accountId).getType();
+    }
+
+    public boolean isVerified(String accountId) {
+        return __accountCahces.get(accountId).getIsVerified() == 1;
+    }
 
 }

@@ -101,10 +101,24 @@ public interface IAccountDataProvider {
 	 */
 	public String getAppSecret(String accountId);
 
+    public String getAppAesKey(String accountId);
+
 	/**
 	 * @param accountId 微信帐号原始ID
 	 * @return OAuth授权后重定向的URL地址
 	 */
 	public String getRedirectURI(String accountId);
+
+    /**
+     * @param accountId
+     * @return 公众号类型
+     */
+    public int getType(String accountId);
+
+    /**
+     * @param accountId
+     * @return 公众号是否已认证
+     */
+    public boolean isVerified(String accountId);
 
 }
