@@ -56,7 +56,7 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 
 //	private static Map<String, Object> __CACHES = new ConcurrentHashMap<String, Object>();
 
-    private static Map<String, AccountDataMeta> __accountCahces = new ConcurrentHashMap<String, AccountDataMeta>();
+    protected static Map<String, AccountDataMeta> __accountCahces = new ConcurrentHashMap<String, AccountDataMeta>();
 
     private static Object __LOCK = new Object();
 
