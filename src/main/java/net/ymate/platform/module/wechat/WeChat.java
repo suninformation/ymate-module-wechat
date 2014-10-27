@@ -259,16 +259,34 @@ public class WeChat {
     /**
      * @param accountId
      * @param groupId
-     * @param mediaId
+     * @param msgType
+     * @param mediaIdOrContent
      * @return 根据分组进行群发并返回消息ID
      * @throws Exception
      */
-    public static Long wxMassSendByGroupId(String accountId, String groupId, String mediaId) throws Exception {
+    public static Long wxMassSendByGroupId(String accountId, String groupId, String msgType, String mediaIdOrContent) throws Exception {
         __doCheckModuleInited();
         StringBuilder _paramSB = new StringBuilder("{");
         _paramSB.append("\"filter\": {").append("\"group_id\":").append("\"").append(groupId).append("\"},");
-        _paramSB.append("\"mpnews\": {").append("\"media_id\":").append("\"").append(mediaId).append("\"},");
-        _paramSB.append("\"msgtype\": \"" + WX_MESSAGE.TYPE_MP_NEWS + "\"}");
+        //
+        String _msgType = WX_MESSAGE.TYPE_MP_NEWS;
+        String _bodyAttr = "media_id";
+        if (WX_MESSAGE.TYPE_MP_NEWS.equals(msgType)) {
+            // default..
+        } else if (WX_MESSAGE.TYPE_TEXT.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_TEXT;
+            _bodyAttr = "content";
+        } else if (WX_MESSAGE.TYPE_VOICE.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_VOICE;
+        } else if (WX_MESSAGE.TYPE_IMAGE.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_IMAGE;
+        } else if (WX_MESSAGE.TYPE_MP_VIDEO.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_MP_VIDEO;
+        } else {
+            throw new UnsupportedOperationException("Unsupport Message Type \"" + msgType + "\".");
+        }
+        _paramSB.append("\"").append(_msgType).append("\": {").append("\"").append(_bodyAttr).append("\":\"").append(mediaIdOrContent).append("\"},");
+        _paramSB.append("\"msgtype\": \"").append(_msgType).append("\"}");
         JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_GROUP + wxGetAccessToken(accountId), true, _paramSB.toString()));
         return _json.getLong("msg_id");
     }
@@ -276,19 +294,36 @@ public class WeChat {
     /**
      * @param accountId
      * @param openIds
-     * @param mediaId
+     * @param mediaIdOrContent
      * @return 根据OpenID列表群发并返回消息ID
      * @throws Exception
      */
-    public static Long wxMassSendByOpenId(String accountId, List<String> openIds, String mediaId) throws Exception {
+    public static Long wxMassSendByOpenId(String accountId, List<String> openIds, String msgType, String mediaIdOrContent) throws Exception {
         __doCheckModuleInited();
         if (openIds == null || openIds.isEmpty()) {
             throw new NullArgumentException("openIds");
         }
         StringBuilder _paramSB = new StringBuilder("{");
         _paramSB.append("\"touser\": ").append(JSON.toJSONString(openIds)).append(",");
-        _paramSB.append("\"mpnews\": {").append("\"media_id\":").append("\"").append(mediaId).append("\"},");
-        _paramSB.append("\"msgtype\": \"" + WX_MESSAGE.TYPE_MP_NEWS + "\"}");
+        //
+        String _msgType = WX_MESSAGE.TYPE_MP_NEWS;
+        String _bodyAttr = "media_id";
+        if (WX_MESSAGE.TYPE_MP_NEWS.equals(msgType)) {
+            // default..
+        } else if (WX_MESSAGE.TYPE_TEXT.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_TEXT;
+            _bodyAttr = "content";
+        } else if (WX_MESSAGE.TYPE_VOICE.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_VOICE;
+        } else if (WX_MESSAGE.TYPE_IMAGE.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_IMAGE;
+        } else if (WX_MESSAGE.TYPE_MP_VIDEO.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_MP_VIDEO;
+        } else {
+            throw new UnsupportedOperationException("Unsupport Message Type \"" + msgType + "\".");
+        }
+        _paramSB.append("\"").append(_msgType).append("\": {").append("\"").append(_bodyAttr).append("\":\"").append(mediaIdOrContent).append("\"},");
+        _paramSB.append("\"msgtype\": \"").append(_msgType).append("\"}");
         JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_OPENID + wxGetAccessToken(accountId), true, _paramSB.toString()));
         return _json.getLong("msg_id");
     }
@@ -663,6 +698,7 @@ public class WeChat {
 
         public final static String TYPE_NEWS = "news";
         public final static String TYPE_MP_NEWS = "mpnews"; // 此类型仅用于群发图文
+        public final static String TYPE_MP_VIDEO = "mpvideo"; // 此类型仅用于群发视频
         public final static String TYPE_MUSIC = "music";
 
         public final static String EVENT_LOCATION = "LOCATION";
