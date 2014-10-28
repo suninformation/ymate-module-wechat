@@ -18,6 +18,10 @@ package net.ymate.platform.module.wechat;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * <p>
  * AccountDataMeta
@@ -62,10 +66,13 @@ public class AccountDataMeta {
 
     private int isVerified;
 
+    private Map<String, String> attributes;
+
     /**
      * 构造器
      */
     public AccountDataMeta() {
+        attributes = new ConcurrentHashMap<String, String>();
     }
 
     /**
@@ -175,5 +182,13 @@ public class AccountDataMeta {
 
     public void setIsVerified(int isVerified) {
         this.isVerified = isVerified;
+    }
+
+    public void addAttribute(String key, String value) {
+        attributes.put(key, value);
+    }
+
+    public void getAttribute(String key) {
+        attributes.get(key);
     }
 }
