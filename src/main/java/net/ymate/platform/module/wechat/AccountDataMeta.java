@@ -66,13 +66,12 @@ public class AccountDataMeta {
 
     private int isVerified;
 
-    private Map<String, String> attributes;
+    private Map<String, String> attributes = new ConcurrentHashMap<String, String>();;
 
     /**
      * 构造器
      */
     public AccountDataMeta() {
-        attributes = new ConcurrentHashMap<String, String>();
     }
 
     /**
