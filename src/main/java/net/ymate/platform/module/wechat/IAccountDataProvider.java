@@ -121,4 +121,11 @@ public interface IAccountDataProvider {
      */
     public boolean isVerified(String accountId);
 
+    /**
+     * @param accountId
+     * @param attrKey
+     * @return 获取公从号自定义属性
+     */
+    public String getAttribute(String accountId, String attrKey);
+
 }

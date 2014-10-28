@@ -162,4 +162,8 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
         return __accountCaches.get(accountId).getIsVerified() == 1;
     }
 
+    public String getAttribute(String accountId, String attrKey) {
+        return __accountCaches.get(accountId).getAttribute(attrKey);
+    }
+
 }

@@ -188,7 +188,7 @@ public class AccountDataMeta {
         attributes.put(key, value);
     }
 
-    public void getAttribute(String key) {
-        attributes.get(key);
+    public String getAttribute(String key) {
+        return attributes.get(key);
     }
 }
