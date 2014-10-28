@@ -56,7 +56,7 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 
 //	private static Map<String, Object> __CACHES = new ConcurrentHashMap<String, Object>();
 
-    protected static Map<String, AccountDataMeta> __accountCahces = new ConcurrentHashMap<String, AccountDataMeta>();
+    protected static Map<String, AccountDataMeta> __accountCaches = new ConcurrentHashMap<String, AccountDataMeta>();
 
     private static Object __LOCK = new Object();
 
@@ -82,28 +82,28 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#registerAccount(net.ymate.platform.module.wechat.AccountDataMeta)
      */
     public void registerAccount(AccountDataMeta account) throws Exception {
-        __accountCahces.put(account.getAccountId(), account);
+        __accountCaches.put(account.getAccountId(), account);
     }
 
     /* (non-Javadoc)
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#unregisterAccount(java.lang.String)
      */
     public AccountDataMeta unregisterAccount(String accountId) {
-        return __accountCahces.remove(accountId);
+        return __accountCaches.remove(accountId);
     }
 
     /* (non-Javadoc)
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAccountIds()
      */
     public Set<String> getAccountIds() {
-        return Collections.unmodifiableSet(__accountCahces.keySet());
+        return Collections.unmodifiableSet(__accountCaches.keySet());
     }
 
     /* (non-Javadoc)
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#checkAccountValid(java.lang.String)
      */
     public boolean checkAccountValid(String accountId) {
-        return __accountCahces.containsKey(accountId);
+        return __accountCaches.containsKey(accountId);
     }
 
     /* (non-Javadoc)
@@ -112,12 +112,13 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
     public String getAccessToken(String accountId) throws Exception {
         AccountDataMeta _accessToken = null;
         synchronized (__LOCK) {
-            _accessToken = __accountCahces.get(accountId);
+            _accessToken = __accountCaches.get(accountId);
             //
             long _currentTime = System.currentTimeMillis();
             if (_accessToken == null || (_currentTime >= _accessToken.getAccessTokenExpires())) {
                 // {"access_token":"ACCESS_TOKEN","expires_in":7200}
                 JSONObject _tokenJSON = WeChat.__doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getAppId(accountId) + "&secret=" + getAppSecret(accountId), true));
+                _accessToken.setAccessToken(_tokenJSON.getString("access_token"));
                 _accessToken.setAccessTokenExpires(_currentTime + _tokenJSON.getIntValue("expires_in") * 1000);
                 //
 //				_LOG.debug("AccessToken Has Expired, Get From Remote: " + _accessToken.getAccountId());
@@ -132,33 +133,33 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAppId(java.lang.String)
      */
     public String getAppId(String accountId) {
-        return __accountCahces.get(accountId).getAppId();
+        return __accountCaches.get(accountId).getAppId();
     }
 
     /* (non-Javadoc)
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#getAppSecret(java.lang.String)
      */
     public String getAppSecret(String accountId) {
-        return __accountCahces.get(accountId).getAppSecret();
+        return __accountCaches.get(accountId).getAppSecret();
     }
 
     public String getAppAesKey(String accountId) {
-        return __accountCahces.get(accountId).getAppAesKey();
+        return __accountCaches.get(accountId).getAppAesKey();
     }
 
     /* (non-Javadoc)
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#getRedirectURI(java.lang.String)
      */
     public String getRedirectURI(String accountId) {
-        return __accountCahces.get(accountId).getRedirectUri();
+        return __accountCaches.get(accountId).getRedirectUri();
     }
 
     public int getType(String accountId) {
-        return __accountCahces.get(accountId).getType();
+        return __accountCaches.get(accountId).getType();
     }
 
     public boolean isVerified(String accountId) {
-        return __accountCahces.get(accountId).getIsVerified() == 1;
+        return __accountCaches.get(accountId).getIsVerified() == 1;
     }
 
 }
