@@ -46,6 +46,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import net.ymate.platform.commons.lang.BlurObject;
+import net.ymate.platform.commons.util.FileUtils;
 import net.ymate.platform.module.wechat.IMediaFileWrapper;
 
 import org.apache.commons.io.IOUtils;
@@ -410,8 +411,8 @@ public class HttpClientHelper {
 			final BufferedInputStream _inputStream = new BufferedInputStream(_conn.getInputStream());
 			String _header = _conn.getHeaderField("Content-disposition");
 			final String _fileName = StringUtils.substringBetween(_header, "filename=\"", "\"");
-			final String _simpleName = _fileName.substring(0, _fileName.lastIndexOf("."));
-			final String _suffix = _fileName.substring(_fileName.length() + 1);
+			final String _simpleName = StringUtils.substringBefore(_fileName, ".");
+			final String _suffix = FileUtils.getExtName(_fileName);
 			final long _contentLength = new BlurObject(_conn.getHeaderField("Content-Length")).toLongValue();
 			final String _contentType = _conn.getHeaderField("Content-Type");
 			//
