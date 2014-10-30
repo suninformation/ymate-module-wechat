@@ -317,8 +317,8 @@ public class WeChat {
             _msgType = WX_MESSAGE.TYPE_VOICE;
         } else if (WX_MESSAGE.TYPE_IMAGE.equals(msgType)) {
             _msgType = WX_MESSAGE.TYPE_IMAGE;
-        } else if (WX_MESSAGE.TYPE_MP_VIDEO.equals(msgType)) {
-            _msgType = WX_MESSAGE.TYPE_MP_VIDEO;
+        } else if (WX_MESSAGE.TYPE_VIDEO.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_VIDEO;
         } else {
             throw new UnsupportedOperationException("Unsupport Message Type \"" + msgType + "\".");
         }
