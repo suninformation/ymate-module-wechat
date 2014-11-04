@@ -252,7 +252,7 @@ public class WeChat {
      */
     public static WxMediaUploadResult wxMediaUploadVideo(String accountId, WxMassVideo video) throws Exception {
         __doCheckModuleInited();
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_VIDEO + wxGetAccessToken(accountId), true, video.toJSON()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_VIDEO + wxGetAccessToken(accountId), false, video.toJSON()));
         return new WxMediaUploadResult(WxMediaType.VIDEO, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
     }
 
@@ -317,8 +317,8 @@ public class WeChat {
             _msgType = WX_MESSAGE.TYPE_VOICE;
         } else if (WX_MESSAGE.TYPE_IMAGE.equals(msgType)) {
             _msgType = WX_MESSAGE.TYPE_IMAGE;
-        } else if (WX_MESSAGE.TYPE_VIDEO.equals(msgType)) {
-            _msgType = WX_MESSAGE.TYPE_VIDEO;
+        } else if (WX_MESSAGE.TYPE_MP_VIDEO.equals(msgType)) {
+            _msgType = WX_MESSAGE.TYPE_MP_VIDEO;
         } else {
             throw new UnsupportedOperationException("Unsupport Message Type \"" + msgType + "\".");
         }
@@ -751,7 +751,7 @@ public class WeChat {
         public static final String MEDIA_UPLOAD = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=";
 
         public static final String MEDIA_UPLOAD_NEWS = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=";
-        public static final String MEDIA_UPLOAD_VIDEO = "https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=";
+        public static final String MEDIA_UPLOAD_VIDEO = "http://file.api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=";
 
         public static final String GROUP_CREATE = "https://api.weixin.qq.com/cgi-bin/groups/create?access_token=";
         public static final String GROUP_GET = "https://api.weixin.qq.com/cgi-bin/groups/get?access_token=";
