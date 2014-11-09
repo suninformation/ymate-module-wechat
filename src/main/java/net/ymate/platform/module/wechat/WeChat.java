@@ -654,17 +654,42 @@ public class WeChat {
             throw new NullArgumentException("openid");
         }
         Map<String, String> _params = new HashMap<String, String>();
-        _params.put("access_token", oauthAccessToken);
         _params.put("openid", openid);
         if (lang != null) {
             _params.put("lang", lang.toString());
         }
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_USER_INFO, true, _params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_USER_INFO.concat(oauthAccessToken), true, _params));
         return new WxOAuthUser(_json.getString("openid"),
                 _json.getString("nickname"), _json.getInteger("sex"),
                 _json.getString("province"), _json.getString("city"),
                 _json.getString("country"), _json.getString("headimgurl"),
                 JSON.parseArray(_json.getJSONArray("privilege").toJSONString(), String.class));
+    }
+
+    /**
+     * 检验授权凭证（access_token）是否有效
+     *
+     * @param oauthAccessToken 网页授权接口调用凭证
+     * @param openid 用户的唯一标识
+     * @return true / false
+     * @throws Exception
+     */
+    public static boolean wxOAuthAuthAccessToken(String oauthAccessToken, String openid) throws Exception {
+        __doCheckModuleInited();
+        if (StringUtils.isBlank(oauthAccessToken)) {
+            throw new NullArgumentException("oauthAccessToken");
+        }
+        if (StringUtils.isBlank(openid)) {
+            throw new NullArgumentException("openid");
+        }
+        Map<String, String> _params = new HashMap<String, String>();
+        _params.put("openid", openid);
+        try {
+            __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_AUTH_ACCESS_TOKEN.concat(oauthAccessToken), true, _params));
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -780,6 +805,7 @@ public class WeChat {
         public static final String OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token";
         public static final String OAUTH_REFRESH_TOKEN = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
         public static final String OAUTH_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?access_token=";
+        public static final String OAUTH_AUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/auth?access_token=";
 
         public static final String SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?action=long2short&access_token=";
     }
