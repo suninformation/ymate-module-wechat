@@ -17,13 +17,7 @@ package net.ymate.platform.module.wechat.message.in;
 
 import net.ymate.platform.module.wechat.WeChat;
 import net.ymate.platform.module.wechat.message.AbstractMessage;
-import net.ymate.platform.module.wechat.message.event.IClickEvent;
-import net.ymate.platform.module.wechat.message.event.ILocationEvent;
-import net.ymate.platform.module.wechat.message.event.IMassSendJobFinishEvent;
-import net.ymate.platform.module.wechat.message.event.IScanEvent;
-import net.ymate.platform.module.wechat.message.event.ISubscribeEvent;
-import net.ymate.platform.module.wechat.message.event.IUnsubscribeEvent;
-import net.ymate.platform.module.wechat.message.event.IViewEvent;
+import net.ymate.platform.module.wechat.message.event.*;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -55,7 +49,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public class InMessage extends AbstractMessage implements ITextMessage,
 		IImageMessage, IVoiceMessage, IVideoMessage, ILocationMessage,
 		ILinkMessage, ISubscribeEvent, IUnsubscribeEvent, IScanEvent,
-		IClickEvent, ILocationEvent, IViewEvent, IMassSendJobFinishEvent {
+		IClickEvent, ILocationEvent, IViewEvent, IMassSendJobFinishEvent, ITemplateSendJobFinishEvent {
 
 	/**
 	 * 

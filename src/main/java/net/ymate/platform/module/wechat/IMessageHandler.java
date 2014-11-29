@@ -16,13 +16,7 @@
 package net.ymate.platform.module.wechat;
 
 import net.ymate.platform.module.wechat.message.OutMessage;
-import net.ymate.platform.module.wechat.message.event.IClickEvent;
-import net.ymate.platform.module.wechat.message.event.ILocationEvent;
-import net.ymate.platform.module.wechat.message.event.IMassSendJobFinishEvent;
-import net.ymate.platform.module.wechat.message.event.IScanEvent;
-import net.ymate.platform.module.wechat.message.event.ISubscribeEvent;
-import net.ymate.platform.module.wechat.message.event.IUnsubscribeEvent;
-import net.ymate.platform.module.wechat.message.event.IViewEvent;
+import net.ymate.platform.module.wechat.message.event.*;
 import net.ymate.platform.module.wechat.message.in.IImageMessage;
 import net.ymate.platform.module.wechat.message.in.ILinkMessage;
 import net.ymate.platform.module.wechat.message.in.ILocationMessage;
@@ -166,9 +160,18 @@ public interface IMessageHandler {
 
 	/**
 	 * 接收推送群发结果事件
-	 * 
+	 *
+	 * @param event
 	 * @throws Exception
 	 */
 	public void onEventMassSendJobFinish(IMassSendJobFinishEvent event) throws Exception;
+
+	/**
+	 * 接收推送模板消息结果事件
+	 *
+	 * @param event
+	 * @throws Exception
+	 */
+	public void onEventTemplateSendJobFinish(ITemplateSendJobFinishEvent event) throws Exception;
 
 }

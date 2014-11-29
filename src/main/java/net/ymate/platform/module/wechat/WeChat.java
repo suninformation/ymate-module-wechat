@@ -186,6 +186,20 @@ public class WeChat {
 
     /**
      * @param accountId 微信公众帐号ID
+     * @return 基于安全等考虑，需要获知微信服务器的IP地址列表，以便进行相关限制，可以通过该接口获得微信服务器IP地址列表
+     * @throws Exception
+     */
+    public static String[] wxGetCallbackIP(String accountId) throws Exception {
+        __doCheckModuleInited();
+        if (StringUtils.isBlank(accountId)) {
+            throw new NullArgumentException("accountId");
+        }
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_GET_CALLBACK_IP.concat(wxGetAccessToken(accountId)), true));
+        return _json.getJSONArray("ip_list").toArray(new String[0]);
+    }
+
+    /**
+     * @param accountId 微信公众帐号ID
      * @param mediaId
      * @return 获取媒体资源
      * @throws Exception
@@ -735,6 +749,7 @@ public class WeChat {
         public final static String EVENT_VIEW = "view";
 
         public final static String EVENT_MASS_SEND_JOB_FINISH = "MASSSENDJOBFINISH";
+        public final static String EVENT_TEMPLATE_SEND_JOB_FINISH = "TEMPLATESENDJOBFINISH";
     }
 
     /**
@@ -771,6 +786,7 @@ public class WeChat {
      */
     public static class WX_API {
         public static final String WX_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
+        public static final String WX_GET_CALLBACK_IP = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=";
 
         public static final String MEDIA_GET = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=";
         public static final String MEDIA_UPLOAD = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=";
