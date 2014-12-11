@@ -250,8 +250,13 @@ public class WeChat {
             throw new NullArgumentException("articles");
         }
         StringBuilder _paramSB = new StringBuilder("{ \"articles\": [");
+        boolean _flag = false;
         for (WxMassArticle article : articles) {
+            if (_flag) {
+                _paramSB.append(",");
+            }
             _paramSB.append(article.toJSON());
+            _flag = true;
         }
         _paramSB.append("]}");
         JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_NEWS + wxGetAccessToken(accountId), true, _paramSB.toString()));
