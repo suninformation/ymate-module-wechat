@@ -374,12 +374,13 @@ public class WeChat {
     /**
      * @param accountId 微信公众帐号ID
      * @param message   模板消息对象
-     * @return 发送模板消息
+     * @return 发送模板消息，若成功则返回msgid
      * @throws Exception
      */
     public static String wxMessageSendTemplate(String accountId, TemplateOutMessage message) throws Exception {
         __doCheckModuleInited();
-        return HttpClientHelper.doPost(WX_API.MESSAGE_TEMPLATE_SEND.concat(wxGetAccessToken(accountId)), true, message.toJSON());
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MESSAGE_TEMPLATE_SEND.concat(wxGetAccessToken(accountId)), true, message.toJSON()));
+        return _result.getString("msgid");
     }
 
     /**
