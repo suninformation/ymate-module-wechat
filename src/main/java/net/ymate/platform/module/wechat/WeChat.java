@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import net.ymate.platform.module.wechat.base.*;
 import net.ymate.platform.module.wechat.message.OutMessage;
+import net.ymate.platform.module.wechat.message.TemplateOutMessage;
 import net.ymate.platform.module.wechat.support.DefaultMessageProcessor;
 import net.ymate.platform.module.wechat.support.HttpClientHelper;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -372,6 +373,17 @@ public class WeChat {
 
     /**
      * @param accountId 微信公众帐号ID
+     * @param message   模板消息对象
+     * @return 发送模板消息
+     * @throws Exception
+     */
+    public static String wxMessageSendTemplate(String accountId, TemplateOutMessage message) throws Exception {
+        __doCheckModuleInited();
+        return HttpClientHelper.doPost(WX_API.MESSAGE_TEMPLATE_SEND.concat(wxGetAccessToken(accountId)), true, message.toJSON());
+    }
+
+    /**
+     * @param accountId 微信公众帐号ID
      * @param openid
      * @param lang      语言(可选)
      * @return 获取用户基本信息
@@ -689,7 +701,7 @@ public class WeChat {
      * 检验授权凭证（access_token）是否有效
      *
      * @param oauthAccessToken 网页授权接口调用凭证
-     * @param openid 用户的唯一标识
+     * @param openid           用户的唯一标识
      * @return true / false
      * @throws Exception
      */
@@ -818,6 +830,8 @@ public class WeChat {
 
         public static final String MESSAGE_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
 
+        public static final String MESSAGE_TEMPLATE_SEND = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=";
+
         public static final String MASS_SEND_BY_GROUP = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=";
         public static final String MASS_SEND_BY_OPENID = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=";
         public static final String MASS_DELETE = "https://api.weixin.qq.com//cgi-bin/message/mass/delete?access_token=";
@@ -829,6 +843,7 @@ public class WeChat {
         public static final String OAUTH_AUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/auth?access_token=";
 
         public static final String SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?action=long2short&access_token=";
+
     }
 
 }
