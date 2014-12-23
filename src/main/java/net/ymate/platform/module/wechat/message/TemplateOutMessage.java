@@ -16,10 +16,9 @@
 package net.ymate.platform.module.wechat.message;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ import java.util.Map;
  * @author 刘镇 (suninformation@163.com) on 14/12/22 上午1:52
  * @version 1.0
  */
-public class TemplateOutMessage {
+public class TemplateOutMessage implements Serializable {
 
     private String toUser;
 
