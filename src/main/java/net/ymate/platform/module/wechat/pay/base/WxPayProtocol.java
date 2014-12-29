@@ -317,7 +317,7 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
      * @return 解析XML协议报文并返回clazz指定的类对象
      */
     public static <T> T fromXML(Class<? extends IWxPayProtocol> clazz, String protocolStr) {
-        XStream _xStream = XStreamHelper.createXStream(true);
+        XStream _xStream = XStreamHelper.createXStream(false);
         _xStream.ignoreUnknownElements();
         _xStream.processAnnotations(WxPayProtocol.class);
         return (T) _xStream.fromXML(protocolStr);
