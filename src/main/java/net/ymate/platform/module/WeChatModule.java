@@ -70,14 +70,21 @@ public class WeChatModule extends AbstractModule {
                     if (__dataProvider == null) {
                         __dataProvider = new DefaultAccountDataProvider();
                         try {
-                            __dataProvider.registerAccount(new AccountDataMeta(
+                            AccountDataMeta _meta = new AccountDataMeta(
                                     moduleCfgs.get("account_id"),
                                     moduleCfgs.get("app_id"),
                                     moduleCfgs.get("app_secret"),
                                     moduleCfgs.get("app_aes_key"),
                                     moduleCfgs.get("redirect_uri"),
                                     new BlurObject(moduleCfgs.get("type")).toIntValue(),
-                                    new BlurObject(moduleCfgs.get("is_verfied")).toIntValue()));
+                                    new BlurObject(moduleCfgs.get("is_verfied")).toIntValue(),
+                                    new BlurObject(moduleCfgs.get("is_msg_encrypted")).toIntValue());
+                            _meta.setLastAppAesKey(moduleCfgs.get("last_app_aes_key"));
+                            _meta.setMchId(moduleCfgs.get("mch_id"));
+                            _meta.setMchKey(moduleCfgs.get("mch_key"));
+                            _meta.setNotifyUrl(moduleCfgs.get("notify_url"));
+                            //
+                            __dataProvider.registerAccount(_meta);
                         } catch (Exception e) {
                             throw new Error(RuntimeUtils.unwrapThrow(e));
                         }

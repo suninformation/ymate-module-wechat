@@ -147,6 +147,26 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
         return __accountCaches.get(accountId).getAppAesKey();
     }
 
+    public String getLastAppAesKey(String accountId) {
+        return __accountCaches.get(accountId).getLastAppAesKey();
+    }
+
+    public int isMsgEncrypted(String accountId) {
+        return __accountCaches.get(accountId).getIsMsgEncrypted();
+    }
+
+    public String getMchId(String accountId) {
+        return __accountCaches.get(accountId).getMchId();
+    }
+
+    public String getMchKey(String accountId) {
+        return __accountCaches.get(accountId).getMchKey();
+    }
+
+    public String getNofityUrl(String accountId) {
+        return __accountCaches.get(accountId).getNotifyUrl();
+    }
+
     /* (non-Javadoc)
      * @see net.ymate.platform.module.wechat.IAccountDataProvider#getRedirectURI(java.lang.String)
      */

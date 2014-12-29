@@ -20,7 +20,9 @@ import java.io.Writer;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.naming.NameCoder;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
@@ -49,6 +51,42 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  */
 public class XStreamHelper {
 
+	public static class WeChatXppDriver extends XppDriver {
+
+		public WeChatXppDriver(NameCoder nameCoder) {
+			super(nameCoder);
+		}
+
+		public HierarchicalStreamWriter createWriter(Writer out) {
+			return new PrettyPrintWriter(out, this.getNameCoder()) {
+				boolean cdata = false;
+
+				@Override
+				@SuppressWarnings("rawtypes")
+				public void startNode(String name, Class clazz) {
+					super.startNode(name, clazz);
+					cdata = String.class.equals(clazz);
+				}
+
+				@Override
+				public void setValue(String text) {
+					super.setValue(text);
+				}
+
+				@Override
+				protected void writeText(QuickWriter writer, String text) {
+					if (cdata) {
+						writer.write("<![CDATA[");
+						writer.write(text);
+						writer.write("]]>");
+					} else {
+						writer.write(text);
+					}
+				}
+			};
+		};
+	}
+
 	/**
 	 * 初始化XStream可支持String类型字段加入CDATA标签"<![CDATA["和结尾处加上"]]>"， 以供XStream输出时进行识别
 	 * 
@@ -58,38 +96,9 @@ public class XStreamHelper {
 	public static XStream createXStream(boolean isAddCDATA) {
 		XStream xstream = null;
 		if (isAddCDATA) {
-			xstream = new XStream(new XppDriver() {
-				public HierarchicalStreamWriter createWriter(Writer out) {
-					return new PrettyPrintWriter(out) {
-						boolean cdata = false;
-
-						@Override
-						@SuppressWarnings("rawtypes")
-						public void startNode(String name, Class clazz) {
-							super.startNode(name, clazz);
-							cdata = String.class.equals(clazz);
-						}
-
-						@Override
-						public void setValue(String text) {
-							super.setValue(text);
-						}
-
-						@Override
-						protected void writeText(QuickWriter writer, String text) {
-							if (cdata) {
-								writer.write("<![CDATA[");
-								writer.write(text);
-								writer.write("]]>");
-							} else {
-								writer.write(text);
-							}
-						}
-					};
-				};
-			});
+			xstream = new XStream(new WeChatXppDriver(new XmlFriendlyNameCoder("_-", "_")));
 		} else {
-			xstream = new XStream();
+			xstream = new XStream(new XppDriver(new XmlFriendlyNameCoder("_-", "_")));
 		}
 		return xstream;
 	}

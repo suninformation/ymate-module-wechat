@@ -18,16 +18,12 @@ package net.ymate.platform.module.wechat;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
  * AccountDataMeta
- * </p>
- * <p>
- * <p/>
  * </p>
  *
  * @author 刘镇(suninformation@163.com)
@@ -48,25 +44,49 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AccountDataMeta {
 
+    // 微信公众帐号原始ID
     private String accountId;
 
+    // 第三方应用唯一凭证
     private String appId;
 
+    // 第三方应用唯一凭证密钥
     private String appSecret;
 
+    // 消息加密密钥由43位字符组成，可随机修改，字符范围为A-Z，a-z，0-9
     private String appAesKey;
 
+    // 上一次使用的消息加密密钥（备用）
+    private String lastAppAesKey;
+
+    // 是否采用消息加密
+    private int isMsgEncrypted;
+
+    // OAuth授权后重定向的URL地址
     private String redirectUri;
 
     private String accessToken;
 
     private long accessTokenExpires;
 
+    // 商户ID，微信支付分配的商户号
+    private String mchId;
+
+    // 商户支付密钥
+    private String mchKey;
+
+    // 通用通知回调URL地址
+    private String notifyUrl;
+
+    // 公众号类型
     private int type;
 
+    // 是否已认证
     private int isVerified;
 
-    private Map<String, String> attributes = new ConcurrentHashMap<String, String>();;
+    // 自定义扩展属性映射
+    private Map<String, String> attributes = new ConcurrentHashMap<String, String>();
+    ;
 
     /**
      * 构造器
@@ -79,11 +99,11 @@ public class AccountDataMeta {
      *
      * @param accountId   微信公众帐号原始ID
      * @param appId       第三方应用唯一凭证
-     * @param appAesKey
      * @param appSecret   第三方应用唯一凭证密钥
+     * @param appAesKey   消息加密密钥由43位字符组成，可随机修改，字符范围为A-Z，a-z，0-9
      * @param redirectUri OAuth授权后重定向的URL地址
-     * @param type
-     * @param isVerfied
+     * @param type        公众号类型
+     * @param isVerfied   是否已认证
      */
     public AccountDataMeta(String accountId, String appId, String appSecret, String appAesKey, String redirectUri, int type, int isVerfied) {
         if (StringUtils.isBlank(accountId)) {
@@ -105,10 +125,21 @@ public class AccountDataMeta {
         this.isVerified = isVerfied;
     }
 
-    public AccountDataMeta(String accountId, String appId, String appSecret, String appAesKey, String redirectUri, int type, int isVerfied, String accessToken, long accessTokenExpires) {
+    /**
+     * 构造器
+     *
+     * @param accountId      微信公众帐号原始ID
+     * @param appId          第三方应用唯一凭证
+     * @param appSecret      第三方应用唯一凭证密钥
+     * @param appAesKey      消息加密密钥由43位字符组成，可随机修改，字符范围为A-Z，a-z，0-9
+     * @param redirectUri    OAuth授权后重定向的URL地址
+     * @param type           公众号类型
+     * @param isVerfied      是否已认证
+     * @param isMsgEncrypted 是否采用消息加密
+     */
+    public AccountDataMeta(String accountId, String appId, String appSecret, String appAesKey, String redirectUri, int type, int isVerfied, int isMsgEncrypted) {
         this(accountId, appId, appSecret, appAesKey, redirectUri, type, isVerfied);
-        this.accessToken = accessToken;
-        this.accessTokenExpires = accessTokenExpires;
+        this.isMsgEncrypted = isMsgEncrypted;
     }
 
     public String getAccountId() {
@@ -143,6 +174,22 @@ public class AccountDataMeta {
         this.appAesKey = appAesKey;
     }
 
+    public String getLastAppAesKey() {
+        return lastAppAesKey;
+    }
+
+    public void setLastAppAesKey(String lastAppAesKey) {
+        this.lastAppAesKey = lastAppAesKey;
+    }
+
+    public int getIsMsgEncrypted() {
+        return isMsgEncrypted;
+    }
+
+    public void setIsMsgEncrypted(int isMsgEncrypted) {
+        this.isMsgEncrypted = isMsgEncrypted;
+    }
+
     public String getRedirectUri() {
         return redirectUri;
     }
@@ -165,6 +212,30 @@ public class AccountDataMeta {
 
     public void setAccessTokenExpires(long accessTokenExpires) {
         this.accessTokenExpires = accessTokenExpires;
+    }
+
+    public String getMchId() {
+        return mchId;
+    }
+
+    public void setMchId(String mchId) {
+        this.mchId = mchId;
+    }
+
+    public String getMchKey() {
+        return mchKey;
+    }
+
+    public void setMchKey(String mchKey) {
+        this.mchKey = mchKey;
+    }
+
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
     }
 
     public int getType() {
@@ -190,4 +261,5 @@ public class AccountDataMeta {
     public String getAttribute(String key) {
         return attributes.get(key);
     }
+
 }
