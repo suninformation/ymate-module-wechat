@@ -864,8 +864,6 @@ public class WeChat {
             throw new NullArgumentException("totalFee");
         } else if (StringUtils.isBlank(payRequest.getTradeType())) {
             throw new NullArgumentException("tradeType");
-        } else if (StringUtils.isBlank(payRequest.getProductId())) {
-            throw new NullArgumentException("productId");
         } else if (StringUtils.isBlank(payRequest.getSpbillCreateIp())) {
             throw new NullArgumentException("spbillCreateIp");
         }

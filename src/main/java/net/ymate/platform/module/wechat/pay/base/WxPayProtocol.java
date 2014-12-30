@@ -331,7 +331,6 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
      * @param totalFee       订单总金额
      * @param spbillCreateIp 终端IP
      * @param tradeType      交易类型
-     * @param productId      商品ID
      * @return 创建统一支付接口请求对象
      * @throws Exception
      */
@@ -341,8 +340,7 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
                                                                            String outTradeNo,
                                                                            String totalFee,
                                                                            String spbillCreateIp,
-                                                                           String tradeType,
-                                                                           String productId) throws Exception {
+                                                                           String tradeType) throws Exception {
         IWxPayUnifiedOrderRequest _req = new WxPayProtocol(
                 WeChat.getAccountDataProvider().getAppId(accountId),
                 WeChat.getAccountDataProvider().getMchId(accountId), nonceStr);
@@ -352,7 +350,6 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
         _req.setTotalFee(totalFee);
         _req.setSpbillCreateIp(spbillCreateIp);
         _req.setTradeType(tradeType);
-        _req.setProductId(productId);
         return _req;
     }
 
