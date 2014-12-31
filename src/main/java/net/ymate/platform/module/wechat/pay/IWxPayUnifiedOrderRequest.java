@@ -53,9 +53,9 @@ public interface IWxPayUnifiedOrderRequest extends IWxPayProtocol {
 
     public void setOutTradeNo(String outTradeNo);
 
-    public String getTotalFee();
+    public Integer getTotalFee();
 
-    public void setTotalFee(String totalFee);
+    public void setTotalFee(Integer totalFee);
 
     public String getSpbillCreateIp();
 

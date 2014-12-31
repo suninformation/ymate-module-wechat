@@ -32,9 +32,9 @@ import java.util.Map;
  */
 @XStreamAlias("xml")
 public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderRequest, IWxPayUnifiedOrderData,
-        IWxPayCloseOrderRequest, IWxPayCloseOrderData, IWxPayNotifyData,
+        IWxPayCloseOrderRequest, IWxPayCloseOrderData, IWxPayNotifyData, IWxPayDownloadBillRequest,
         IWxPayOrderQueryRequest, IWxPayOrderQueryData, IWxPayRefundRequest, IWxPayRefundData,
-        IWxPayShortUrlRequest, IWxPayShortUrlData {
+        IWxPayShortUrlRequest, IWxPayShortUrlData, IWxPayRefundQueryRequest, IWxPayRefundQueryData {
 
     /**
      * 公众帐号ID，微信分配的公众账号ID
@@ -103,7 +103,7 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
      * 总金额，订单总金额,单位为分,不能带小数点
      */
     @XStreamAlias("total_fee")
-    private String totalFee;
+    private Integer totalFee;
 
     /**
      * 终端IP，订单生成的机器IP
@@ -159,7 +159,7 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
      * 现金券金额，现金券支付金额<=订单总金额,订单总金额-现金券金额为现金支付金额
      */
     @XStreamAlias("coupon_fee")
-    private String couponFee;
+    private Integer couponFee;
 
     /**
      * 货币种类，货币类型,符合ISO4217标准的三位字母代码,默认人民币:CNY
@@ -223,13 +223,31 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
      * 退款金额，退款总金额,单位为分,可以做部分退款
      */
     @XStreamAlias("refund_fee")
-    private String refundFee;
+    private Integer refundFee;
 
     /**
      * 现金券退款金额
      */
     @XStreamAlias("coupon_refund_fee")
-    private String couponRefundFee;
+    private Integer couponRefundFee;
+
+    /**
+     * 退款状态
+     */
+    @XStreamAlias("refund_status")
+    private String refundStatus;
+
+    /**
+     * 对帐单日期，下载对账单的日期,格式: 20140603
+     */
+    @XStreamAlias("bill_date")
+    private String billDate;
+
+    /**
+     * 帐单类型，ALL,返回当日所有订单信息, 默认值 SUCCESS,返回当日成功支付 的订单 REFUND,返回当日退款订单
+     */
+    @XStreamAlias("bill_type")
+    private String billType;
 
     /**
      * 需要转换的URL,签名用原串,传输需URLencode
@@ -338,7 +356,7 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
                                                                            String nonceStr,
                                                                            String body,
                                                                            String outTradeNo,
-                                                                           String totalFee,
+                                                                           Integer totalFee,
                                                                            String spbillCreateIp,
                                                                            String tradeType) throws Exception {
         IWxPayUnifiedOrderRequest _req = new WxPayProtocol(
@@ -398,8 +416,8 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
                                                                String nonceStr,
                                                                String outTradeNo,
                                                                String outRefundNo,
-                                                               String totalFee,
-                                                               String refundFee,
+                                                               Integer totalFee,
+                                                               Integer refundFee,
                                                                String opUserId) throws Exception {
         IWxPayRefundRequest _req = new WxPayProtocol(
                 WeChat.getAccountDataProvider().getAppId(accountId),
@@ -409,6 +427,23 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
         _req.setTotalFee(totalFee);
         _req.setRefundFee(refundFee);
         _req.setOpUserId(opUserId);
+        return _req;
+    }
+
+    /**
+     * @param accountId   微信帐号原始ID
+     * @param nonceStr    随机字符串
+     * @param outRefundNo 商户退款单号
+     * @return 创建退款查询接口请求对象
+     * @throws Exception
+     */
+    public static IWxPayRefundQueryRequest createWxPayRefundQueryRequest(String accountId,
+                                                                         String nonceStr,
+                                                                         String outRefundNo) throws Exception {
+        IWxPayRefundQueryRequest _req = new WxPayProtocol(
+                WeChat.getAccountDataProvider().getAppId(accountId),
+                WeChat.getAccountDataProvider().getMchId(accountId), nonceStr);
+        _req.setOutRefundNo(outRefundNo);
         return _req;
     }
 
@@ -464,6 +499,9 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
         _params.put("refund_channel", refundChannel);
         _params.put("refund_fee", refundFee);
         _params.put("coupon_refund_fee", couponRefundFee);
+        _params.put("refund_status", refundStatus);
+        _params.put("bill_date", billDate);
+        _params.put("bill_type", billType);
         _params.put("long_url", longUrl);
         _params.put("short_url", shortUrl);
         //
@@ -563,11 +601,11 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
         this.outTradeNo = outTradeNo;
     }
 
-    public String getTotalFee() {
+    public Integer getTotalFee() {
         return totalFee;
     }
 
-    public void setTotalFee(String totalFee) {
+    public void setTotalFee(Integer totalFee) {
         this.totalFee = totalFee;
     }
 
@@ -643,11 +681,11 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
         this.bankType = bankType;
     }
 
-    public String getCouponFee() {
+    public Integer getCouponFee() {
         return couponFee;
     }
 
-    public void setCouponFee(String couponFee) {
+    public void setCouponFee(Integer couponFee) {
         this.couponFee = couponFee;
     }
 
@@ -715,20 +753,44 @@ public class WxPayProtocol implements IWxPayResultData, IWxPayUnifiedOrderReques
         this.refundChannel = refundChannel;
     }
 
-    public String getRefundFee() {
+    public Integer getRefundFee() {
         return refundFee;
     }
 
-    public void setRefundFee(String refundFee) {
+    public void setRefundFee(Integer refundFee) {
         this.refundFee = refundFee;
     }
 
-    public String getCouponRefundFee() {
+    public Integer getCouponRefundFee() {
         return couponRefundFee;
     }
 
-    public void setCouponRefundFee(String couponRefundFee) {
+    public void setCouponRefundFee(Integer couponRefundFee) {
         this.couponRefundFee = couponRefundFee;
+    }
+
+    public String getRefundStatus() {
+        return refundStatus;
+    }
+
+    public void setRefundStatus(String refundStatus) {
+        this.refundStatus = refundStatus;
+    }
+
+    public String getBillDate() {
+        return billDate;
+    }
+
+    public void setBillDate(String billDate) {
+        this.billDate = billDate;
+    }
+
+    public String getBillType() {
+        return billType;
+    }
+
+    public void setBillType(String billType) {
+        this.billType = billType;
     }
 
     public String getLongUrl() {

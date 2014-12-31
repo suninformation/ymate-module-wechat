@@ -860,7 +860,7 @@ public class WeChat {
             throw new NullArgumentException("outTradeNo");
         } else if (StringUtils.isBlank(payRequest.getBody())) {
             throw new NullArgumentException("body");
-        } else if (StringUtils.isBlank(payRequest.getTotalFee())) {
+        } else if (payRequest.getTotalFee() != null) {
             throw new NullArgumentException("totalFee");
         } else if (StringUtils.isBlank(payRequest.getTradeType())) {
             throw new NullArgumentException("tradeType");
@@ -943,6 +943,10 @@ public class WeChat {
             throw new NullArgumentException("outTradeNo");
         } else if (StringUtils.isBlank(payRequest.getOutRefundNo())) {
             throw new NullArgumentException("outRefundNo");
+        } else if (payRequest.getTotalFee() == null) {
+            throw new NullArgumentException("totalFee");
+        } else if (payRequest.getRefundFee() == null) {
+            throw new NullArgumentException("refundFee");
         }
         //
         payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
@@ -950,6 +954,51 @@ public class WeChat {
         //
         __doWxPayVerifyResultData(mchKey, _data);
         return _data;
+    }
+
+    /**
+     * 调用退款查询接口
+     *
+     * @param mchKey
+     * @param payRequest
+     * @return
+     * @throws Exception
+     */
+    public static IWxPayRefundQueryData wxPayRefundQuery(String mchKey, IWxPayRefundQueryRequest payRequest) throws Exception {
+        if (StringUtils.isBlank(mchKey)) {
+            throw new NullArgumentException("mchKey");
+        }
+        if (payRequest == null) {
+            throw new NullArgumentException("payRequest");
+        } else if (StringUtils.isBlank(payRequest.getOutTradeNo())) {
+            throw new NullArgumentException("outTradeNo");
+        }
+        //
+        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
+        IWxPayRefundQueryData _data = WxPayProtocol.fromXML(IWxPayRefundQueryData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_REFUND_QUERY, true, payRequest.toXML()));
+        //
+        __doWxPayVerifyResultData(mchKey, _data);
+        return _data;
+    }
+
+    /**
+     * 调用对帐单接口
+     *
+     * @param accountId 微信帐号原始ID
+     * @param nonceStr 随机字符串
+     * @param billDate 对账单日期
+     * @param billType 账单类型
+     * @return 成功时,数据以文本表格的方式返回, 失败时返回XML格式的状态码和错误信息
+     * @throws Exception
+     */
+    public static String wxPayDownloadBill(String accountId, String nonceStr, String billDate, String billType) throws Exception {
+        IWxPayDownloadBillRequest _req = new WxPayProtocol(WeChat.getAccountDataProvider().getAppId(accountId),
+                WeChat.getAccountDataProvider().getMchId(accountId), nonceStr);
+        _req.setBillDate(billDate);
+        _req.setBillType(billType);
+        _req.setSign(WeChat.wxPayCreateSignature(WeChat.getAccountDataProvider().getMchKey(accountId), _req));
+        //
+        return HttpClientHelper.doPost(WX_PAY_API.PAY_API_DOWNLOAD_BILL, true, _req.toXML());
     }
 
     /**
@@ -1102,6 +1151,9 @@ public class WeChat {
         public static final String TRADE_TYPE_NATIVE = "JATIVE";
         public static final String TRADE_TYPE_APP = "APP";
 
+        public static final String BILL_TYPE_ALL = "ALL";
+        public static final String BILL_TYPE_SUCCESS = "SUCCESS";
+        public static final String BILL_TYPE_REFUND = "REFUND";
     }
 
     /**
@@ -1124,6 +1176,12 @@ public class WeChat {
 
         // 退款申请接口
         public static final String PAY_API_REFUND = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+
+        // 退款查询接口
+        public static final String PAY_API_REFUND_QUERY = "https://api.mch.weixin.qq.com/pay/refundquery";
+
+        // 对帐单接口
+        public static final String PAY_API_DOWNLOAD_BILL = "https://api.mch.weixin.qq.com/pay/downloadbill";
 
         // 短链接转换接口
         public static final String PAY_API_SHORTURL = "https://api.mch.weixin.qq.com/tools/shorturl";

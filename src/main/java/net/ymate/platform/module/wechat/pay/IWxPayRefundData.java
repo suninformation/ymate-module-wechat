@@ -35,8 +35,8 @@ public interface IWxPayRefundData extends IWxPayResultData {
 
     public String getRefundChannel();
 
-    public String getRefundFee();
+    public Integer getRefundFee();
 
-    public String getCouponRefundFee();
+    public Integer getCouponRefundFee();
 
 }

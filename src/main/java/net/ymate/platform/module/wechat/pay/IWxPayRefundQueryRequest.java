@@ -15,36 +15,30 @@
  */
 package net.ymate.platform.module.wechat.pay;
 
-import net.ymate.platform.module.wechat.pay.base.IWxPayResultData;
+import net.ymate.platform.module.wechat.pay.base.IWxPayProtocol;
 
 /**
- * 通用通知接口回应数据对象
+ * 退款查询接口请求对象
  *
- * @author 刘镇 (suninformation@163.com) on 14/12/27 下午4:33
+ * @author 刘镇 (suninformation@163.com) on 14/12/30 下午7:31
  * @version 1.0
  */
-public interface IWxPayNotifyData extends IWxPayResultData {
-
-    public String getOpenId();
-
-    public String getIsSubscribe();
-
-    public String getTradeType();
-
-    public String getBankType();
-
-    public Integer getTotalFee();
-
-    public Integer getCouponFee();
-
-    public String getFeeType();
+public interface IWxPayRefundQueryRequest extends IWxPayProtocol {
 
     public String getTransactionId();
 
+    public void setTransactionId(String transactionId);
+
     public String getOutTradeNo();
 
-    public String getAttach();
+    public void setOutTradeNo(String outTradeNo);
 
-    public String getTimeEnd();
+    public String getOutRefundNo();
+
+    public void setOutRefundNo(String outRefundNo);
+
+    public String getRefundId();
+
+    public void setRefundId(String refundId);
 
 }

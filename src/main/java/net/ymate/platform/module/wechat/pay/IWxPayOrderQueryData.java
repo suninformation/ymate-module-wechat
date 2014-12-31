@@ -37,9 +37,9 @@ public interface IWxPayOrderQueryData extends IWxPayResultData {
 
     public String getBankType();
 
-    public String getTotalFee();
+    public Integer getTotalFee();
 
-    public String getCouponFee();
+    public Integer getCouponFee();
 
     public String getFeeType();
 

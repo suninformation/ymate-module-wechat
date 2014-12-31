@@ -37,13 +37,13 @@ public interface IWxPayRefundRequest extends IWxPayProtocol {
 
     public void setOutRefundNo(String outRefundNo);
 
-    public String getTotalFee();
+    public Integer getTotalFee();
 
-    public void setTotalFee(String totalFee);
+    public void setTotalFee(Integer totalFee);
 
-    public String getRefundFee();
+    public Integer getRefundFee();
 
-    public void setRefundFee(String refundFee);
+    public void setRefundFee(Integer refundFee);
 
     public String getOpUserId();
 
