@@ -80,9 +80,6 @@ public class WeChatModule extends AbstractModule {
                                     new BlurObject(moduleCfgs.get("is_verfied")).toIntValue(),
                                     new BlurObject(moduleCfgs.get("is_msg_encrypted")).toIntValue());
                             _meta.setLastAppAesKey(moduleCfgs.get("last_app_aes_key"));
-                            _meta.setMchId(moduleCfgs.get("mch_id"));
-                            _meta.setMchKey(moduleCfgs.get("mch_key"));
-                            _meta.setNotifyUrl(moduleCfgs.get("notify_url"));
                             //
                             __dataProvider.registerAccount(_meta);
                         } catch (Exception e) {

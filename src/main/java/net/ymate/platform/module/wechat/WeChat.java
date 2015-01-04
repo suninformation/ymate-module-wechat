@@ -17,14 +17,9 @@ package net.ymate.platform.module.wechat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import net.ymate.platform.commons.util.UUIDUtils;
 import net.ymate.platform.module.wechat.base.*;
 import net.ymate.platform.module.wechat.message.OutMessage;
 import net.ymate.platform.module.wechat.message.TemplateOutMessage;
-import net.ymate.platform.module.wechat.pay.*;
-import net.ymate.platform.module.wechat.pay.base.IWxPayProtocol;
-import net.ymate.platform.module.wechat.pay.base.IWxPayResultData;
-import net.ymate.platform.module.wechat.pay.base.WxPayProtocol;
 import net.ymate.platform.module.wechat.support.DefaultMessageProcessor;
 import net.ymate.platform.module.wechat.support.HttpClientHelper;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -603,26 +598,42 @@ public class WeChat {
     }
 
     /**
-     * @param accountId     微信公众帐号ID
-     * @param need_userinfo 是否弹出授权页面
-     * @param state         自定义参数(a-zA-Z0-9)
+     * @param accountId    微信公众帐号ID
+     * @param needUserInfo 是否弹出授权页面
+     * @param state        自定义参数(a-zA-Z0-9)
      * @return 返回微信用户授权URL地址
+     * @throws Exception
      */
-    public static String wxOAuthGetCodeURL(String accountId, boolean need_userinfo, String state) throws Exception {
+    public static String wxOAuthGetCodeURL(String accountId, boolean needUserInfo, String state) throws Exception {
+        String _appId = __dataProvider.getAppId(accountId);
+        if (StringUtils.isBlank(_appId)) {
+            throw new NullArgumentException("appId");
+        }
+        return wxOAuthGetCodeURL(accountId, needUserInfo, state, __dataProvider.getRedirectURI(accountId));
+    }
+
+    /**
+     * @param accountId    微信公众帐号ID
+     * @param needUserInfo 是否弹出授权页面
+     * @param state        自定义参数(a-zA-Z0-9)
+     * @param redirectURI  自定义重定向地址
+     * @return 返回微信用户授权URL地址
+     * @throws Exception
+     */
+    public static String wxOAuthGetCodeURL(String accountId, boolean needUserInfo, String state, String redirectURI) throws Exception {
         __doCheckModuleInited();
         String _appId = __dataProvider.getAppId(accountId);
         if (StringUtils.isBlank(_appId)) {
             throw new NullArgumentException("appId");
         }
-        String _redirectURI = __dataProvider.getRedirectURI(accountId);
-        if (StringUtils.isBlank(_redirectURI)) {
+        if (StringUtils.isBlank(redirectURI)) {
             throw new NullArgumentException("redirectURI");
         }
         Map<String, String> _params = new HashMap<String, String>();
         _params.put("appid", _appId);
         _params.put("response_type", "code");
-        _params.put("redirect_uri", URLEncoder.encode(_redirectURI, HttpClientHelper.DEFAULT_CHARSET));
-        _params.put("scope", need_userinfo ? "snsapi_userinfo" : "snsapi_base");
+        _params.put("redirect_uri", URLEncoder.encode(redirectURI, HttpClientHelper.DEFAULT_CHARSET));
+        _params.put("scope", needUserInfo ? "snsapi_userinfo" : "snsapi_base");
         _params.put("state", StringUtils.defaultIfEmpty(state, "") + "#wechat_redirect");
         return WX_API.OAUTH_GET_CODE.concat(HttpClientHelper.doParamSignatureSort(_params, false));
     }
@@ -769,262 +780,6 @@ public class WeChat {
         return false;
     }
 
-    //---------------------
-    // WeChat Payment API
-    //---------------------
-
-    /**
-     * @return 产生随机字符串，长度为6到32位不等
-     */
-    public static String wxPayCreateNonceStr() {
-        return UUIDUtils.randomString(UUIDUtils.randomInt(6, 32), false);
-    }
-
-    /**
-     * @param params 请求参数映射
-     * @param encode 是否对参数进行编码
-     * @return 对参数进行ASCII正序排列并生成请求参数串
-     */
-    public static String wxPayBuildQueryParamStr(Map<String, Object> params, boolean encode) {
-        Object[] _keys = params.keySet().toArray();
-        Arrays.sort(_keys);
-        StringBuffer _paramSB = new StringBuffer();
-        boolean _flag = true;
-        for (Object _key : _keys) {
-            if (_flag) {
-                _flag = false;
-            } else {
-                _paramSB.append("&");
-            }
-            Object _value = params.get(_key);
-            if (_value != null) {
-                String _valueStr = _value.toString();
-                if (encode) {
-                    try {
-                        _paramSB.append(_key).append("=").append(URLEncoder.encode(_valueStr, "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    _paramSB.append(_key).append("=").append(_valueStr);
-                }
-            }
-        }
-        return _paramSB.toString();
-    }
-
-    /**
-     * @param mchKey   商户支付密钥
-     * @param protocol 请求协议对象
-     * @return 返回最终生成的签名
-     */
-    public static String wxPayCreateSignature(String mchKey, IWxPayProtocol protocol) {
-        String _queryParamStr = wxPayBuildQueryParamStr(protocol.buildQueryParamMap(), false);
-        return DigestUtils.md5Hex(_queryParamStr + "&key=" + mchKey).toUpperCase();
-    }
-
-    /**
-     * @param mchKey   商户支付密钥
-     * @param protocol 回应数据对象
-     * @return 验证接口回应数据对象
-     */
-    public static boolean wxPayCheckSignature(String mchKey, IWxPayProtocol protocol) {
-        return wxPayCreateSignature(mchKey, protocol).equals(protocol.getSign());
-    }
-
-    private static void __doWxPayVerifyResultData(String mchKey, IWxPayResultData protocol) throws Exception {
-        if (WX_PAY.CODE_SUCCESS.equals(protocol.getReturnCode())) {
-            if (!wxPayCheckSignature(mchKey, protocol)) {
-                throw new Exception("Result data signature doesn't match");
-            }
-        } else {
-            throw new Exception(protocol.getReturnMsg());
-        }
-    }
-
-    /**
-     * 调用统一支付接口
-     *
-     * @param mchKey     商户支付密钥
-     * @param payRequest
-     * @return
-     * @throws Exception
-     */
-    public static IWxPayUnifiedOrderData wxPayUnifiedOrder(String mchKey, IWxPayUnifiedOrderRequest payRequest) throws Exception {
-        if (StringUtils.isBlank(mchKey)) {
-            throw new NullArgumentException("mchKey");
-        }
-        if (payRequest == null) {
-            throw new NullArgumentException("payRequest");
-        } else if (StringUtils.isBlank(payRequest.getOutTradeNo())) {
-            throw new NullArgumentException("outTradeNo");
-        } else if (StringUtils.isBlank(payRequest.getBody())) {
-            throw new NullArgumentException("body");
-        } else if (payRequest.getTotalFee() != null) {
-            throw new NullArgumentException("totalFee");
-        } else if (StringUtils.isBlank(payRequest.getTradeType())) {
-            throw new NullArgumentException("tradeType");
-        } else if (StringUtils.isBlank(payRequest.getSpbillCreateIp())) {
-            throw new NullArgumentException("spbillCreateIp");
-        }
-        //
-        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
-        IWxPayUnifiedOrderData _data = WxPayProtocol.fromXML(IWxPayUnifiedOrderData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_UNIFIED_ORDER, true, payRequest.toXML()));
-        //
-        __doWxPayVerifyResultData(mchKey, _data);
-        return _data;
-    }
-
-    /**
-     * 调用订单查询接口
-     *
-     * @param mchKey     商户支付密钥
-     * @param payRequest
-     * @return
-     * @throws Exception
-     */
-    public static IWxPayOrderQueryData wxPayOrderQuery(String mchKey, IWxPayOrderQueryRequest payRequest) throws Exception {
-        if (StringUtils.isBlank(mchKey)) {
-            throw new NullArgumentException("mchKey");
-        }
-        if (payRequest == null) {
-            throw new NullArgumentException("payRequest");
-        } else if (StringUtils.isBlank(payRequest.getOutTradeNo())) {
-            throw new NullArgumentException("outTradeNo");
-        }
-        //
-        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
-        IWxPayOrderQueryData _data = WxPayProtocol.fromXML(IWxPayOrderQueryData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_ORDER_QUERY, true, payRequest.toXML()));
-        //
-        __doWxPayVerifyResultData(mchKey, _data);
-        return _data;
-    }
-
-    /**
-     * 调用关闭订单接口
-     *
-     * @param mchKey     商户支付密钥
-     * @param payRequest 请求对象
-     * @return
-     * @throws Exception
-     */
-    public static IWxPayCloseOrderData wxPayCloseOrder(String mchKey, IWxPayCloseOrderRequest payRequest) throws Exception {
-        if (StringUtils.isBlank(mchKey)) {
-            throw new NullArgumentException("mchKey");
-        }
-        if (payRequest == null) {
-            throw new NullArgumentException("payRequest");
-        } else if (StringUtils.isBlank(payRequest.getOutTradeNo())) {
-            throw new NullArgumentException("outTradeNo");
-        }
-        //
-        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
-        IWxPayCloseOrderData _data = WxPayProtocol.fromXML(IWxPayCloseOrderData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_CLOSE_ORDER, true, payRequest.toXML()));
-        //
-        __doWxPayVerifyResultData(mchKey, _data);
-        return _data;
-    }
-
-    /**
-     * 调用退款申请接口
-     *
-     * @param mchKey
-     * @param payRequest
-     * @return
-     * @throws Exception
-     */
-    public static IWxPayRefundData wxPayRefund(String mchKey, IWxPayRefundRequest payRequest) throws Exception {
-        if (StringUtils.isBlank(mchKey)) {
-            throw new NullArgumentException("mchKey");
-        }
-        if (payRequest == null) {
-            throw new NullArgumentException("payRequest");
-        } else if (StringUtils.isBlank(payRequest.getOutTradeNo())) {
-            throw new NullArgumentException("outTradeNo");
-        } else if (StringUtils.isBlank(payRequest.getOutRefundNo())) {
-            throw new NullArgumentException("outRefundNo");
-        } else if (payRequest.getTotalFee() == null) {
-            throw new NullArgumentException("totalFee");
-        } else if (payRequest.getRefundFee() == null) {
-            throw new NullArgumentException("refundFee");
-        }
-        //
-        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
-        IWxPayRefundData _data = WxPayProtocol.fromXML(IWxPayRefundData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_REFUND, true, payRequest.toXML()));
-        //
-        __doWxPayVerifyResultData(mchKey, _data);
-        return _data;
-    }
-
-    /**
-     * 调用退款查询接口
-     *
-     * @param mchKey
-     * @param payRequest
-     * @return
-     * @throws Exception
-     */
-    public static IWxPayRefundQueryData wxPayRefundQuery(String mchKey, IWxPayRefundQueryRequest payRequest) throws Exception {
-        if (StringUtils.isBlank(mchKey)) {
-            throw new NullArgumentException("mchKey");
-        }
-        if (payRequest == null) {
-            throw new NullArgumentException("payRequest");
-        } else if (StringUtils.isBlank(payRequest.getOutTradeNo())) {
-            throw new NullArgumentException("outTradeNo");
-        }
-        //
-        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
-        IWxPayRefundQueryData _data = WxPayProtocol.fromXML(IWxPayRefundQueryData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_REFUND_QUERY, true, payRequest.toXML()));
-        //
-        __doWxPayVerifyResultData(mchKey, _data);
-        return _data;
-    }
-
-    /**
-     * 调用对帐单接口
-     *
-     * @param accountId 微信帐号原始ID
-     * @param nonceStr 随机字符串
-     * @param billDate 对账单日期
-     * @param billType 账单类型
-     * @return 成功时,数据以文本表格的方式返回, 失败时返回XML格式的状态码和错误信息
-     * @throws Exception
-     */
-    public static String wxPayDownloadBill(String accountId, String nonceStr, String billDate, String billType) throws Exception {
-        IWxPayDownloadBillRequest _req = new WxPayProtocol(WeChat.getAccountDataProvider().getAppId(accountId),
-                WeChat.getAccountDataProvider().getMchId(accountId), nonceStr);
-        _req.setBillDate(billDate);
-        _req.setBillType(billType);
-        _req.setSign(WeChat.wxPayCreateSignature(WeChat.getAccountDataProvider().getMchKey(accountId), _req));
-        //
-        return HttpClientHelper.doPost(WX_PAY_API.PAY_API_DOWNLOAD_BILL, true, _req.toXML());
-    }
-
-    /**
-     * 调用短链接转换接口
-     *
-     * @param mchKey
-     * @param payRequest
-     * @return
-     * @throws Exception
-     */
-    public static IWxPayShortUrlData wxPayShortUrl(String mchKey, IWxPayShortUrlRequest payRequest) throws Exception {
-        if (StringUtils.isBlank(mchKey)) {
-            throw new NullArgumentException("paternerKey");
-        }
-        if (payRequest == null) {
-            throw new NullArgumentException("payRequest");
-        } else if (StringUtils.isBlank(payRequest.getLongUrl())) {
-            throw new NullArgumentException("longUrl");
-        }
-        payRequest.setSign(WeChat.wxPayCreateSignature(mchKey, payRequest));
-        IWxPayShortUrlData _data = WxPayProtocol.fromXML(IWxPayShortUrlData.class, HttpClientHelper.doPost(WX_PAY_API.PAY_API_SHORTURL, true, payRequest.toXML()));
-        //
-        __doWxPayVerifyResultData(mchKey, _data);
-        return _data;
-    }
-
     /**
      * <p>
      * WX_MESSAGE
@@ -1133,58 +888,6 @@ public class WeChat {
         public static final String OAUTH_AUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/auth?access_token=";
 
         public static final String SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?action=long2short&access_token=";
-    }
-
-    /**
-     * <p>
-     * WX_PAY
-     * </p>
-     * <p>
-     * 微信支付部份常量
-     * </p>
-     */
-    public static class WX_PAY {
-        public static final String CODE_SUCCESS = "SUCCESS";
-        public static final String CODE_FAIL = "FAIL";
-
-        public static final String TRADE_TYPE_JSAPI = "JSAPI";
-        public static final String TRADE_TYPE_NATIVE = "JATIVE";
-        public static final String TRADE_TYPE_APP = "APP";
-
-        public static final String BILL_TYPE_ALL = "ALL";
-        public static final String BILL_TYPE_SUCCESS = "SUCCESS";
-        public static final String BILL_TYPE_REFUND = "REFUND";
-    }
-
-    /**
-     * <p>
-     * WX_PAY_API
-     * </p>
-     * <p>
-     * 微信支付API地址
-     * </p>
-     */
-    public static class WX_PAY_API {
-        // 统一支付接口
-        public static final String PAY_API_UNIFIED_ORDER = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
-        // 订单查询接口
-        public static final String PAY_API_ORDER_QUERY = "https://api.mch.weixin.qq.com/pay/orderquery";
-
-        // 关闭订单接口
-        public static final String PAY_API_CLOSE_ORDER = "https://api.mch.weixin.qq.com/pay/closeorder";
-
-        // 退款申请接口
-        public static final String PAY_API_REFUND = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-
-        // 退款查询接口
-        public static final String PAY_API_REFUND_QUERY = "https://api.mch.weixin.qq.com/pay/refundquery";
-
-        // 对帐单接口
-        public static final String PAY_API_DOWNLOAD_BILL = "https://api.mch.weixin.qq.com/pay/downloadbill";
-
-        // 短链接转换接口
-        public static final String PAY_API_SHORTURL = "https://api.mch.weixin.qq.com/tools/shorturl";
     }
 
 }

@@ -121,24 +121,6 @@ public interface IAccountDataProvider {
 
     /**
      * @param accountId 微信帐号原始ID
-     * @return 返回微信支付分配的商户ID
-     */
-    public String getMchId(String accountId);
-
-    /**
-     * @param accountId 微信帐号原始ID
-     * @return 返回商户支付密钥
-     */
-    public String getMchKey(String accountId);
-
-    /**
-     * @param accountId 微信帐号原始ID
-     * @return 返回微支付通用通知回调URL地址
-     */
-    public String getNofityUrl(String accountId);
-
-    /**
-     * @param accountId 微信帐号原始ID
      * @return OAuth授权后重定向的URL地址
      */
     public String getRedirectURI(String accountId);

@@ -69,15 +69,6 @@ public class AccountDataMeta {
 
     private long accessTokenExpires;
 
-    // 商户ID，微信支付分配的商户号
-    private String mchId;
-
-    // 商户支付密钥
-    private String mchKey;
-
-    // 通用通知回调URL地址
-    private String notifyUrl;
-
     // 公众号类型
     private int type;
 
@@ -212,30 +203,6 @@ public class AccountDataMeta {
 
     public void setAccessTokenExpires(long accessTokenExpires) {
         this.accessTokenExpires = accessTokenExpires;
-    }
-
-    public String getMchId() {
-        return mchId;
-    }
-
-    public void setMchId(String mchId) {
-        this.mchId = mchId;
-    }
-
-    public String getMchKey() {
-        return mchKey;
-    }
-
-    public void setMchKey(String mchKey) {
-        this.mchKey = mchKey;
-    }
-
-    public String getNotifyUrl() {
-        return notifyUrl;
-    }
-
-    public void setNotifyUrl(String notifyUrl) {
-        this.notifyUrl = notifyUrl;
     }
 
     public int getType() {
