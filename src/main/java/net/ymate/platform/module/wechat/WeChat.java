@@ -156,6 +156,34 @@ public class WeChat {
         return _result;
     }
 
+    private static String __doParamSignatureSort(Map<String, String> params, boolean encode) {
+        StringBuilder _paramSB = new StringBuilder();
+        String[] _keys = params.keySet().toArray(new String[0]);
+        Arrays.sort(_keys);
+        boolean _flag = true;
+        for (String _key : _keys) {
+            if (_flag) {
+                _flag = false;
+            } else {
+                _paramSB.append("&");
+            }
+            _paramSB.append(_key).append("=");
+            String _value = params.get(_key);
+            if (StringUtils.isNotEmpty(_value)) {
+                if (encode) {
+                    try {
+                        _paramSB.append(URLEncoder.encode(_value, HttpClientHelper.DEFAULT_CHARSET));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    _paramSB.append(_value);
+                }
+            }
+        }
+        return _paramSB.toString();
+    }
+
     /**
      * @param token
      * @param signature
@@ -199,7 +227,7 @@ public class WeChat {
         if (StringUtils.isBlank(accountId)) {
             throw new NullArgumentException("accountId");
         }
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_GET_CALLBACK_IP.concat(wxGetAccessToken(accountId)), true));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.WX_GET_CALLBACK_IP.concat(wxGetAccessToken(accountId))));
         return _json.getJSONArray("ip_list").toArray(new String[0]);
     }
 
@@ -211,7 +239,7 @@ public class WeChat {
      */
     public static IMediaFileWrapper wxMediaGetFile(String accountId, String mediaId) throws Exception {
         __doCheckModuleInited();
-        IMediaFileWrapper _wrapper = HttpClientHelper.doDownload(WX_API.MEDIA_GET + wxGetAccessToken(accountId) + "&media_id=" + mediaId);
+        IMediaFileWrapper _wrapper = HttpClientHelper.create().doDownload(WX_API.MEDIA_GET + wxGetAccessToken(accountId) + "&media_id=" + mediaId);
         if (_wrapper.getErrorMsg() != null && StringUtils.isNotEmpty(_wrapper.getErrorMsg())) {
             __doCheckJsonResult(_wrapper.getErrorMsg());
         }
@@ -239,7 +267,7 @@ public class WeChat {
         }
         // {"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
         // {"type":"TYPE","thubm_media_id":"MEDIA_ID","created_at":123456789}
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doUpload(WX_API.MEDIA_UPLOAD + wxGetAccessToken(accountId) + "&type=" + type.toString().toLowerCase(), false, file));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doUpload(WX_API.MEDIA_UPLOAD + wxGetAccessToken(accountId) + "&type=" + type.toString().toLowerCase(), file));
         return new WxMediaUploadResult(type, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
     }
 
@@ -264,7 +292,7 @@ public class WeChat {
             _flag = true;
         }
         _paramSB.append("]}");
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_NEWS + wxGetAccessToken(accountId), true, _paramSB.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MEDIA_UPLOAD_NEWS + wxGetAccessToken(accountId), _paramSB.toString()));
         return new WxMediaUploadResult(WxMediaType.NEWS, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
     }
 
@@ -276,7 +304,7 @@ public class WeChat {
      */
     public static WxMediaUploadResult wxMediaUploadVideo(String accountId, WxMassVideo video) throws Exception {
         __doCheckModuleInited();
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MEDIA_UPLOAD_VIDEO + wxGetAccessToken(accountId), false, video.toJSON()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MEDIA_UPLOAD_VIDEO + wxGetAccessToken(accountId), video.toJSON()));
         return new WxMediaUploadResult(WxMediaType.VIDEO, _json.getString("media_id"), _json.getString("thumb_media_id"), _json.getLong("created_at"));
     }
 
@@ -311,7 +339,7 @@ public class WeChat {
         }
         _paramSB.append("\"").append(_msgType).append("\": {").append("\"").append(_bodyAttr).append("\":\"").append(mediaIdOrContent).append("\"},");
         _paramSB.append("\"msgtype\": \"").append(_msgType).append("\"}");
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_GROUP + wxGetAccessToken(accountId), true, _paramSB.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MASS_SEND_BY_GROUP + wxGetAccessToken(accountId), _paramSB.toString()));
         return _json.getLong("msg_id");
     }
 
@@ -348,7 +376,7 @@ public class WeChat {
         }
         _paramSB.append("\"").append(_msgType).append("\": {").append("\"").append(_bodyAttr).append("\":\"").append(mediaIdOrContent).append("\"},");
         _paramSB.append("\"msgtype\": \"").append(_msgType).append("\"}");
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_SEND_BY_OPENID + wxGetAccessToken(accountId), true, _paramSB.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MASS_SEND_BY_OPENID + wxGetAccessToken(accountId), _paramSB.toString()));
         return _json.getLong("msg_id");
     }
 
@@ -360,7 +388,7 @@ public class WeChat {
      */
     public static boolean wxMassDelete(String accountId, Long msgId) throws Exception {
         __doCheckModuleInited();
-        JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MASS_DELETE.concat(wxGetAccessToken(accountId)), true, "{\"msgid\":" + msgId + "}"));
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MASS_DELETE.concat(wxGetAccessToken(accountId)), "{\"msgid\":" + msgId + "}"));
         return 0 == _result.getIntValue("errcode");
     }
 
@@ -372,7 +400,7 @@ public class WeChat {
      */
     public static String wxMessageSendCustom(String accountId, OutMessage message) throws Exception {
         __doCheckModuleInited();
-        return HttpClientHelper.doPost(WX_API.MESSAGE_SEND.concat(wxGetAccessToken(accountId)), true, message.toJSON());
+        return HttpClientHelper.create().doPost(WX_API.MESSAGE_SEND.concat(wxGetAccessToken(accountId)), message.toJSON());
     }
 
     /**
@@ -383,7 +411,7 @@ public class WeChat {
      */
     public static String wxMessageSendTemplate(String accountId, TemplateOutMessage message) throws Exception {
         __doCheckModuleInited();
-        JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MESSAGE_TEMPLATE_SEND.concat(wxGetAccessToken(accountId)), true, message.toJSON()));
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MESSAGE_TEMPLATE_SEND.concat(wxGetAccessToken(accountId)), message.toJSON()));
         return _result.getString("msgid");
     }
 
@@ -402,7 +430,7 @@ public class WeChat {
         if (lang != null) {
             _params.put("lang", lang.toString());
         }
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_INFO, true, _params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.USER_INFO, _params));
         return new WxUser(_json.getString("openid"),
                 _json.getString("nickname"), _json.getInteger("sex"),
                 _json.getString("city"), _json.getString("province"),
@@ -421,7 +449,7 @@ public class WeChat {
         Map<String, String> params = new HashMap<String, String>();
         params.put("access_token", wxGetAccessToken(accountId));
         params.put("next_openid", next_openid);
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_GET, true, params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.USER_GET, params));
         List<String> _datas = null;
         if (_json.containsKey("data") && _json.getJSONObject("data").containsKey("openid")) {
             _datas = JSON.parseArray(_json.getJSONObject("data").getJSONArray("openid").toJSONString(), String.class);
@@ -445,7 +473,7 @@ public class WeChat {
         _params.put("access_token", wxGetAccessToken(accountId));
         _params.put("openid", openid);
         _params.put("remark", remark);
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.USER_UPDATE_REMARK, true, _params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.USER_UPDATE_REMARK, _params));
         return 0 == _json.getIntValue("errcode");
     }
 
@@ -461,7 +489,7 @@ public class WeChat {
         JSONObject _nameJSON = new JSONObject();
         _nameJSON.put("name", name);
         _groupJSON.put("group", _nameJSON);
-        return JSON.toJavaObject(__doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_CREATE.concat(wxGetAccessToken(accountId)), true, _groupJSON.toString())), WxGroup.class);
+        return JSON.toJavaObject(__doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.GROUP_CREATE.concat(wxGetAccessToken(accountId)), _groupJSON.toString())), WxGroup.class);
     }
 
     /**
@@ -471,7 +499,7 @@ public class WeChat {
      */
     public static List<WxGroup> wxGroupGetList(String accountId) throws Exception {
         __doCheckModuleInited();
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.GROUP_GET.concat(wxGetAccessToken(accountId)), true));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.GROUP_GET.concat(wxGetAccessToken(accountId))));
         if (_json.containsKey("groups")) {
             return JSON.parseArray(_json.getJSONArray("groups").toJSONString(), WxGroup.class);
         }
@@ -488,7 +516,7 @@ public class WeChat {
         __doCheckModuleInited();
         JSONObject _openidJSON = new JSONObject();
         _openidJSON.put("openid", openid);
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_GET_ID.concat(wxGetAccessToken(accountId)), true, _openidJSON.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.GROUP_GET_ID.concat(wxGetAccessToken(accountId)), _openidJSON.toString()));
         return _json.getIntValue("groupid");
     }
 
@@ -506,7 +534,7 @@ public class WeChat {
         _groupJSON.put("name", name);
         JSONObject _paramJSON = new JSONObject();
         _paramJSON.put("group", _groupJSON);
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_UPDATE.concat(wxGetAccessToken(accountId)), true, _paramJSON.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.GROUP_UPDATE.concat(wxGetAccessToken(accountId)), _paramJSON.toString()));
         return 0 == _json.getIntValue("errcode");
     }
 
@@ -522,7 +550,7 @@ public class WeChat {
         JSONObject _paramJSON = new JSONObject();
         _paramJSON.put("openid", openid);
         _paramJSON.put("to_groupid", to_groupid);
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.GROUP_MEMBERS_UPDATE.concat(wxGetAccessToken(accountId)), true, _paramJSON.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.GROUP_MEMBERS_UPDATE.concat(wxGetAccessToken(accountId)), _paramJSON.toString()));
         return 0 == _json.getIntValue("errcode");
     }
 
@@ -534,7 +562,7 @@ public class WeChat {
      */
     public static boolean wxMenuCreate(String accountId, WxMenu menu) throws Exception {
         __doCheckModuleInited();
-        JSONObject _result = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.MENU_CREATE.concat(wxGetAccessToken(accountId)), true, JSON.toJSONString(menu)));
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MENU_CREATE.concat(wxGetAccessToken(accountId)), JSON.toJSONString(menu)));
         return 0 == _result.getIntValue("errcode");
     }
 
@@ -545,7 +573,7 @@ public class WeChat {
      */
     public static WxMenu wxMenuGet(String accountId) throws Exception {
         __doCheckModuleInited();
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_GET.concat(wxGetAccessToken(accountId)), true));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.MENU_GET.concat(wxGetAccessToken(accountId))));
         return JSON.toJavaObject(_json.getJSONObject("menu"), WxMenu.class);
     }
 
@@ -556,7 +584,7 @@ public class WeChat {
      */
     public static boolean wxMenuDelete(String accountId) throws Exception {
         __doCheckModuleInited();
-        JSONObject _result = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.MENU_DELETE.concat(wxGetAccessToken(accountId)), true));
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.MENU_DELETE.concat(wxGetAccessToken(accountId))));
         return 0 == _result.getIntValue("errcode");
     }
 
@@ -580,7 +608,7 @@ public class WeChat {
         _infoJSON.put("scene", _sceneJSON);
         _paramJSON.put("action_info", _infoJSON);
         // {"ticket":"gQG28DoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL0FuWC1DNmZuVEhvMVp4NDNMRnNRAAIEesLvUQMECAcAAA==","expire_seconds":1800}
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doPost(WX_API.QRCODE_CREATE.concat(wxGetAccessToken(accountId)), true, _paramJSON.toString()));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.QRCODE_CREATE.concat(wxGetAccessToken(accountId)), _paramJSON.toString()));
         return new WxQRCode(scene_id, _json.getString("ticket"), _json.getIntValue("expire_seconds"));
     }
 
@@ -635,7 +663,7 @@ public class WeChat {
         _params.put("redirect_uri", URLEncoder.encode(redirectURI, HttpClientHelper.DEFAULT_CHARSET));
         _params.put("scope", needUserInfo ? "snsapi_userinfo" : "snsapi_base");
         _params.put("state", StringUtils.defaultIfEmpty(state, "") + "#wechat_redirect");
-        return WX_API.OAUTH_GET_CODE.concat(HttpClientHelper.doParamSignatureSort(_params, false));
+        return WX_API.OAUTH_GET_CODE.concat(__doParamSignatureSort(_params, false));
     }
 
     /**
@@ -664,7 +692,7 @@ public class WeChat {
         _params.put("secret", _appSecret);
         _params.put("code", code);
         _params.put("grant_type", "authorization_code");
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_ACCESS_TOKEN, true, _params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_ACCESS_TOKEN, _params));
         return new WxOAuthToken(_json.getString("access_token"), _json.getIntValue("expires_in"), _json.getString("refresh_token"), _json.getString("openid"), _json.getString("scope"));
     }
 
@@ -687,7 +715,7 @@ public class WeChat {
         _params.put("appid", _appId);
         _params.put("grant_type", "refresh_token");
         _params.put("refresh_token", refreshToken);
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_REFRESH_TOKEN, true, _params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_REFRESH_TOKEN, _params));
         return new WxOAuthToken(_json.getString("access_token"), _json.getIntValue("expires_in"), _json.getString("refresh_token"), _json.getString("openid"), _json.getString("scope"));
     }
 
@@ -710,7 +738,7 @@ public class WeChat {
         if (lang != null) {
             _params.put("lang", lang.toString());
         }
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_USER_INFO.concat(oauthAccessToken), true, _params));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_USER_INFO.concat(oauthAccessToken), _params));
         return new WxOAuthUser(_json.getString("openid"),
                 _json.getString("nickname"), _json.getInteger("sex"),
                 _json.getString("province"), _json.getString("city"),
@@ -737,7 +765,7 @@ public class WeChat {
         Map<String, String> _params = new HashMap<String, String>();
         _params.put("openid", openid);
         try {
-            __doCheckJsonResult(HttpClientHelper.doGet(WX_API.OAUTH_AUTH_ACCESS_TOKEN.concat(oauthAccessToken), true, _params));
+            __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_AUTH_ACCESS_TOKEN.concat(oauthAccessToken), _params));
         } catch (Exception e) {
             return false;
         }
@@ -752,7 +780,7 @@ public class WeChat {
      */
     public static String wxShortUrl(String accountId, String longUrl) throws Exception {
         __doCheckModuleInited();
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.doGet(WX_API.SHORT_URL.concat(wxGetAccessToken(accountId)), true));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.SHORT_URL.concat(wxGetAccessToken(accountId))));
         return _json.getString("short_url");
     }
 

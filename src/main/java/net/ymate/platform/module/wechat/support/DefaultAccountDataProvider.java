@@ -117,7 +117,7 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
             long _currentTime = System.currentTimeMillis();
             if (_accessToken == null || (_currentTime >= _accessToken.getAccessTokenExpires())) {
                 // {"access_token":"ACCESS_TOKEN","expires_in":7200}
-                JSONObject _tokenJSON = WeChat.__doCheckJsonResult(HttpClientHelper.doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getAppId(accountId) + "&secret=" + getAppSecret(accountId), true));
+                JSONObject _tokenJSON = WeChat.__doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.WX_ACCESS_TOKEN.concat("&appid=") + getAppId(accountId) + "&secret=" + getAppSecret(accountId)));
                 _accessToken.setAccessToken(_tokenJSON.getString("access_token"));
                 _accessToken.setAccessTokenExpires(_currentTime + _tokenJSON.getIntValue("expires_in") * 1000);
                 //

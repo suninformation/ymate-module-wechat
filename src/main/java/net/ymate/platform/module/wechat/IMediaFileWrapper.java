@@ -15,7 +15,9 @@
  */
 package net.ymate.platform.module.wechat;
 
-import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * <p>
@@ -55,6 +57,8 @@ public interface IMediaFileWrapper {
 
 	public String getContentType();
 
-	public BufferedInputStream getInputStream();
+	public InputStream getInputStream() throws IOException;
+
+	public void writeTo(File file) throws IOException;
 
 }
