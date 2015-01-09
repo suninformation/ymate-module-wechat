@@ -118,7 +118,7 @@ public class HttpClientHelper {
             String _result = _httpClient.execute(RequestBuilder.get().setUri(url).build(), new ResponseHandler<String>() {
 
                 public String handleResponse(HttpResponse response) throws IOException {
-                    return EntityUtils.toString(response.getEntity());
+                    return EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
                 }
 
             });
@@ -140,7 +140,7 @@ public class HttpClientHelper {
             String _result = _httpClient.execute(_request.build(), new ResponseHandler<String>() {
 
                 public String handleResponse(HttpResponse response) throws IOException {
-                    return EntityUtils.toString(response.getEntity());
+                    return EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
                 }
 
             });
