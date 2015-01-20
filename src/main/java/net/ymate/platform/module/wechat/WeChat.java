@@ -162,14 +162,14 @@ public class WeChat {
         Arrays.sort(_keys);
         boolean _flag = true;
         for (String _key : _keys) {
-            if (_flag) {
-                _flag = false;
-            } else {
-                _paramSB.append("&");
-            }
-            _paramSB.append(_key).append("=");
             String _value = params.get(_key);
             if (StringUtils.isNotEmpty(_value)) {
+                if (_flag) {
+                    _flag = false;
+                } else {
+                    _paramSB.append("&");
+                }
+                _paramSB.append(_key).append("=");
                 if (encode) {
                     try {
                         _paramSB.append(URLEncoder.encode(_value, HttpClientHelper.DEFAULT_CHARSET));
