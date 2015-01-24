@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.EntityBuilder;
@@ -32,6 +33,7 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.File;
@@ -39,6 +41,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -97,18 +101,17 @@ public class HttpClientHelper {
     }
 
     private CloseableHttpClient __doBuildHttpClient() throws KeyManagementException, NoSuchAlgorithmException {
-        RequestConfig _config = RequestConfig.custom()
-                .setConnectTimeout(__connectionTimeout)
-                .setSocketTimeout(__connectionTimeout)
-                .setConnectionRequestTimeout(__connectionTimeout).build();
-        HttpClientBuilder _builder = HttpClientBuilder.create().setDefaultRequestConfig(_config);
-        if (__socketFactory != null) {
+        HttpClientBuilder _builder = HttpClientBuilder.create()
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setConnectTimeout(__connectionTimeout)
+                        .setSocketTimeout(__connectionTimeout)
+                        .setConnectionRequestTimeout(__connectionTimeout).build());
+        if (__socketFactory == null) {
             __socketFactory = new SSLConnectionSocketFactory(
                     SSLContexts.custom().useSSL().build(),
                     SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         }
-        _builder.setSSLSocketFactory(__socketFactory).build();
-        return HttpClientBuilder.create().setDefaultRequestConfig(_config).setSSLSocketFactory(__socketFactory).build();
+        return _builder.setSSLSocketFactory(__socketFactory).build();
     }
 
     public String doGet(String url) throws Exception {
@@ -172,6 +175,37 @@ public class HttpClientHelper {
         } finally {
             _httpClient.close();
         }
+    }
+
+    public String doPost(String url, Map<String, String> params) throws Exception {
+        CloseableHttpClient _httpClient = __doBuildHttpClient();
+        try {
+            _LOG.debug("Request URL [" + url + "]");
+            String _result = _httpClient.execute(RequestBuilder.post()
+                    .setUri(url)
+                    .setEntity(EntityBuilder.create()
+                            .setContentEncoding(DEFAULT_CHARSET)
+                            .setContentType(ContentType.create("text/plain", DEFAULT_CHARSET))
+                            .setParameters(__doBuildNameValuePairs(params)).build()).build(), new ResponseHandler<String>() {
+
+                public String handleResponse(HttpResponse response) throws IOException {
+                    return EntityUtils.toString(response.getEntity());
+                }
+
+            });
+            _LOG.debug("Request URL [" + url + "] Response [" + _result + "]");
+            return _result;
+        } finally {
+            _httpClient.close();
+        }
+    }
+
+    private static List<NameValuePair> __doBuildNameValuePairs(Map<String, String> params) {
+        List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            nameValuePair.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+        }
+        return nameValuePair;
     }
 
     public String doUpload(String url, File uploadFile) throws Exception {
