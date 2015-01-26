@@ -91,6 +91,13 @@ public interface IAccountDataProvider {
 
     /**
      * @param accountId 微信帐号原始ID
+     * @return 通过微信帐号获取用于调用微信JS接口的临时票据JS_TICKET，在有效期内将被缓存，过期后会重新获取新的
+     * @throws Exception
+     */
+    public String getJsApiTicket(String accountId) throws Exception;
+
+    /**
+     * @param accountId 微信帐号原始ID
      * @return 返回第三方应用唯一凭证
      */
     public String getAppId(String accountId);

@@ -17,6 +17,8 @@ package net.ymate.platform.module.wechat;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import net.ymate.platform.commons.util.DateTimeUtils;
+import net.ymate.platform.commons.util.UUIDUtils;
 import net.ymate.platform.module.wechat.base.*;
 import net.ymate.platform.module.wechat.message.OutMessage;
 import net.ymate.platform.module.wechat.message.TemplateOutMessage;
@@ -156,13 +158,13 @@ public class WeChat {
         return _result;
     }
 
-    private static String __doParamSignatureSort(Map<String, String> params, boolean encode) {
+    private static String __doParamSignatureSort(Map<String, Object> params, boolean encode) {
         StringBuilder _paramSB = new StringBuilder();
         String[] _keys = params.keySet().toArray(new String[0]);
         Arrays.sort(_keys);
         boolean _flag = true;
         for (String _key : _keys) {
-            String _value = params.get(_key);
+            String _value = (String) params.get(_key);
             if (StringUtils.isNotEmpty(_value)) {
                 if (_flag) {
                     _flag = false;
@@ -202,6 +204,27 @@ public class WeChat {
             }
         });
         return DigestUtils.shaHex(_params.get(0) + _params.get(1) + _params.get(2)).equals(signature);
+    }
+
+    /**
+     * 生成JSAPI配置对象
+     *
+     * @param accountId 微信公众帐号ID
+     * @param url       使用JSAPI的页面URL地址
+     * @return 返回wx.config对象
+     * @throws Exception
+     */
+    public static JSONObject wxCreateJsApiConfig(String accountId, String url) throws Exception {
+        Map<String, Object> _params = new HashMap<String, Object>();
+        _params.put("jsapi_ticket", __dataProvider.getJsApiTicket(accountId));
+        _params.put("timestamp", DateTimeUtils.currentTimeMillisUTC() + "");
+        _params.put("nonceStr", UUIDUtils.uuid());
+        _params.put("url", url);
+        _params.put("signature", DigestUtils.shaHex(__doParamSignatureSort(_params, false)));
+        //
+        _params.put("appId", __dataProvider.getAppId(accountId));
+        //
+        return new JSONObject(_params);
     }
 
     /**
@@ -657,7 +680,7 @@ public class WeChat {
         if (StringUtils.isBlank(redirectURI)) {
             throw new NullArgumentException("redirectURI");
         }
-        Map<String, String> _params = new HashMap<String, String>();
+        Map<String, Object> _params = new HashMap<String, Object>();
         _params.put("appid", _appId);
         _params.put("response_type", "code");
         _params.put("redirect_uri", URLEncoder.encode(redirectURI, HttpClientHelper.DEFAULT_CHARSET));
@@ -770,6 +793,17 @@ public class WeChat {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param accountId
+     * @return
+     * @throws Exception
+     */
+    public static String wxOAuthJsApiTicket(String accountId) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_JSAPI_TICKET.concat(wxGetAccessToken(accountId))));
+        return _json.getString("ticket");
     }
 
     /**
@@ -914,6 +948,8 @@ public class WeChat {
         public static final String OAUTH_REFRESH_TOKEN = "https://api.weixin.qq.com/sns/oauth2/refresh_token";
         public static final String OAUTH_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?access_token=";
         public static final String OAUTH_AUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/auth?access_token=";
+
+        public static final String OAUTH_JSAPI_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=";
 
         public static final String SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?action=long2short&access_token=";
     }

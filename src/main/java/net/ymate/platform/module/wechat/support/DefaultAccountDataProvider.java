@@ -60,6 +60,8 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 
     private static Object __LOCK = new Object();
 
+    private static Object __JS_TICKET_LOCK = new Object();
+
     /**
      * 构造器
      */
@@ -127,6 +129,22 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
             }
         }
         return _accessToken.getAccessToken();
+    }
+
+    public String getJsApiTicket(String accountId) throws Exception {
+        AccountDataMeta _account = null;
+        synchronized (__JS_TICKET_LOCK) {
+            _account = __accountCaches.get(accountId);
+            //
+            long _currentTime = System.currentTimeMillis();
+            if (_account == null || (_currentTime >= _account.getJsAPiTicketExpires())) {
+                // { "errcode":0, "errmsg":"ok", "ticket":"bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA", "expires_in":7200 }
+                JSONObject _ticketJSON = WeChat.__doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_JSAPI_TICKET.concat(getAccessToken(accountId))));
+                _account.setJsApiTicket(_ticketJSON.getString("ticket"));
+                _account.setJsAPiTicketExpires(_currentTime + _ticketJSON.getIntValue("expires_in") * 1000);
+            }
+        }
+        return _account.getJsApiTicket();
     }
 
     /* (non-Javadoc)

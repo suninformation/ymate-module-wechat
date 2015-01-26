@@ -68,6 +68,12 @@ public class AccountDataMeta {
     private String accessToken;
 
     private long accessTokenExpires;
+    
+    // JSAPI
+    
+    private String jsApiTicket;
+    
+    private long jsAPiTicketExpires;
 
     // 公众号类型
     private int type;
@@ -203,6 +209,22 @@ public class AccountDataMeta {
 
     public void setAccessTokenExpires(long accessTokenExpires) {
         this.accessTokenExpires = accessTokenExpires;
+    }
+
+    public String getJsApiTicket() {
+        return jsApiTicket;
+    }
+
+    public void setJsApiTicket(String jsApiTicket) {
+        this.jsApiTicket = jsApiTicket;
+    }
+
+    public long getJsAPiTicketExpires() {
+        return jsAPiTicketExpires;
+    }
+
+    public void setJsAPiTicketExpires(long jsAPiTicketExpires) {
+        this.jsAPiTicketExpires = jsAPiTicketExpires;
     }
 
     public int getType() {
