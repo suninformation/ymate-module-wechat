@@ -215,16 +215,24 @@ public class WeChat {
      * @throws Exception
      */
     public static JSONObject wxCreateJsApiConfig(String accountId, String url) throws Exception {
-        Map<String, Object> _params = new HashMap<String, Object>();
-        _params.put("jsapi_ticket", __dataProvider.getJsApiTicket(accountId));
-        _params.put("timestamp", DateTimeUtils.currentTimeMillisUTC() + "");
-        _params.put("nonceStr", UUIDUtils.uuid());
-        _params.put("url", url);
-        _params.put("signature", DigestUtils.shaHex(__doParamSignatureSort(_params, false)));
+        String _jsapiTicket = __dataProvider.getJsApiTicket(accountId);
+        String _timestamp = DateTimeUtils.currentTimeMillisUTC() + "";
+        String _noncestr = UUIDUtils.uuid();
         //
-        _params.put("appId", __dataProvider.getAppId(accountId));
+        StringBuilder _signSB = new StringBuilder()
+                .append("jsapi_ticket=").append(_jsapiTicket).append("&")
+                .append("noncestr=").append(_noncestr).append("&")
+                .append("timestamp=").append(_timestamp).append("&")
+                .append("url=").append(url);
         //
-        return new JSONObject(_params);
+        JSONObject _json = new JSONObject();
+        _json.put("jsapi_ticket", _jsapiTicket);
+        _json.put("timestamp", _timestamp);
+        _json.put("nonceStr", _noncestr);
+        _json.put("url", url);
+        _json.put("signature", DigestUtils.shaHex(_signSB.toString()));
+        _json.put("appId", __dataProvider.getAppId(accountId));
+        return _json;
     }
 
     /**

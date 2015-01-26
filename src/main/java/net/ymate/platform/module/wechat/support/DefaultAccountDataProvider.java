@@ -60,6 +60,8 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 
     private static Object __LOCK = new Object();
 
+    private static Object __JS_TICKET_LOCK = new Object();
+
     /**
      * 构造器
      */
@@ -131,7 +133,7 @@ public class DefaultAccountDataProvider implements IAccountDataProvider {
 
     public String getJsApiTicket(String accountId) throws Exception {
         AccountDataMeta _account = null;
-        synchronized (__LOCK) {
+        synchronized (__JS_TICKET_LOCK) {
             _account = __accountCaches.get(accountId);
             //
             long _currentTime = System.currentTimeMillis();
