@@ -805,17 +805,6 @@ public class WeChat {
 
     /**
      * @param accountId
-     * @return
-     * @throws Exception
-     */
-    public static String wxOAuthJsApiTicket(String accountId) throws Exception {
-        __doCheckModuleInited();
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doGet(WX_API.OAUTH_JSAPI_TICKET.concat(wxGetAccessToken(accountId))));
-        return _json.getString("ticket");
-    }
-
-    /**
-     * @param accountId
      * @param longUrl   需要转换的长链接
      * @return 长链接转成短链接
      * @throws Exception
