@@ -157,16 +157,40 @@ public class HttpClientHelper {
     public String doPost(String url, String content) throws Exception {
         CloseableHttpClient _httpClient = __doBuildHttpClient();
         try {
-            _LOG.debug("Request URL [" + url + "]");
+            _LOG.debug("Request URL [" + url + "] PostBody [" + content + "]");
             String _result = _httpClient.execute(RequestBuilder.post()
                     .setUri(url)
                     .setEntity(EntityBuilder.create()
                             .setContentEncoding(DEFAULT_CHARSET)
-                            .setContentType(ContentType.create("text/plain", DEFAULT_CHARSET))
+                            .setContentType(ContentType.create("application/x-www-form-urlencoded", DEFAULT_CHARSET))
                             .setText(content).build()).build(), new ResponseHandler<String>() {
 
                 public String handleResponse(HttpResponse response) throws IOException {
-                    return EntityUtils.toString(response.getEntity());
+                    return EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
+                }
+
+            });
+            _LOG.debug("Request URL [" + url + "] Response [" + _result + "]");
+            return _result;
+        } finally {
+            _httpClient.close();
+        }
+    }
+
+    public String doPost(String url, byte[] content) throws Exception {
+        CloseableHttpClient _httpClient = __doBuildHttpClient();
+        try {
+            _LOG.debug("Request URL [" + url + "] PostBody [" + content + "]");
+            String _result = _httpClient.execute(RequestBuilder.post()
+                    .setUri(url)
+                    .setEntity(EntityBuilder.create()
+                            .setContentEncoding(DEFAULT_CHARSET)
+                            .setContentType(ContentType.create("application/x-www-form-urlencoded", DEFAULT_CHARSET))
+                            .setBinary(content).build())
+                    .build(), new ResponseHandler<String>() {
+
+                public String handleResponse(HttpResponse response) throws IOException {
+                    return EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
                 }
 
             });
@@ -180,16 +204,15 @@ public class HttpClientHelper {
     public String doPost(String url, Map<String, String> params) throws Exception {
         CloseableHttpClient _httpClient = __doBuildHttpClient();
         try {
-            _LOG.debug("Request URL [" + url + "]");
+            _LOG.debug("Request URL [" + url + "] PostBody [" + params + "]");
             String _result = _httpClient.execute(RequestBuilder.post()
                     .setUri(url)
                     .setEntity(EntityBuilder.create()
                             .setContentEncoding(DEFAULT_CHARSET)
-                            .setContentType(ContentType.create("text/plain", DEFAULT_CHARSET))
                             .setParameters(__doBuildNameValuePairs(params)).build()).build(), new ResponseHandler<String>() {
 
                 public String handleResponse(HttpResponse response) throws IOException {
-                    return EntityUtils.toString(response.getEntity());
+                    return EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
                 }
 
             });
@@ -203,7 +226,9 @@ public class HttpClientHelper {
     private static List<NameValuePair> __doBuildNameValuePairs(Map<String, String> params) {
         List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            nameValuePair.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            if (StringUtils.isNotBlank(entry.getValue())) {
+                nameValuePair.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            }
         }
         return nameValuePair;
     }

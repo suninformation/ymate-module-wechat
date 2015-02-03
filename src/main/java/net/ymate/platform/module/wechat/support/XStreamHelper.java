@@ -15,24 +15,24 @@
  */
 package net.ymate.platform.module.wechat.support;
 
-import java.io.Writer;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.util.QuickWriter;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.naming.NameCoder;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+
+import java.io.Writer;
 
 /**
  * <p>
  * XStreamHelper
  * </p>
  * <p>
- * 
+ * <p/>
  * </p>
- * 
+ *
  * @author 刘镇(suninformation@163.com)
  * @version 0.0.0
  *          <table style="border:1px solid gray;">
@@ -51,56 +51,58 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  */
 public class XStreamHelper {
 
-	public static class WeChatXppDriver extends XppDriver {
+    public static class WeChatDomDriver extends DomDriver {
 
-		public WeChatXppDriver(NameCoder nameCoder) {
-			super(nameCoder);
-		}
+        public WeChatDomDriver(String encoding, NameCoder nameCoder) {
+            super(encoding, nameCoder);
+        }
 
-		public HierarchicalStreamWriter createWriter(Writer out) {
-			return new PrettyPrintWriter(out, this.getNameCoder()) {
-				boolean cdata = false;
+        public HierarchicalStreamWriter createWriter(Writer out) {
+            return new PrettyPrintWriter(out, this.getNameCoder()) {
+                boolean cdata = false;
 
-				@Override
-				@SuppressWarnings("rawtypes")
-				public void startNode(String name, Class clazz) {
-					super.startNode(name, clazz);
-					cdata = String.class.equals(clazz);
-				}
+                @Override
+                @SuppressWarnings("rawtypes")
+                public void startNode(String name, Class clazz) {
+                    super.startNode(name, clazz);
+                    cdata = String.class.equals(clazz);
+                }
 
-				@Override
-				public void setValue(String text) {
-					super.setValue(text);
-				}
+                @Override
+                public void setValue(String text) {
+                    super.setValue(text);
+                }
 
-				@Override
-				protected void writeText(QuickWriter writer, String text) {
-					if (cdata) {
-						writer.write("<![CDATA[");
-						writer.write(text);
-						writer.write("]]>");
-					} else {
-						writer.write(text);
-					}
-				}
-			};
-		};
-	}
+                @Override
+                protected void writeText(QuickWriter writer, String text) {
+                    if (cdata) {
+                        writer.write("<![CDATA[");
+                        writer.write(text);
+                        writer.write("]]>");
+                    } else {
+                        writer.write(text);
+                    }
+                }
+            };
+        }
 
-	/**
-	 * 初始化XStream可支持String类型字段加入CDATA标签"<![CDATA["和结尾处加上"]]>"， 以供XStream输出时进行识别
-	 * 
-	 * @param isAddCDATA 是否支持CDATA标签
-	 * @return
-	 */
-	public static XStream createXStream(boolean isAddCDATA) {
-		XStream xstream = null;
-		if (isAddCDATA) {
-			xstream = new XStream(new WeChatXppDriver(new XmlFriendlyNameCoder("_-", "_")));
-		} else {
-			xstream = new XStream(new XppDriver(new XmlFriendlyNameCoder("_-", "_")));
-		}
-		return xstream;
-	}
+        ;
+    }
+
+    /**
+     * 初始化XStream可支持String类型字段加入CDATA标签"<![CDATA["和结尾处加上"]]>"， 以供XStream输出时进行识别
+     *
+     * @param isAddCDATA 是否支持CDATA标签
+     * @return
+     */
+    public static XStream createXStream(boolean isAddCDATA) {
+        XStream xstream = null;
+        if (isAddCDATA) {
+            xstream = new XStream(new WeChatDomDriver("UTF-8", new XmlFriendlyNameCoder("-_", "_")));
+        } else {
+            xstream = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("-_", "_")));
+        }
+        return xstream;
+    }
 
 }
