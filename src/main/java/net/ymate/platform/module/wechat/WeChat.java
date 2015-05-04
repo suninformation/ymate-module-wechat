@@ -855,6 +855,7 @@ public class WeChat {
         public final static String TYPE_VOICE = "voice";
         public final static String TYPE_EVENT = "event";
         public final static String TYPE_VIDEO = "video";
+        public final static String TYPE_SHORT_VIDEO = "shortvideo";
 
         public final static String TYPE_NEWS = "news";
         public final static String TYPE_MP_NEWS = "mpnews"; // 此类型仅用于群发图文
@@ -882,7 +883,7 @@ public class WeChat {
      * </p>
      */
     public static enum WxMediaType {
-        IMAGE, VOICE, VIDEO, THUMB, NEWS
+        IMAGE, VOICE, VIDEO, SHORT_VIDEO, THUMB, NEWS
     }
 
     /**
