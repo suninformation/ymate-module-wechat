@@ -15,19 +15,19 @@
  */
 package net.ymate.platform.module.wechat.base;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * <p>
  * WxMenuItem
  * </p>
  * <p>
- * 
+ * <p/>
  * </p>
- * 
+ *
  * @author 刘镇(suninformation@163.com)
  * @version 0.0.0
  *          <table style="border:1px solid gray;">
@@ -46,72 +46,82 @@ import com.alibaba.fastjson.annotation.JSONField;
  */
 public class WxMenuItem {
 
-	public static final String TYPE_CLICK = "click";
+    public static final String TYPE_CLICK = "click";
 
-	public static final String TYPE_VIEW = "view";
+    public static final String TYPE_VIEW = "view";
 
-	private String name;
+    private String name;
 
-	@JSONField(name = "sub_button")
-	private List<WxMenuItem> subItems = new ArrayList<WxMenuItem>();
+    @JSONField(name = "sub_button")
+    private List<WxMenuItem> subItems = new ArrayList<WxMenuItem>();
 
-	private String type;
+    private String type;
 
-	private String key;
+    private String key;
 
-	private String url;
+    private String url;
 
-	public static WxMenuItem create() {
-		return new WxMenuItem();
-	}
+    @JSONField(name = "media_id")
+    private String mediaId;
 
-	public WxMenuItem addItem(WxMenuItem item) {
-		subItems.add(item);
-		return this;
-	}
+    public static WxMenuItem create() {
+        return new WxMenuItem();
+    }
 
-	public String getName() {
-		return name;
-	}
+    public WxMenuItem addItem(WxMenuItem item) {
+        subItems.add(item);
+        return this;
+    }
 
-	public WxMenuItem setName(String name) {
-		this.name = name;
-		return this;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<WxMenuItem> getSubItems() {
-		return subItems;
-	}
+    public WxMenuItem setName(String name) {
+        this.name = name;
+        return this;
+    }
 
-	public void setSubItems(List<WxMenuItem> subItems) {
-		this.subItems = subItems;
-	}
+    public List<WxMenuItem> getSubItems() {
+        return subItems;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setSubItems(List<WxMenuItem> subItems) {
+        this.subItems = subItems;
+    }
 
-	public WxMenuItem setType(String type) {
-		this.type = type;
-		return this;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public WxMenuItem setType(String type) {
+        this.type = type;
+        return this;
+    }
 
-	public WxMenuItem setKey(String key) {
-		this.key = key;
-		return this;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public WxMenuItem setKey(String key) {
+        this.key = key;
+        return this;
+    }
 
-	public WxMenuItem setUrl(String url) {
-		this.url = url;
-		return this;
-	}
+    public String getUrl() {
+        return url;
+    }
 
+    public WxMenuItem setUrl(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
+    }
 }

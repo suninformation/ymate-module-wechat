@@ -223,7 +223,7 @@ public class WeChat {
                 .append("jsapi_ticket=").append(_jsapiTicket).append("&")
                 .append("noncestr=").append(_noncestr).append("&")
                 .append("timestamp=").append(_timestamp).append("&")
-                .append("url=").append(url);
+                .append("url=").append(StringUtils.substringBefore(url, "#"));
         //
         JSONObject _json = new JSONObject();
         _json.put("jsapi_ticket", _jsapiTicket);
@@ -816,6 +816,160 @@ public class WeChat {
     }
 
     /**
+     * 上传永久图文素材
+     *
+     * @param accountId
+     * @param articles
+     * @return
+     * @throws Exception
+     */
+    public static String wxMaterialAddNews(String accountId, List<WxMassArticle> articles) throws Exception {
+        __doCheckModuleInited();
+        if (articles == null || articles.isEmpty()) {
+            throw new NullArgumentException("articles");
+        }
+        StringBuilder _paramSB = new StringBuilder("{ \"articles\": [");
+        boolean _flag = false;
+        for (WxMassArticle article : articles) {
+            if (_flag) {
+                _paramSB.append(",");
+            }
+            _paramSB.append(article.toJSON());
+            _flag = true;
+        }
+        _paramSB.append("]}");
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_ADD_NEWS + wxGetAccessToken(accountId), _paramSB.toString()));
+        return _json.getString("media_id");
+    }
+
+    /**
+     * 上传永久媒体素材(不包括视频)
+     *
+     * @param accountId
+     * @param type
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public static String wxMaterialAddNews(String accountId, WxMediaType type, File file) throws Exception {
+        __doCheckModuleInited();
+        if (WxMediaType.NEWS.equals(type)) {
+            throw new UnsupportedOperationException("News media type need use wxMediaUploadNews method.");
+        } else if (WxMediaType.VIDEO.equals(type) || WxMediaType.SHORT_VIDEO.equals(type)) {
+            throw new UnsupportedOperationException("Unsupport Video and Short Video");
+        }
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doUpload(WX_API.MATERIAL_UPDATE_NEWS + wxGetAccessToken(accountId) + "&type=" + type.toString().toLowerCase(), file));
+        return _json.getString("media_id");
+    }
+
+    /**
+     * 上传永久视频素材
+     *
+     * @param accountId
+     * @param title
+     * @param introduction
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    public static String wxMaterialAddNews(String accountId, String title, String introduction, File file) throws Exception {
+        __doCheckModuleInited();
+        String _description = "{\"title\":" + title + ", \"introduction\":" + introduction + "}";
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doUpload(WX_API.MATERIAL_UPDATE_NEWS + wxGetAccessToken(accountId) + "&description=" + _description + "&type=" + WxMediaType.VIDEO.toString().toLowerCase(), file));
+        return _json.getString("media_id");
+    }
+
+    /**
+     * 删除永久素材
+     *
+     * @param accountId
+     * @param mediaId
+     * @return
+     * @throws Exception
+     */
+    public static boolean wxMaterialDelete(String accountId, String mediaId) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_DEL_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":" + mediaId + "}"));
+        return 0 == _result.getIntValue("errcode");
+    }
+
+    /**
+     * 获取素材列表
+     *
+     * @param accountId
+     * @param type
+     * @param offset
+     * @param count
+     * @return
+     * @throws Exception
+     */
+    public static WxMaterialResult wxMaterialGetNews(String accountId, WxMediaType type, int offset, int count) throws Exception {
+        __doCheckModuleInited();
+        String _params = "{\"type\":" + type.toString().toLowerCase() + ", \"offset\":" + offset + ", \"count\":" + count + "}";
+        JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_BATCH_GET.concat(wxGetAccessToken(accountId)), _params));
+        if (_resultJSON != null) {
+            WxMaterialResult _result = JSON.toJavaObject(_resultJSON, WxMaterialResult.class);
+            return _result;
+        }
+        return null;
+    }
+
+    /**
+     * 获取永久素材
+     *
+     * @param accountId
+     * @param mediaId
+     * @return
+     * @throws Exception
+     */
+    public static WxNewsItem wxMaterialGet(String accountId, String mediaId) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_GET_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":" + mediaId + "}"));
+        if (_resultJSON != null) {
+            WxNewsItem _result = JSON.toJavaObject(_resultJSON, WxNewsItem.class);
+            return _result;
+        }
+        return null;
+    }
+
+    /**
+     * 修改永久图文素材
+     *
+     * @param accountId
+     * @param mediaId
+     * @param index
+     * @param newsItem
+     * @return
+     * @throws Exception
+     */
+    public static boolean wxMaterialUpdate(String accountId, String mediaId, int index, WxNewsItem newsItem) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _params = new JSONObject();
+        _params.put("media_id", mediaId);
+        _params.put("index", index);
+        _params.put("articles", JSON.toJSON(newsItem));
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_UPDATE_NEWS.concat(wxGetAccessToken(accountId)), _params.toJSONString()));
+        return 0 == _result.getIntValue("errcode");
+    }
+
+    /**
+     * 获取素材总数
+     *
+     * @param accountId
+     * @return
+     * @throws Exception
+     */
+    public static WxMaterialCount wxMaterialCount(String accountId) throws Exception {
+        __doCheckModuleInited();
+        JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_GET_COUNT.concat(wxGetAccessToken(accountId)), ""));
+        if (_resultJSON != null) {
+            WxMaterialCount _result = JSON.toJavaObject(_resultJSON, WxMaterialCount.class);
+            return _result;
+        }
+        return null;
+    }
+
+    /**
      * @param request  Http请求对象
      * @param needVer5 是否需要判断版本大于5.0
      * @return 判断当前是否在微信环境
@@ -950,6 +1104,22 @@ public class WeChat {
         public static final String OAUTH_JSAPI_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=";
 
         public static final String SHORT_URL = "https://api.weixin.qq.com/cgi-bin/shorturl?action=long2short&access_token=";
+
+
+        // 新增永久图文素材
+        public static final String MATERIAL_ADD_NEWS = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=";
+        // 新增其他类型永久素材
+        public static final String MATERIAL_ADD_MATERIAL = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=";
+        // 获取永久素材
+        public static final String MATERIAL_GET_MATERIAL = "https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=";
+        // 删除永久素材
+        public static final String MATERIAL_DEL_MATERIAL = "https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=";
+        // 修改永久图文素材
+        public static final String MATERIAL_UPDATE_NEWS = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=";
+        // 获取素材总数
+        public static final String MATERIAL_GET_COUNT = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=";
+        // 获取素材列表
+        public static final String MATERIAL_BATCH_GET = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=";
     }
 
 }
