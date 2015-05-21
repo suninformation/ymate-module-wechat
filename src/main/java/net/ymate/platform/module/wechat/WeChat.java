@@ -874,7 +874,7 @@ public class WeChat {
      */
     public static String wxMaterialAddNews(String accountId, String title, String introduction, File file) throws Exception {
         __doCheckModuleInited();
-        String _description = "{\"title\":" + title + ", \"introduction\":" + introduction + "}";
+        String _description = "{\"title\":\"" + title + "\", \"introduction\":\"" + introduction + "\"}";
         JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doUpload(WX_API.MATERIAL_UPDATE_NEWS + wxGetAccessToken(accountId) + "&description=" + _description + "&type=" + WxMediaType.VIDEO.toString().toLowerCase(), file));
         return _json.getString("media_id");
     }
@@ -905,7 +905,7 @@ public class WeChat {
      */
     public static WxMaterialResult wxMaterialGetNews(String accountId, WxMediaType type, int offset, int count) throws Exception {
         __doCheckModuleInited();
-        String _params = "{\"type\":" + type.toString().toLowerCase() + ", \"offset\":" + offset + ", \"count\":" + count + "}";
+        String _params = "{\"type\":\"" + type.toString().toLowerCase() + "\", \"offset\":" + offset + ", \"count\":" + count + "}";
         JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_BATCH_GET.concat(wxGetAccessToken(accountId)), _params));
         if (_resultJSON != null) {
             WxMaterialResult _result = JSON.toJavaObject(_resultJSON, WxMaterialResult.class);
@@ -924,7 +924,7 @@ public class WeChat {
      */
     public static WxNewsItem wxMaterialGet(String accountId, String mediaId) throws Exception {
         __doCheckModuleInited();
-        JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_GET_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":" + mediaId + "}"));
+        JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_GET_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":\"" + mediaId + "\"}"));
         if (_resultJSON != null) {
             WxNewsItem _result = JSON.toJavaObject(_resultJSON, WxNewsItem.class);
             return _result;
