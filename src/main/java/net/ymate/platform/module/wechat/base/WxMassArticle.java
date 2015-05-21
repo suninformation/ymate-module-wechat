@@ -16,6 +16,7 @@
 package net.ymate.platform.module.wechat.base;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * <p>
@@ -43,18 +44,21 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class WxMassArticle {
 
+	@JSONField(name = "thumb_media_id")
 	private String thumbMediaId;
 
 	private String author;
 
 	private String title;
 
+	@JSONField(name = "content_source_url")
 	private String contentSourceUrl;
 
 	private String content;
 
 	private String digest;
 
+	@JSONField(name = "show_cover_pic")
     private boolean showCoverPic;
 
 	public String getThumbMediaId() {
