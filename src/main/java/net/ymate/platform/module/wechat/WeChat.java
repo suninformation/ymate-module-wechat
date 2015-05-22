@@ -875,7 +875,7 @@ public class WeChat {
     public static String wxMaterialAddNews(String accountId, String title, String introduction, File file) throws Exception {
         __doCheckModuleInited();
         String _description = URLEncoder.encode("{\"title\":\"" + title + "\", \"introduction\":\"" + introduction + "\"}", "UTF-8");
-        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doUpload(WX_API.MATERIAL_UPDATE_NEWS + wxGetAccessToken(accountId) + "&description=" + _description + "&type=" + WxMediaType.VIDEO.toString().toLowerCase(), file));
+        JSONObject _json = __doCheckJsonResult(HttpClientHelper.create().doUpload(WX_API.MATERIAL_ADD_MATERIAL + wxGetAccessToken(accountId) + "&description=" + _description + "&type=" + WxMediaType.VIDEO.toString().toLowerCase(), file));
         return _json.getString("media_id");
     }
 
