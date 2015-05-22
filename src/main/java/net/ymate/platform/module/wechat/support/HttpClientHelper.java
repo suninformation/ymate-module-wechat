@@ -16,6 +16,7 @@
 package net.ymate.platform.module.wechat.support;
 
 import net.ymate.platform.commons.util.FileUtils;
+import net.ymate.platform.commons.util.UUIDUtils;
 import net.ymate.platform.module.wechat.IMediaFileWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -347,7 +348,56 @@ public class HttpClientHelper {
                     .setEntity(EntityBuilder.create()
                             .setContentEncoding(DEFAULT_CHARSET)
                             .setContentType(ContentType.create("application/x-www-form-urlencoded", DEFAULT_CHARSET))
-                            .setText(content).build()).build(), __INNER_DOWNLOAD_HANDLER);
+                            .setText(content).build()).build(), new ResponseHandler<IMediaFileWrapper>() {
+
+                public IMediaFileWrapper handleResponse(HttpResponse response) throws IOException {
+                    final long _contentLength = response.getEntity().getContentLength();
+                    final String _contentType = response.getEntity().getContentType().getValue();
+                    //
+                    final File _tmpFile = File.createTempFile(UUIDUtils.uuid(), null);
+                    org.apache.commons.io.FileUtils.copyInputStreamToFile(response.getEntity().getContent(), _tmpFile);
+                    //
+                    return new IMediaFileWrapper() {
+
+                        public String getErrorMsg() {
+                            return null;
+                        }
+
+                        public String getFileName() {
+                            return null;
+                        }
+
+                        public String getSimpleName() {
+                            return null;
+                        }
+
+                        public String getSuffix() {
+                            return null;
+                        }
+
+                        public long getContentLength() {
+                            return _contentLength;
+                        }
+
+                        public String getContentType() {
+                            return _contentType;
+                        }
+
+                        public InputStream getInputStream() throws IOException {
+                            return org.apache.commons.io.FileUtils.openInputStream(_tmpFile);
+                        }
+
+                        public void writeTo(File file) throws IOException {
+                            if (!_tmpFile.renameTo(file)) {
+                                org.apache.commons.io.FileUtils.copyInputStreamToFile(getInputStream(), file);
+                            } else {
+                                throw new IOException("Cannot write file to disk!");
+                            }
+                        }
+
+                    };
+                }
+            });
         } finally {
             _httpClient.close();
         }
