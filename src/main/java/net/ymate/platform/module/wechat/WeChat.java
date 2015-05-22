@@ -938,16 +938,16 @@ public class WeChat {
      * @param accountId
      * @param mediaId
      * @param index
-     * @param newsItem
+     * @param article
      * @return
      * @throws Exception
      */
-    public static boolean wxMaterialUpdate(String accountId, String mediaId, int index, WxNewsItem newsItem) throws Exception {
+    public static boolean wxMaterialUpdate(String accountId, String mediaId, int index, WxMassArticle article) throws Exception {
         __doCheckModuleInited();
         JSONObject _params = new JSONObject();
         _params.put("media_id", mediaId);
         _params.put("index", index);
-        _params.put("articles", JSON.toJSON(newsItem));
+        _params.put("articles", JSON.toJSON(article));
         JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_UPDATE_NEWS.concat(wxGetAccessToken(accountId)), _params.toJSONString()));
         return 0 == _result.getIntValue("errcode");
     }
