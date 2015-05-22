@@ -915,14 +915,14 @@ public class WeChat {
     }
 
     /**
-     * 获取永久素材
+     * 获取永久素材(图文和视频)
      *
      * @param accountId
      * @param mediaId
      * @return
      * @throws Exception
      */
-    public static WxNewsItem wxMaterialGet(String accountId, String mediaId) throws Exception {
+    public static WxNewsItem wxMaterialNewOrVideoGet(String accountId, String mediaId) throws Exception {
         __doCheckModuleInited();
         JSONObject _resultJSON = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_GET_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":\"" + mediaId + "\"}"));
         if (_resultJSON != null) {
@@ -930,6 +930,19 @@ public class WeChat {
             return _result;
         }
         return null;
+    }
+
+    /**
+     * 获取永久素材（非图文和非视频）
+     *
+     * @param accountId
+     * @param mediaId
+     * @return
+     * @throws Exception
+     */
+    public static IMediaFileWrapper wxMaterialFileGet(String accountId, String mediaId) throws Exception {
+        __doCheckModuleInited();
+        return HttpClientHelper.create().doDownload(WX_API.MATERIAL_GET_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":\"" + mediaId + "\"}");
     }
 
     /**

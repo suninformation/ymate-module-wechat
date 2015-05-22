@@ -246,101 +246,117 @@ public class HttpClientHelper {
         }
     }
 
+    protected static ResponseHandler<IMediaFileWrapper> __INNER_DOWNLOAD_HANDLER = new ResponseHandler<IMediaFileWrapper>() {
+
+        public IMediaFileWrapper handleResponse(HttpResponse response) throws IOException {
+            if (response.getEntity().getContentType().getValue().equalsIgnoreCase("text/plain")) {
+                final String _errMsg = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
+                //
+                return new IMediaFileWrapper() {
+
+                    public String getErrorMsg() {
+                        return _errMsg;
+                    }
+
+                    public String getFileName() {
+                        return null;
+                    }
+
+                    public String getSimpleName() {
+                        return null;
+                    }
+
+                    public String getSuffix() {
+                        return null;
+                    }
+
+                    public long getContentLength() {
+                        return 0;
+                    }
+
+                    public String getContentType() {
+                        return null;
+                    }
+
+                    public InputStream getInputStream() throws IOException {
+                        return null;
+                    }
+
+                    public void writeTo(File file) throws IOException {
+                    }
+
+                };
+            } else {
+                final String _fileName = StringUtils.substringBetween(response.getFirstHeader("Content-disposition").getValue(), "filename=\"", "\"");
+                final String _simpleName = StringUtils.substringBefore(_fileName, ".");
+                final String _suffix = FileUtils.getExtName(_fileName);
+                final long _contentLength = response.getEntity().getContentLength();
+                final String _contentType = response.getEntity().getContentType().getValue();
+                //
+                final File _tmpFile = File.createTempFile(_fileName, _suffix);
+                org.apache.commons.io.FileUtils.copyInputStreamToFile(response.getEntity().getContent(), _tmpFile);
+                //
+                return new IMediaFileWrapper() {
+
+                    public String getErrorMsg() {
+                        return null;
+                    }
+
+                    public String getFileName() {
+                        return _fileName;
+                    }
+
+                    public String getSimpleName() {
+                        return _simpleName;
+                    }
+
+                    public String getSuffix() {
+                        return _suffix;
+                    }
+
+                    public long getContentLength() {
+                        return _contentLength;
+                    }
+
+                    public String getContentType() {
+                        return _contentType;
+                    }
+
+                    public InputStream getInputStream() throws IOException {
+                        return org.apache.commons.io.FileUtils.openInputStream(_tmpFile);
+                    }
+
+                    public void writeTo(File file) throws IOException {
+                        if (!_tmpFile.renameTo(file)) {
+                            org.apache.commons.io.FileUtils.copyInputStreamToFile(getInputStream(), file);
+                        } else {
+                            throw new IOException("Cannot write file to disk!");
+                        }
+                    }
+
+                };
+            }
+        }
+    };
+
+    public IMediaFileWrapper doDownload(String url, String content) throws Exception {
+        CloseableHttpClient _httpClient = __doBuildHttpClient();
+        try {
+            return _httpClient.execute(RequestBuilder.post()
+                    .setUri(url)
+                    .setEntity(EntityBuilder.create()
+                            .setContentEncoding(DEFAULT_CHARSET)
+                            .setContentType(ContentType.create("application/x-www-form-urlencoded", DEFAULT_CHARSET))
+                            .setText(content).build()).build(), __INNER_DOWNLOAD_HANDLER);
+        } finally {
+            _httpClient.close();
+        }
+    }
+
     public IMediaFileWrapper doDownload(String url) throws Exception {
         CloseableHttpClient _httpClient = __doBuildHttpClient();
         try {
-            return _httpClient.execute(RequestBuilder.get().setUri(url).build(), new ResponseHandler<IMediaFileWrapper>() {
-
-                public IMediaFileWrapper handleResponse(HttpResponse response) throws IOException {
-                    if (response.getEntity().getContentType().getValue().equalsIgnoreCase("text/plain")) {
-                        final String _errMsg = EntityUtils.toString(response.getEntity(), DEFAULT_CHARSET);
-                        //
-                        return new IMediaFileWrapper() {
-
-                            public String getErrorMsg() {
-                                return _errMsg;
-                            }
-
-                            public String getFileName() {
-                                return null;
-                            }
-
-                            public String getSimpleName() {
-                                return null;
-                            }
-
-                            public String getSuffix() {
-                                return null;
-                            }
-
-                            public long getContentLength() {
-                                return 0;
-                            }
-
-                            public String getContentType() {
-                                return null;
-                            }
-
-                            public InputStream getInputStream() throws IOException {
-                                return null;
-                            }
-
-                            public void writeTo(File file) throws IOException {
-                            }
-
-                        };
-                    } else {
-                        final String _fileName = StringUtils.substringBetween(response.getFirstHeader("Content-disposition").getValue(), "filename=\"", "\"");
-                        final String _simpleName = StringUtils.substringBefore(_fileName, ".");
-                        final String _suffix = FileUtils.getExtName(_fileName);
-                        final long _contentLength = response.getEntity().getContentLength();
-                        final String _contentType = response.getEntity().getContentType().getValue();
-                        //
-                        final File _tmpFile = File.createTempFile(_fileName, _suffix);
-                        org.apache.commons.io.FileUtils.copyInputStreamToFile(response.getEntity().getContent(), _tmpFile);
-                        //
-                        return new IMediaFileWrapper() {
-
-                            public String getErrorMsg() {
-                                return null;
-                            }
-
-                            public String getFileName() {
-                                return _fileName;
-                            }
-
-                            public String getSimpleName() {
-                                return _simpleName;
-                            }
-
-                            public String getSuffix() {
-                                return _suffix;
-                            }
-
-                            public long getContentLength() {
-                                return _contentLength;
-                            }
-
-                            public String getContentType() {
-                                return _contentType;
-                            }
-
-                            public InputStream getInputStream() throws IOException {
-                                return org.apache.commons.io.FileUtils.openInputStream(_tmpFile);
-                            }
-
-                            public void writeTo(File file) throws IOException {
-                                if (!_tmpFile.renameTo(file)) {
-                                    org.apache.commons.io.FileUtils.copyInputStreamToFile(getInputStream(), file);
-                                } else {
-                                    throw new IOException("Cannot write file to disk!");
-                                }
-                            }
-
-                        };
-                    }
-                }
-            });
+            return _httpClient.execute(RequestBuilder.get().setUri(url).build(), __INNER_DOWNLOAD_HANDLER);
         } finally {
             _httpClient.close();
         }
