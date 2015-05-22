@@ -889,7 +889,7 @@ public class WeChat {
      */
     public static boolean wxMaterialDelete(String accountId, String mediaId) throws Exception {
         __doCheckModuleInited();
-        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_DEL_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":" + mediaId + "}"));
+        JSONObject _result = __doCheckJsonResult(HttpClientHelper.create().doPost(WX_API.MATERIAL_DEL_MATERIAL.concat(wxGetAccessToken(accountId)), "{\"media_id\":\"" + mediaId + "\"}"));
         return 0 == _result.getIntValue("errcode");
     }
 
