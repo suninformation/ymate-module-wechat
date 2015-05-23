@@ -15,6 +15,7 @@
  */
 package net.ymate.platform.module.wechat.support;
 
+import net.ymate.platform.commons.util.DateTimeUtils;
 import net.ymate.platform.commons.util.FileUtils;
 import net.ymate.platform.commons.util.UUIDUtils;
 import net.ymate.platform.module.wechat.IMediaFileWrapper;
@@ -288,8 +289,8 @@ public class HttpClientHelper {
 
                 };
             } else {
-                final String _fileName = StringUtils.substringBetween(response.getFirstHeader("Content-disposition").getValue(), "filename=\"", "\"");
-                final String _simpleName = StringUtils.substringBefore(_fileName, ".");
+                final String _fileName = StringUtils.substringAfter(response.getFirstHeader("Content-disposition").getValue(), "filename=");
+                final String _simpleName = StringUtils.substringBefore(StringUtils.replace(_fileName, "\"", ""), ".");
                 final String _suffix = FileUtils.getExtName(_fileName);
                 final long _contentLength = response.getEntity().getContentLength();
                 final String _contentType = response.getEntity().getContentType().getValue();
@@ -404,7 +405,7 @@ public class HttpClientHelper {
     }
 
     public IMediaFileWrapper doDownload(String url) throws Exception {
-        CloseableHttpClient _httpClient = __doBuildHttpClient();
+        CloseableHttpClient _httpClient = HttpClientHelper.create().setConnectionTimeout(new Long(DateTimeUtils.MINUTE * 5).intValue()).__doBuildHttpClient();
         try {
             return _httpClient.execute(RequestBuilder.get().setUri(url).build(), __INNER_DOWNLOAD_HANDLER);
         } finally {
