@@ -50,6 +50,10 @@ public class WxMenuItem {
 
     public static final String TYPE_VIEW = "view";
 
+    public final static String TYPE_MEDIA_ID = "media_id";
+
+    public final static String TYPE_VIEW_LIMITED = "view_limited";
+
     private String name;
 
     @JSONField(name = "sub_button")
