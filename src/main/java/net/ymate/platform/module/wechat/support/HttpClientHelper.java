@@ -19,6 +19,7 @@ import net.ymate.platform.commons.util.DateTimeUtils;
 import net.ymate.platform.commons.util.FileUtils;
 import net.ymate.platform.commons.util.UUIDUtils;
 import net.ymate.platform.module.wechat.IMediaFileWrapper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -295,7 +296,7 @@ public class HttpClientHelper {
                 final long _contentLength = response.getEntity().getContentLength();
                 final String _contentType = response.getEntity().getContentType().getValue();
                 //
-                final File _tmpFile = File.createTempFile(_fileName, _suffix);
+                final File _tmpFile = File.createTempFile(DigestUtils.md5Hex(_fileName), _suffix);
                 org.apache.commons.io.FileUtils.copyInputStreamToFile(response.getEntity().getContent(), _tmpFile);
                 //
                 return new IMediaFileWrapper() {
