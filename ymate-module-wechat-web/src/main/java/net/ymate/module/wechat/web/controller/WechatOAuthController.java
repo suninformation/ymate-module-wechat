@@ -135,7 +135,7 @@ public class WechatOAuthController {
                 _state = _wxSession.getId();
             }
         }
-        if (_tokenGetFlag) {
+        if (!_tokenGetFlag) {
             // 重新获取Token
             String _redirectUri = _accountMeta.getRedirectUri();
             if (StringUtils.isBlank(_redirectUri)) {
