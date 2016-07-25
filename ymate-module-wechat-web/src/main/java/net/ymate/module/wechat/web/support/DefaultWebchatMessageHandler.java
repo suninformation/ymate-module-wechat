@@ -44,6 +44,7 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
 
     public void init(IWechat owner) throws Exception {
         __owner = owner;
+        __owner.getOwner().getEvents().registerEvent(WechatEvent.class);
         __owner.getOwner().getEvents().registerListener(WechatEvent.class, new MessageEventListener());
         __owner.getOwner().getEvents().registerListener(WechatEvent.class, new LocationEventListener());
         __owner.getOwner().getEvents().registerListener(WechatEvent.class, new SubscribeEventListener());

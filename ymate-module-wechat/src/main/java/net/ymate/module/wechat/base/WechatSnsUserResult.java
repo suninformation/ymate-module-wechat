@@ -51,7 +51,9 @@ public class WechatSnsUserResult extends WechatResult {
             this.province = result.getString("province");
             this.country = result.getString("country");
             this.headImgUrl = result.getString("headimgurl");
-            this.privilege = result.getJSONArray("privilege").toArray(new String[0]);
+            if (result.containsKey("privilege")) {
+                this.privilege = result.getJSONArray("privilege").toArray(new String[0]);
+            }
             this.unionId = result.getString("unionid");
         }
     }

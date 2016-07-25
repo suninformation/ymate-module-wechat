@@ -99,18 +99,19 @@ public class MessageEventListener implements IEventListener<WechatEvent> {
             Transactions.execute(new ITrade() {
                 @Override
                 public void deal() throws Throwable {
-                    WechatMessage.builder().id(DigestUtils.md5Hex(msgId + toUserName))
+                    WechatMessage.builder().id(DigestUtils.md5Hex(msgId + toUserName + createTime))
                             .fromUid(fromUserName)
                             .toUid(toUserName)
                             .content(content)
                             .type(msgType)
-                            .createTime(createTime * 1000L)
+                            .createTime(System.currentTimeMillis())
                             .sessionFlag(fromUserName)
                             .siteId(siteId).build()
                             .save(Fields.create(WechatMessage.FIELDS.ID,
                                     WechatMessage.FIELDS.FROM_UID,
                                     WechatMessage.FIELDS.TO_UID,
                                     WechatMessage.FIELDS.CONTENT,
+                                    WechatMessage.FIELDS.TYPE,
                                     WechatMessage.FIELDS.CREATE_TIME,
                                     WechatMessage.FIELDS.SESSION_FLAG,
                                     WechatMessage.FIELDS.SITE_ID));

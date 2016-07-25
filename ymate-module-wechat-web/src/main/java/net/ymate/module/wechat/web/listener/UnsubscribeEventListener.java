@@ -37,11 +37,12 @@ public class UnsubscribeEventListener implements IEventListener<WechatEvent> {
             case UNSUBSCRIBE:
                 UnsubscribeEvent _unsubscribe = (UnsubscribeEvent) context.getSource();
                 try {
+                    long _currentTime = System.currentTimeMillis();
                     WechatUser.builder()
                             .id(DigestUtils.md5Hex(_unsubscribe.getFromUserName()))
                             .isSubscribe(0)
-                            .unsubscribeTime(_unsubscribe.getCreateTime().longValue())
-                            .lastModifyTime(System.currentTimeMillis())
+                            .unsubscribeTime(_currentTime)
+                            .lastModifyTime(_currentTime)
                             .build().update(Fields.create(WechatUser.FIELDS.IS_SUBSCRIBE, WechatUser.FIELDS.UNSUBSCRIBE_TIME, WechatUser.FIELDS.LAST_MODIFY_TIME));
                 } catch (Exception e) {
                     _LOG.warn("", e);

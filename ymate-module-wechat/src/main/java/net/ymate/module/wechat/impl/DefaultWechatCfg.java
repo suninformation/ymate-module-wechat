@@ -61,8 +61,8 @@ public class DefaultWechatCfg implements IWechatCfg {
             _meta.setNotifyUrl(_moduleCfgs.get("notify_url"));
             //
             for (Map.Entry<String, String> _item : _moduleCfgs.entrySet()) {
-                if (_item.getKey().startsWith("param.")) {
-                    String _key = StringUtils.substringAfter(_item.getKey(), "param.");
+                if (_item.getKey().startsWith("params.")) {
+                    String _key = StringUtils.substringAfter(_item.getKey(), "params.");
                     _meta.addAttribute(_key, _item.getValue());
                 }
             }

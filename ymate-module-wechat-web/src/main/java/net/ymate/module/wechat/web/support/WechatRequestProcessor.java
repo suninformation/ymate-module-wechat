@@ -35,7 +35,11 @@ public class WechatRequestProcessor implements IRequestProcessor {
         String _content = IOUtils.toString(WebContext.getRequest().getInputStream(), owner.getModuleCfg().getDefaultCharsetEncoding());
         Map<String, Object> _params = new HashMap<String, Object>();
         _params.put("protocol", StringUtils.trimToNull(_content));
-        _params.put("accountId", WebContext.getContext().getAttribute("account_id"));
+        String _accountId = StringUtils.substringAfterLast(WebContext.getRequestContext().getRequestMapping(), "/");
+        if (StringUtils.isNotBlank(WebContext.getRequestContext().getSuffix()) && StringUtils.endsWith(_accountId, WebContext.getRequestContext().getSuffix())) {
+            _accountId = StringUtils.substringBefore(_accountId, WebContext.getRequestContext().getSuffix());
+        }
+        _params.put("accountId", _accountId);
         //
         return _params;
     }

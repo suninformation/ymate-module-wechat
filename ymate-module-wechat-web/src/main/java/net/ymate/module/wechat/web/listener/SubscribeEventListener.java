@@ -47,6 +47,7 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                         public void deal() throws Throwable {
                             String _wxUid = DigestUtils.md5Hex(_subscribe.getFromUserName());
                             WechatUser _wxUser = WechatUser.builder().id(_wxUid).build().load(Fields.create(WechatUser.FIELDS.ID), IDBLocker.MYSQL);
+                            long _currentTime = System.currentTimeMillis();
                             boolean _isNew = true;
                             Fields _fields = Fields.create();
                             if (_wxUser != null) {
@@ -55,9 +56,10 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                                 _wxUser = new WechatUser();
                                 _wxUser.setId(_wxUid);
                                 _wxUser.setOpenId(_subscribe.getFromUserName());
+                                _wxUser.setAccountId(_subscribe.getToUserName());
                                 _wxUser.setSiteId((String) context.getParamExtend("site_id"));
                                 //
-                                _fields.add(WechatUser.FIELDS.ID, WechatUser.FIELDS.OPEN_ID, WechatUser.FIELDS.SITE_ID);
+                                _fields.add(Fields.create(WechatUser.FIELDS.ID, WechatUser.FIELDS.OPEN_ID, WechatUser.FIELDS.ACCOUNT_ID, WechatUser.FIELDS.SITE_ID));
                             }
                             //
                             IWechat _wechat = (IWechat) context.getParamExtend(IWechat.class.getName());
@@ -71,7 +73,6 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                                 _wxUser.setCity(_userinfo.getCity());
                                 _wxUser.setUnionId(_userinfo.getUnionId());
                                 _wxUser.setIsSubscribe(1);
-                                _wxUser.setSubscribeTime(_userinfo.getSubscribeTime() * 1000L);
                                 _wxUser.setUnsubscribeTime(0L);
                                 _wxUser.setLanguage(_userinfo.getLanguage());
                                 _wxUser.setRemark(_userinfo.getRemark());
@@ -84,9 +85,12 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                                         WechatUser.FIELDS.CITY,
                                         WechatUser.FIELDS.UNION_ID,
                                         WechatUser.FIELDS.IS_SUBSCRIBE,
-                                        WechatUser.FIELDS.SUBSCRIBE_TIME,
                                         WechatUser.FIELDS.UNSUBSCRIBE_TIME,
                                         WechatUser.FIELDS.LANGUAGE));
+                                if (_isNew) {
+                                    _wxUser.setSubscribeTime(_currentTime);
+                                    _fields.add(WechatUser.FIELDS.SUBSCRIBE_TIME);
+                                }
                                 //
                                 if (_userinfo.getTagidList() != null && _userinfo.getTagidList().length > 0) {
                                     _wxUser.setTagIdList(StringUtils.join(_userinfo.getTagidList(), ","));
@@ -95,6 +99,9 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                                 }
                             }
                             //
+                            _wxUser.setLastActiveTime(_currentTime);
+                            _wxUser.setLastModifyTime(_currentTime);
+                            _fields.add(WechatUser.FIELDS.LAST_ACTIVE_TIME).add(WechatUser.FIELDS.LAST_MODIFY_TIME);
                             if (_isNew) {
                                 _wxUser.save(_fields);
                             } else {
