@@ -32,13 +32,7 @@ import net.ymate.platform.webmvc.base.Type;
 import net.ymate.platform.webmvc.view.IView;
 import net.ymate.platform.webmvc.view.impl.HttpStatusView;
 import net.ymate.platform.webmvc.view.impl.TextView;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * 微信服务接入统一入口
@@ -49,19 +43,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/wechat/service")
 public class WechatServiceController {
-
-    private boolean __doCheckSignature(String token, String signature, String timestamp, String nonce) {
-        List<String> _params = new ArrayList<String>();
-        _params.add(token);
-        _params.add(timestamp);
-        _params.add(nonce);
-        Collections.sort(_params, new Comparator<String>() {
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-        return DigestUtils.sha1Hex(_params.get(0) + _params.get(1) + _params.get(2)).equals(signature);
-    }
 
     private IWechat.MessageType __doParseMsgType(String msgType) {
         if ("text".equals(msgType)) {
@@ -157,7 +138,7 @@ public class WechatServiceController {
             echostr = "";
         } else {
             WechatAccountMeta _meta = Wechat.get().getAccountById(accountId);
-            if (_meta == null || !__doCheckSignature(token, signature, timestamp, nonce) || !token.equals(_meta.getToken())) {
+            if (_meta == null || !WechatRequestProcessor.__doCheckSignature(token, signature, timestamp, nonce) || !token.equals(_meta.getToken())) {
                 echostr = "";
             }
         }

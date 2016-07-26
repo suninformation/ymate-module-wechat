@@ -19,11 +19,11 @@ import net.ymate.platform.webmvc.IRequestProcessor;
 import net.ymate.platform.webmvc.IWebMvc;
 import net.ymate.platform.webmvc.RequestMeta;
 import net.ymate.platform.webmvc.context.WebContext;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 刘镇 (suninformation@163.com) on 16/5/22 上午4:25
@@ -31,16 +31,37 @@ import java.util.Map;
  */
 public class WechatRequestProcessor implements IRequestProcessor {
 
+    public static boolean __doCheckSignature(String token, String signature, String timestamp, String nonce) {
+        List<String> _params = new ArrayList<String>();
+        _params.add(token);
+        _params.add(timestamp);
+        _params.add(nonce);
+        Collections.sort(_params, new Comparator<String>() {
+            public int compare(String o1, String o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        return DigestUtils.sha1Hex(_params.get(0) + _params.get(1) + _params.get(2)).equals(signature);
+    }
+
     public Map<String, Object> processRequestParams(IWebMvc owner, RequestMeta requestMeta) throws Exception {
-        String _content = IOUtils.toString(WebContext.getRequest().getInputStream(), owner.getModuleCfg().getDefaultCharsetEncoding());
-        Map<String, Object> _params = new HashMap<String, Object>();
-        _params.put("protocol", StringUtils.trimToNull(_content));
-        String _accountId = StringUtils.substringAfterLast(WebContext.getRequestContext().getRequestMapping(), "/");
-        if (StringUtils.isNotBlank(WebContext.getRequestContext().getSuffix()) && StringUtils.endsWith(_accountId, WebContext.getRequestContext().getSuffix())) {
-            _accountId = StringUtils.substringBefore(_accountId, WebContext.getRequestContext().getSuffix());
+        String _token = WebContext.getContext().getParameterToString("token");
+        String _timestamp = WebContext.getContext().getParameterToString("timestamp");
+        String _nonce = WebContext.getContext().getParameterToString("nonce");
+        String _signature = WebContext.getContext().getParameterToString("signature");
+        if (__doCheckSignature(_token, _signature, _timestamp, _nonce)) {
+
+            String _content = IOUtils.toString(WebContext.getRequest().getInputStream(), owner.getModuleCfg().getDefaultCharsetEncoding());
+            Map<String, Object> _params = new HashMap<String, Object>();
+            _params.put("protocol", StringUtils.trimToNull(_content));
+            String _accountId = StringUtils.substringAfterLast(WebContext.getRequestContext().getRequestMapping(), "/");
+            if (StringUtils.isNotBlank(WebContext.getRequestContext().getSuffix()) && StringUtils.endsWith(_accountId, WebContext.getRequestContext().getSuffix())) {
+                _accountId = StringUtils.substringBefore(_accountId, WebContext.getRequestContext().getSuffix());
+            }
+            _params.put("accountId", _accountId);
+            //
+            return _params;
         }
-        _params.put("accountId", _accountId);
-        //
-        return _params;
+        return Collections.emptyMap();
     }
 }
