@@ -15,6 +15,7 @@
  */
 package net.ymate.module.wechat.web.intercept;
 
+import net.ymate.framework.core.util.WebUtils;
 import net.ymate.platform.core.beans.intercept.IInterceptor;
 import net.ymate.platform.core.beans.intercept.InterceptContext;
 import net.ymate.platform.core.lang.BlurObject;
@@ -44,12 +45,24 @@ public class WechatBrowserCheckInterceptor implements IInterceptor {
             if (_m.find()) {
                 _version = _m.group(1);
             }
+            boolean _flag = false;
             if (_version == null) {
-                return View.httpStatusView(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                _flag = true;
             } else {
-                int _needVersion = BlurObject.bind(context.getContextParams().get("wechat_version")).toIntValue();
+                int _needVersion = BlurObject.bind(context.getContextParams().get("wx_version")).toIntValue();
                 if (_needVersion > 0 && NumberUtils.toInt(_version) < _needVersion) {
+                    _flag = true;
+                }
+            }
+            if (_flag) {
+                String _redirectUri = context.getContextParams().get("wx_redirect_uri");
+                if (StringUtils.isBlank(_redirectUri)) {
                     return View.httpStatusView(HttpServletResponse.SC_NOT_ACCEPTABLE);
+                } else {
+                    if (!StringUtils.startsWithIgnoreCase(_redirectUri, "http")) {
+                        _redirectUri = WebUtils.buildURL(WebContext.getRequest(), _redirectUri, true);
+                    }
+                    return View.redirectView(_redirectUri);
                 }
             }
         }

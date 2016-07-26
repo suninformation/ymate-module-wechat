@@ -39,7 +39,7 @@ public class WechatUserOAuthCheckInterceptor implements IInterceptor {
         // 是否需要检查AccessToken状态, 默认为false
         boolean _checkStatus = BlurObject.bind(context.getContextParams().get("check_status")).toBooleanValue();
         // 是否使用snsapi_base, 默认为true
-        boolean _baseScope = BlurObject.bind(StringUtils.defaultIfBlank(context.getContextParams().get("base_scope"), "true")).toBooleanValue();
+        boolean _baseScope = BlurObject.bind(StringUtils.defaultIfBlank(context.getContextParams().get("oauth_base_scope"), "true")).toBooleanValue();
         //
         boolean _flag = false;
         UserSessionBean _sessionBean = UserSessionBean.current();
@@ -68,10 +68,12 @@ public class WechatUserOAuthCheckInterceptor implements IInterceptor {
             // 否不存在则回应HTTP状态为400
             if (_accountId != null) {
                 // 自定义的跳转地址
-                String _redirectUri = context.getContextParams().get("redirect_uri");
+                String _redirectUri = context.getContextParams().get("oauth_redirect_uri");
                 if (StringUtils.isBlank(_redirectUri)) {
                     // 拼装当前请求URL
                     _redirectUri = WebUtils.buildURL(WebContext.getRequest(), WebContext.getRequestContext().getRequestMapping(), true).concat("?").concat(WebContext.getRequest().getQueryString());
+                } else if (!StringUtils.startsWithIgnoreCase(_redirectUri, "http")) {
+                    _redirectUri = WebUtils.buildURL(WebContext.getRequest(), _redirectUri, true);
                 }
                 return View.redirectView(WebUtils.buildURL(WebContext.getRequest(), "/wechat/oauth/".concat(_accountId), true))
                         .addAttribute("scope", _baseScope ? "snsapi_base" : "snsapi_info")
