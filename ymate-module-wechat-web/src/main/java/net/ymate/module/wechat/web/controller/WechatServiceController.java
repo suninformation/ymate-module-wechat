@@ -147,7 +147,7 @@ public class WechatServiceController {
 
     @RequestMapping(value = "/{account_id}", method = Type.HttpMethod.POST)
     @RequestProcessor(WechatRequestProcessor.class)
-    public IView __doServicePOST(String accountId, String protocol) throws Exception {
+    public IView __doServicePOST(String accountId, String protocol, String openId) throws Exception {
         //
         if (StringUtils.isNotBlank(accountId) && StringUtils.isNotBlank(protocol)) {
             WechatAccountMeta _accountMeta = Wechat.get().getAccountById(accountId);
@@ -166,8 +166,8 @@ public class WechatServiceController {
                     _outMessage = _messageHandler.onMessageReceived(protocol);
                     if (_outMessage == null) {
                         String _toUserName = _helper.getStringValue("//ToUserName");
-                        if (StringUtils.equals(accountId, _toUserName)) {
-                            String _fromUserName = _helper.getStringValue("//FromUserName");
+                        String _fromUserName = _helper.getStringValue("//FromUserName");
+                        if (StringUtils.equals(accountId, _toUserName) && StringUtils.equals(openId, _fromUserName)) {
                             Integer _createTime = _helper.getNumberValue("//CreateTime").intValue();
                             String _msgType = _helper.getStringValue("//MsgType");
                             //
