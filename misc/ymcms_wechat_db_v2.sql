@@ -50,7 +50,7 @@ CREATE TABLE `ymcms_wechat_autoreply` (
   `is_autoreply_open` smallint(1) unsigned DEFAULT '1',
   `is_subscribe_reply_open` smallint(1) unsigned DEFAULT '1',
   `subscribe_autoreply_type` varchar(10) DEFAULT NULL,
-  `subscribeautoreply_content` varchar(32) DEFAULT NULL,
+  `subscribe_autoreply_content` varchar(32) DEFAULT NULL,
   `default_autoreply_type` varchar(10) DEFAULT NULL,
   `default_autoreply_content` varchar(32) DEFAULT NULL,
   `site_id` varchar(32) NOT NULL,

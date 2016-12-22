@@ -41,9 +41,9 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
     @PropertyState(propertyName = "subscribe_autoreply_type")
     private String subscribeAutoreplyType;
 
-    @Property(name = "subscribeautoreply_content", length = 32)
-    @PropertyState(propertyName = "subscribeautoreply_content")
-    private String subscribeautoreplyContent;
+    @Property(name = "subscribe_autoreply_content", length = 32)
+    @PropertyState(propertyName = "subscribe_autoreply_content")
+    private String subscribeAutoreplyContent;
 
     @Property(name = "default_autoreply_type", length = 10)
     @PropertyState(propertyName = "default_autoreply_type")
@@ -89,19 +89,19 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
      * @param isAutoreplyOpen
      * @param isSubscribeReplyOpen
      * @param subscribeAutoreplyType
-     * @param subscribeautoreplyContent
+     * @param subscribeAutoreplyContent
      * @param defaultAutoreplyType
      * @param defaultAutoreplyContent
      * @param siteId
      * @param lastModifyTime
      */
-    public WechatAutoreply(String id, String accountId, Integer isAutoreplyOpen, Integer isSubscribeReplyOpen, String subscribeAutoreplyType, String subscribeautoreplyContent, String defaultAutoreplyType, String defaultAutoreplyContent, String siteId, Long lastModifyTime) {
+    public WechatAutoreply(String id, String accountId, Integer isAutoreplyOpen, Integer isSubscribeReplyOpen, String subscribeAutoreplyType, String subscribeAutoreplyContent, String defaultAutoreplyType, String defaultAutoreplyContent, String siteId, Long lastModifyTime) {
         this.id = id;
         this.accountId = accountId;
         this.isAutoreplyOpen = isAutoreplyOpen;
         this.isSubscribeReplyOpen = isSubscribeReplyOpen;
         this.subscribeAutoreplyType = subscribeAutoreplyType;
-        this.subscribeautoreplyContent = subscribeautoreplyContent;
+        this.subscribeAutoreplyContent = subscribeAutoreplyContent;
         this.defaultAutoreplyType = defaultAutoreplyType;
         this.defaultAutoreplyContent = defaultAutoreplyContent;
         this.siteId = siteId;
@@ -174,17 +174,17 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
     }
 
     /**
-     * @return the subscribeautoreplyContent
+     * @return the subscribeAutoreplyContent
      */
-    public String getSubscribeautoreplyContent() {
-        return subscribeautoreplyContent;
+    public String getSubscribeAutoreplyContent() {
+        return subscribeAutoreplyContent;
     }
 
     /**
-     * @param subscribeautoreplyContent the subscribeautoreplyContent to set
+     * @param subscribeAutoreplyContent the subscribeAutoreplyContent to set
      */
-    public void setSubscribeautoreplyContent(String subscribeautoreplyContent) {
-        this.subscribeautoreplyContent = subscribeautoreplyContent;
+    public void setSubscribeAutoreplyContent(String subscribeAutoreplyContent) {
+        this.subscribeAutoreplyContent = subscribeAutoreplyContent;
     }
 
     /**
@@ -317,12 +317,12 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
             return this;
         }
 
-        public String subscribeautoreplyContent() {
-            return _model.getSubscribeautoreplyContent();
+        public String subscribeAutoreplyContent() {
+            return _model.getSubscribeAutoreplyContent();
         }
 
-        public WechatAutoreplyBuilder subscribeautoreplyContent(String subscribeautoreplyContent) {
-            _model.setSubscribeautoreplyContent(subscribeautoreplyContent);
+        public WechatAutoreplyBuilder subscribeAutoreplyContent(String subscribeAutoreplyContent) {
+            _model.setSubscribeAutoreplyContent(subscribeAutoreplyContent);
             return this;
         }
 
@@ -373,7 +373,7 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
         public static final String IS_AUTOREPLY_OPEN = "is_autoreply_open";
         public static final String IS_SUBSCRIBE_REPLY_OPEN = "is_subscribe_reply_open";
         public static final String SUBSCRIBE_AUTOREPLY_TYPE = "subscribe_autoreply_type";
-        public static final String SUBSCRIBEAUTOREPLY_CONTENT = "subscribeautoreply_content";
+        public static final String SUBSCRIBE_AUTOREPLY_CONTENT = "subscribe_autoreply_content";
         public static final String DEFAULT_AUTOREPLY_TYPE = "default_autoreply_type";
         public static final String DEFAULT_AUTOREPLY_CONTENT = "default_autoreply_content";
         public static final String SITE_ID = "site_id";

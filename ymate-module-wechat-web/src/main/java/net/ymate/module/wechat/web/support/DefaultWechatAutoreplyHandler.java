@@ -128,7 +128,7 @@ public class DefaultWechatAutoreplyHandler implements IWechatAutoreplyHandler {
                     .autoreplyOpen(BlurObject.bind(_autoreply.getIsAutoreplyOpen()).toBooleanValue())
                     .defaultAutoreplyInfo(WechatAutoreplyResult.ContentBuilder.create().bind(_autoreply.getDefaultAutoreplyType(), _autoreply.getDefaultAutoreplyContent()).build())
                     .subscribeReplyOpen(BlurObject.bind(_autoreply.getIsSubscribeReplyOpen()).toBooleanValue())
-                    .subscribeAutoreplyInfo(WechatAutoreplyResult.ContentBuilder.create().bind(_autoreply.getSubscribeAutoreplyType(), _autoreply.getSubscribeautoreplyContent()).build());
+                    .subscribeAutoreplyInfo(WechatAutoreplyResult.ContentBuilder.create().bind(_autoreply.getSubscribeAutoreplyType(), _autoreply.getSubscribeAutoreplyContent()).build());
             //
             IResultSet<WechatAutoreplyRule> _rules = WechatAutoreplyRule.builder().accountId(_id).build().find();
             if (_rules.isResultsAvailable()) {
