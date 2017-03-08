@@ -19,6 +19,7 @@ import net.ymate.module.wechat.message.event.UnsubscribeEvent;
 import net.ymate.module.wechat.model.WechatUser;
 import net.ymate.module.wechat.web.WechatEvent;
 import net.ymate.platform.core.event.IEventListener;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.persistence.Fields;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
@@ -45,7 +46,7 @@ public class UnsubscribeEventListener implements IEventListener<WechatEvent> {
                             .lastModifyTime(_currentTime)
                             .build().update(Fields.create(WechatUser.FIELDS.IS_SUBSCRIBE, WechatUser.FIELDS.UNSUBSCRIBE_TIME, WechatUser.FIELDS.LAST_MODIFY_TIME));
                 } catch (Exception e) {
-                    _LOG.warn("", e);
+                    _LOG.warn("", RuntimeUtils.unwrapThrow(e));
                 }
                 break;
         }

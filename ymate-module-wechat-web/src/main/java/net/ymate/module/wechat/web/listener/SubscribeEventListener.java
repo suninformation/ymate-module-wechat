@@ -21,6 +21,7 @@ import net.ymate.module.wechat.message.event.SubscribeEvent;
 import net.ymate.module.wechat.model.WechatUser;
 import net.ymate.module.wechat.web.WechatEvent;
 import net.ymate.platform.core.event.IEventListener;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.persistence.Fields;
 import net.ymate.platform.persistence.jdbc.query.IDBLocker;
 import net.ymate.platform.persistence.jdbc.transaction.ITrade;
@@ -110,7 +111,7 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                         }
                     });
                 } catch (Exception e) {
-                    _LOG.warn("", e);
+                    _LOG.warn("", RuntimeUtils.unwrapThrow(e));
                 }
                 break;
         }

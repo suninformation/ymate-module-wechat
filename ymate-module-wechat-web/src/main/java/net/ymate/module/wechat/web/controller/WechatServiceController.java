@@ -27,6 +27,7 @@ import net.ymate.module.wechat.message.event.*;
 import net.ymate.module.wechat.message.in.*;
 import net.ymate.module.wechat.web.support.WechatRequestProcessor;
 import net.ymate.platform.core.util.DateTimeUtils;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.webmvc.annotation.*;
 import net.ymate.platform.webmvc.base.Type;
 import net.ymate.platform.webmvc.view.IView;
@@ -243,7 +244,7 @@ public class WechatServiceController {
                         }
                     }
                 } catch (Throwable e) {
-                    _messageHandler.onExceptionCaught(e);
+                    _messageHandler.onExceptionCaught(RuntimeUtils.unwrapThrow(e));
                 }
                 String _msgText = _outMessage != null ? _outMessage.toXML() : null;
                 if (_msgText != null && _accountMeta.isMsgEncrypted()) {

@@ -23,6 +23,7 @@ import net.ymate.module.wechat.model.WechatAccount;
 import net.ymate.platform.cache.Caches;
 import net.ymate.platform.cache.ICaches;
 import net.ymate.platform.core.lang.BlurObject;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.persistence.Fields;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
@@ -114,7 +115,7 @@ public class MultilevelWechatAccountProvider implements IWechatAccountProvider {
                     _meta = __doBuildAccountMeta(_account);
                 }
             } catch (Exception e) {
-                _LOG.warn("", e);
+                _LOG.warn("", RuntimeUtils.unwrapThrow(e));
             } finally {
                 _locker.unlock();
             }
@@ -151,7 +152,7 @@ public class MultilevelWechatAccountProvider implements IWechatAccountProvider {
                             WechatAccount.FIELDS.NOTIFY_URL, WechatAccount.FIELDS.SITE_ID));
             return __doBuildAccountMeta(_account);
         } catch (Exception e) {
-            _LOG.warn("", e);
+            _LOG.warn("", RuntimeUtils.unwrapThrow(e));
         } finally {
             _locker.unlock();
         }

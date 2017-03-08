@@ -80,7 +80,7 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
     }
 
     public OutMessage onTextMessage(InTextMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_TEXT, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_TEXT, message));
         if (__owner.getModuleCfg().getAutoreplyHandler() != null) {
             return __owner.getModuleCfg().getAutoreplyHandler().onKeywords(message.getToUserName(), message.getFromUserName(), message.getContent());
         }
@@ -88,12 +88,12 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
     }
 
     public OutMessage onImageMessage(InImageMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_IMAGE, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_IMAGE, message));
         return __doWriteLog(message);
     }
 
     public OutMessage onVoiceMessage(InVoiceMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_VOICE, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_VOICE, message));
         if (__owner.getModuleCfg().getAutoreplyHandler() != null && StringUtils.isNotBlank(message.getRecognition())) {
             return __owner.getModuleCfg().getAutoreplyHandler().onKeywords(message.getToUserName(), message.getFromUserName(), message.getRecognition());
         }
@@ -101,17 +101,17 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
     }
 
     public OutMessage onVideoMessage(InVideoMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_VIDEO, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_VIDEO, message));
         return __doWriteLog(message);
     }
 
     public OutMessage onShortVideoMessage(InShortVideoMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_SHORT_VIDEO, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_SHORT_VIDEO, message));
         return __doWriteLog(message);
     }
 
     public OutMessage onLocationMessage(InLocationMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_LOCATION, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_LOCATION, message));
         if (__owner.getModuleCfg().getAutoreplyHandler() != null) {
             return __owner.getModuleCfg().getAutoreplyHandler().onLocation(message);
         }
@@ -119,12 +119,12 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
     }
 
     public OutMessage onLinkMessage(InLinkMessage message) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MSG_LINK, message));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MSG_LINK, message));
         return __doWriteLog(message);
     }
 
     public OutMessage onSubscribeEvent(SubscribeEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.SUBSCRIBE, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.SUBSCRIBE, event));
         if (__owner.getModuleCfg().getAutoreplyHandler() != null) {
             return __owner.getModuleCfg().getAutoreplyHandler().onSubscribe(event);
         }
@@ -132,12 +132,12 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
     }
 
     public void onUnsubscribeEvent(UnsubscribeEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.UNSUBSCRIBE, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.UNSUBSCRIBE, event));
         __doWriteLog(event);
     }
 
     public OutMessage onMenuEvent(MenuEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MENU, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MENU, event));
         if (__owner.getModuleCfg().getAutoreplyHandler() != null) {
             return __owner.getModuleCfg().getAutoreplyHandler().onMenu(event);
         }
@@ -145,22 +145,22 @@ public class DefaultWebchatMessageHandler implements IWechatMessageHandler {
     }
 
     public OutMessage onScanEvent(ScanEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.SCAN, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.SCAN, event));
         return __doWriteLog(event);
     }
 
     public OutMessage onLocationEvent(LocationEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.LOCATION, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.LOCATION, event));
         return __doWriteLog(event);
     }
 
     public void onMassJobEvent(MassJobEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.MASS_SEND_JOB_FINISH, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.MASS_SEND_JOB_FINISH, event));
         __doWriteLog(event);
     }
 
     public void onTemplateJobEvent(TemplateJobEvent event) throws Exception {
-        __owner.getOwner().getEvents().fireEvent(Events.MODE.ASYNC, __doBuildEvent(WechatEvent.EVENT.TEMPLATE_SEND_JOB_FINISH, event));
+        __owner.getOwner().getEvents().fireEvent(__doBuildEvent(WechatEvent.EVENT.TEMPLATE_SEND_JOB_FINISH, event));
         __doWriteLog(event);
     }
 }

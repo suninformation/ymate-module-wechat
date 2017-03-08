@@ -20,6 +20,7 @@ import net.ymate.module.wechat.message.in.*;
 import net.ymate.module.wechat.model.WechatMessage;
 import net.ymate.module.wechat.web.WechatEvent;
 import net.ymate.platform.core.event.IEventListener;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.persistence.Fields;
 import net.ymate.platform.persistence.jdbc.transaction.ITrade;
 import net.ymate.platform.persistence.jdbc.transaction.Transactions;
@@ -118,7 +119,7 @@ public class MessageEventListener implements IEventListener<WechatEvent> {
                 }
             });
         } catch (Exception e) {
-            _LOG.warn("", e);
+            _LOG.warn("", RuntimeUtils.unwrapThrow(e));
         }
     }
 }

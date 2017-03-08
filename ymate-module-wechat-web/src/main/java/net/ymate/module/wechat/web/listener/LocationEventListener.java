@@ -19,6 +19,7 @@ import net.ymate.module.wechat.message.event.LocationEvent;
 import net.ymate.module.wechat.model.WechatLocation;
 import net.ymate.module.wechat.web.WechatEvent;
 import net.ymate.platform.core.event.IEventListener;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.core.util.UUIDUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +50,7 @@ public class LocationEventListener implements IEventListener<WechatEvent> {
                             .createTime(_location.getCreateTime().longValue())
                             .build().save();
                 } catch (Exception e) {
-                    _LOG.warn("", e);
+                    _LOG.warn(e.getMessage(), RuntimeUtils.unwrapThrow(e));
                 }
                 break;
         }

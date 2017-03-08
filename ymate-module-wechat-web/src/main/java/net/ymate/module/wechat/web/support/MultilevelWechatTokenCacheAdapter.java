@@ -24,6 +24,7 @@ import net.ymate.module.wechat.base.WechatTicket;
 import net.ymate.module.wechat.model.WechatToken;
 import net.ymate.platform.cache.Caches;
 import net.ymate.platform.cache.ICaches;
+import net.ymate.platform.core.util.RuntimeUtils;
 import net.ymate.platform.persistence.Fields;
 import net.ymate.platform.persistence.jdbc.query.IDBLocker;
 import net.ymate.platform.persistence.jdbc.transaction.Trade;
@@ -72,7 +73,7 @@ public class MultilevelWechatTokenCacheAdapter extends AbstractWechatTokenCacheA
                 try {
                     _token = __doGetAccessTokenFromDB(_cacheKey, accountMeta);
                 } catch (Exception ex) {
-                    _LOG.warn("", ex);
+                    _LOG.warn("", RuntimeUtils.unwrapThrow(ex));
                 }
             } finally {
                 _locker.unlock();
@@ -136,7 +137,7 @@ public class MultilevelWechatTokenCacheAdapter extends AbstractWechatTokenCacheA
                 try {
                     _ticket = __doGetTicketFromDB(_cacheKey, accountMeta);
                 } catch (Exception ex) {
-                    _LOG.warn("", ex);
+                    _LOG.warn("", RuntimeUtils.unwrapThrow(ex));
                 }
             } finally {
                 _locker.unlock();
