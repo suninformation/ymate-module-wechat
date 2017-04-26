@@ -82,7 +82,7 @@ public class Wechat implements IModule, IWechat {
     public void init(YMP owner) throws Exception {
         if (!__inited) {
             //
-            _LOG.info("Initializing ymatecms-wechat-" + VERSION);
+            _LOG.info("Initializing ymate-module-wechat-" + VERSION);
             //
             __owner = owner;
             __moduleCfg = new DefaultWechatCfg(owner);
