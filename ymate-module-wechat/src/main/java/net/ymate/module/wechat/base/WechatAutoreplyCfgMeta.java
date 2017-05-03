@@ -41,7 +41,10 @@ public class WechatAutoreplyCfgMeta implements Serializable {
         if (replyRules != null && !replyRules.isEmpty()) {
             for (AutoreplyRuleMeta _meta : replyRules) {
                 for (WechatAutoreplyResult.ContentInfo _info : _meta.matchKeywords(keywords)) {
-                    _returnValues.add(_info.toOutMessage(fromUserName, toUserName));
+                    OutMessage _msg = _info.toOutMessage(fromUserName, toUserName);
+                    if (_msg != null) {
+                        _returnValues.add(_msg);
+                    }
                 }
             }
         }

@@ -22,7 +22,10 @@ import com.alibaba.fastjson.annotation.JSONField;
 import net.ymate.module.wechat.IWechat;
 import net.ymate.module.wechat.message.OutMessage;
 import net.ymate.module.wechat.message.out.*;
+import net.ymate.platform.core.util.RuntimeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,8 @@ import java.util.List;
  * @version 1.0
  */
 public class WechatAutoreplyResult extends WechatResult {
+
+    private static final Log _LOG = LogFactory.getLog(WechatAutoreplyResult.class);
 
     private String id;
 
@@ -275,35 +280,40 @@ public class WechatAutoreplyResult extends WechatResult {
         }
 
         public OutMessage toOutMessage(String fromUserName, String toUserName) {
-            IWechat.MessageType _type = IWechat.MessageType.valueOf(type);
-            OutMessage _out = null;
-            switch (_type) {
-                case TEXT:
-                    _out = new OutTextMessage(fromUserName, toUserName, content);
-                    break;
-                case IMAGE:
-                    _out = new OutImageMessage(fromUserName, toUserName, JSON.parseObject(content).getString("MediaId"));
-                    break;
-                case VIDEO:
-                    JSONObject _json = JSONObject.parseObject(content);
-                    OutVideoMessage _videoMsg = new OutVideoMessage(fromUserName, toUserName, _json.getString("MediaId"));
-                    if (_json.containsKey("Title")) {
-                        _videoMsg.setTitle(_json.getString("Title"));
-                    }
-                    if (_json.containsKey("Description")) {
-                        _videoMsg.setDescription(_json.getString("Description"));
-                    }
-                    _out = _videoMsg;
-                    break;
-                case VOICE:
-                    _out = new OutVoiceMessage(fromUserName, toUserName, JSON.parseObject(content).getString("MediaId"));
-                    break;
-                case NEWS:
-                    List<Article> _articles = JSONArray.parseArray(JSONObject.parseObject(content).getJSONArray("Articles").toJSONString(), Article.class);
-                    _out = new OutNewsMessage(fromUserName, toUserName, _articles);
-                    break;
+            try {
+                IWechat.MessageType _type = IWechat.MessageType.valueOf(StringUtils.upperCase(type));
+                OutMessage _out = null;
+                switch (_type) {
+                    case TEXT:
+                        _out = new OutTextMessage(fromUserName, toUserName, content);
+                        break;
+                    case IMAGE:
+                        _out = new OutImageMessage(fromUserName, toUserName, JSON.parseObject(content).getString("MediaId"));
+                        break;
+                    case VIDEO:
+                        JSONObject _json = JSONObject.parseObject(content);
+                        OutVideoMessage _videoMsg = new OutVideoMessage(fromUserName, toUserName, _json.getString("MediaId"));
+                        if (_json.containsKey("Title")) {
+                            _videoMsg.setTitle(_json.getString("Title"));
+                        }
+                        if (_json.containsKey("Description")) {
+                            _videoMsg.setDescription(_json.getString("Description"));
+                        }
+                        _out = _videoMsg;
+                        break;
+                    case VOICE:
+                        _out = new OutVoiceMessage(fromUserName, toUserName, JSON.parseObject(content).getString("MediaId"));
+                        break;
+                    case NEWS:
+                        List<Article> _articles = JSONArray.parseArray(JSONObject.parseObject(content).getJSONArray("Articles").toJSONString(), Article.class);
+                        _out = new OutNewsMessage(fromUserName, toUserName, _articles);
+                        break;
+                }
+                return _out;
+            } catch (IllegalArgumentException e) {
+                _LOG.warn("", RuntimeUtils.unwrapThrow(e));
             }
-            return _out;
+            return null;
         }
     }
 
