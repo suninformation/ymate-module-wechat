@@ -38,9 +38,11 @@ public class WechatAutoreplyCfgMeta implements Serializable {
 
     public List<OutMessage> matchKeywords(String fromUserName, String toUserName, String keywords) throws Exception {
         List<OutMessage> _returnValues = new ArrayList<OutMessage>();
-        for (AutoreplyRuleMeta _meta : replyRules) {
-            for (WechatAutoreplyResult.ContentInfo _info : _meta.matchKeywords(keywords)) {
-                _returnValues.add(_info.toOutMessage(fromUserName, toUserName));
+        if (replyRules != null && !replyRules.isEmpty()) {
+            for (AutoreplyRuleMeta _meta : replyRules) {
+                for (WechatAutoreplyResult.ContentInfo _info : _meta.matchKeywords(keywords)) {
+                    _returnValues.add(_info.toOutMessage(fromUserName, toUserName));
+                }
             }
         }
         return _returnValues;
