@@ -213,7 +213,7 @@ public class WechatOAuthController {
                 _wxSession.setOauthExpiredTime(_token.getExpiredTime());
                 _wxSession.setOauthScope(_token.getScope());
                 //
-                _sessionBean.addAttribute(WechatUserSession.class.getName(), _wxSession);
+                _sessionBean.addAttribute(WechatUserSession.class.getName(), _wxSession).saveIfNeed();
                 //
                 return View.redirectView(redirectUri);
             }
