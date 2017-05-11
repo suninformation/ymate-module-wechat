@@ -160,6 +160,7 @@ public class WechatOAuthController {
                     state = DigestUtils.md5Hex(_token.getOpenId());
                 }
                 boolean _needInfo = _token.getScope().equals("snsapi_info");
+                long _currentTime = System.currentTimeMillis();
                 boolean _isNew = false;
                 WechatUser _wxUser = WechatUser.builder().id(state).build().load(Fields.create(WechatUser.FIELDS.ID, WechatUser.FIELDS.OAUTH_SCOPE), IDBLocker.MYSQL);
                 Fields _fields = Fields.create();
@@ -169,9 +170,10 @@ public class WechatOAuthController {
                 } else {
                     _wxUser = new WechatUser();
                     _wxUser.setId(state);
+                    _wxUser.setAccountId(_accountMeta.getAccountId());
                     _wxUser.setOpenId(_token.getOpenId());
                     _wxUser.setSiteId(_accountMeta.getAttribute("site_id"));
-                    _fields.add(WechatUser.FIELDS.ID, WechatUser.FIELDS.SITE_ID);
+                    _fields.add(WechatUser.FIELDS.ID).add(WechatUser.FIELDS.ACCOUNT_ID).add(WechatUser.FIELDS.OPEN_ID).add(WechatUser.FIELDS.SITE_ID);
                     _isNew = true;
                 }
                 if (_needInfo) {
@@ -184,7 +186,13 @@ public class WechatOAuthController {
                         _wxUser.setProvince(_snsUser.getProvince());
                         _wxUser.setCity(_snsUser.getCity());
                         //
-                        _fields.add(Fields.create(WechatUser.FIELDS.NICK_NAME, WechatUser.FIELDS.HEAD_IMG_URL, WechatUser.FIELDS.GENDER, WechatUser.FIELDS.COUNTRY, WechatUser.FIELDS.PROVINCE, WechatUser.FIELDS.CITY));
+                        _fields.add(Fields.create(
+                                WechatUser.FIELDS.NICK_NAME,
+                                WechatUser.FIELDS.HEAD_IMG_URL,
+                                WechatUser.FIELDS.GENDER,
+                                WechatUser.FIELDS.COUNTRY,
+                                WechatUser.FIELDS.PROVINCE,
+                                WechatUser.FIELDS.CITY));
                     }
                 }
                 _wxUser.setOauthAccessToken(_token.getAccessToken());
@@ -192,11 +200,18 @@ public class WechatOAuthController {
                 _wxUser.setOauthExpiredTime(_token.getExpiredTime());
                 _wxUser.setOauthScope(_token.getScope());
                 _wxUser.setUnionId(_token.getUnionId());
-                _wxUser.setLastModifyTime(System.currentTimeMillis());
+                _wxUser.setLastModifyTime(_currentTime);
                 //
-                _fields.add(Fields.create(WechatUser.FIELDS.OAUTH_ACCESS_TOKEN, WechatUser.FIELDS.OAUTH_REFRESH_TOKEN, WechatUser.FIELDS.OAUTH_EXPIRED_TIME, WechatUser.FIELDS.OAUTH_SCOPE, WechatUser.FIELDS.UNION_ID, WechatUser.FIELDS.LAST_MODIFY_TIME));
+                _fields.add(Fields.create(
+                        WechatUser.FIELDS.OAUTH_ACCESS_TOKEN,
+                        WechatUser.FIELDS.OAUTH_REFRESH_TOKEN,
+                        WechatUser.FIELDS.OAUTH_EXPIRED_TIME,
+                        WechatUser.FIELDS.OAUTH_SCOPE,
+                        WechatUser.FIELDS.UNION_ID,
+                        WechatUser.FIELDS.LAST_MODIFY_TIME));
                 if (_isNew) {
-                    _wxUser.save(_fields);
+                    _wxUser.setCreateTime(_currentTime);
+                    _wxUser.save(_fields.add(WechatUser.FIELDS.CREATE_TIME));
                 } else {
                     _wxUser.update(_fields);
                 }

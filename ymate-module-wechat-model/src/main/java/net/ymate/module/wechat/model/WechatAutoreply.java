@@ -14,53 +14,53 @@ import net.ymate.platform.persistence.jdbc.support.BaseEntity;
  * @version 1.0
  */
 @Entity("wechat_autoreply")
-public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
+public class WechatAutoreply extends BaseEntity<WechatAutoreply, java.lang.String> {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Property(name = "id", nullable = false, length = 32)
     @PropertyState(propertyName = "id")
-    private String id;
+    private java.lang.String id;
 
     @Property(name = "account_id", nullable = false, length = 32)
     @PropertyState(propertyName = "account_id")
-    private String accountId;
+    private java.lang.String accountId;
 
     @Property(name = "is_autoreply_open", unsigned = true, length = 1)
     @Default("1")
     @PropertyState(propertyName = "is_autoreply_open")
-    private Integer isAutoreplyOpen;
+    private java.lang.Integer isAutoreplyOpen;
 
     @Property(name = "is_subscribe_reply_open", unsigned = true, length = 1)
     @Default("1")
     @PropertyState(propertyName = "is_subscribe_reply_open")
-    private Integer isSubscribeReplyOpen;
+    private java.lang.Integer isSubscribeReplyOpen;
 
     @Property(name = "subscribe_autoreply_type", length = 10)
     @PropertyState(propertyName = "subscribe_autoreply_type")
-    private String subscribeAutoreplyType;
+    private java.lang.String subscribeAutoreplyType;
 
     @Property(name = "subscribe_autoreply_content", length = 32)
     @PropertyState(propertyName = "subscribe_autoreply_content")
-    private String subscribeAutoreplyContent;
+    private java.lang.String subscribeAutoreplyContent;
 
     @Property(name = "default_autoreply_type", length = 10)
     @PropertyState(propertyName = "default_autoreply_type")
-    private String defaultAutoreplyType;
+    private java.lang.String defaultAutoreplyType;
 
     @Property(name = "default_autoreply_content", length = 32)
     @PropertyState(propertyName = "default_autoreply_content")
-    private String defaultAutoreplyContent;
+    private java.lang.String defaultAutoreplyContent;
 
     @Property(name = "site_id", nullable = false, length = 32)
     @PropertyState(propertyName = "site_id")
-    private String siteId;
+    private java.lang.String siteId;
 
     @Property(name = "last_modify_time", length = 13)
     @Default("0")
     @PropertyState(propertyName = "last_modify_time")
-    private Long lastModifyTime;
+    private java.lang.Long lastModifyTime;
 
     /**
      * 构造器
@@ -75,7 +75,7 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
      * @param accountId
      * @param siteId
      */
-    public WechatAutoreply(String id, String accountId, String siteId) {
+    public WechatAutoreply(java.lang.String id, java.lang.String accountId, java.lang.String siteId) {
         this.id = id;
         this.accountId = accountId;
         this.siteId = siteId;
@@ -95,7 +95,7 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
      * @param siteId
      * @param lastModifyTime
      */
-    public WechatAutoreply(String id, String accountId, Integer isAutoreplyOpen, Integer isSubscribeReplyOpen, String subscribeAutoreplyType, String subscribeAutoreplyContent, String defaultAutoreplyType, String defaultAutoreplyContent, String siteId, Long lastModifyTime) {
+    public WechatAutoreply(java.lang.String id, java.lang.String accountId, java.lang.Integer isAutoreplyOpen, java.lang.Integer isSubscribeReplyOpen, java.lang.String subscribeAutoreplyType, java.lang.String subscribeAutoreplyContent, java.lang.String defaultAutoreplyType, java.lang.String defaultAutoreplyContent, java.lang.String siteId, java.lang.Long lastModifyTime) {
         this.id = id;
         this.accountId = accountId;
         this.isAutoreplyOpen = isAutoreplyOpen;
@@ -108,11 +108,11 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
         this.lastModifyTime = lastModifyTime;
     }
 
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
@@ -120,126 +120,126 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
     /**
      * @return the accountId
      */
-    public String getAccountId() {
+    public java.lang.String getAccountId() {
         return accountId;
     }
 
     /**
      * @param accountId the accountId to set
      */
-    public void setAccountId(String accountId) {
+    public void setAccountId(java.lang.String accountId) {
         this.accountId = accountId;
     }
 
     /**
      * @return the isAutoreplyOpen
      */
-    public Integer getIsAutoreplyOpen() {
+    public java.lang.Integer getIsAutoreplyOpen() {
         return isAutoreplyOpen;
     }
 
     /**
      * @param isAutoreplyOpen the isAutoreplyOpen to set
      */
-    public void setIsAutoreplyOpen(Integer isAutoreplyOpen) {
+    public void setIsAutoreplyOpen(java.lang.Integer isAutoreplyOpen) {
         this.isAutoreplyOpen = isAutoreplyOpen;
     }
 
     /**
      * @return the isSubscribeReplyOpen
      */
-    public Integer getIsSubscribeReplyOpen() {
+    public java.lang.Integer getIsSubscribeReplyOpen() {
         return isSubscribeReplyOpen;
     }
 
     /**
      * @param isSubscribeReplyOpen the isSubscribeReplyOpen to set
      */
-    public void setIsSubscribeReplyOpen(Integer isSubscribeReplyOpen) {
+    public void setIsSubscribeReplyOpen(java.lang.Integer isSubscribeReplyOpen) {
         this.isSubscribeReplyOpen = isSubscribeReplyOpen;
     }
 
     /**
      * @return the subscribeAutoreplyType
      */
-    public String getSubscribeAutoreplyType() {
+    public java.lang.String getSubscribeAutoreplyType() {
         return subscribeAutoreplyType;
     }
 
     /**
      * @param subscribeAutoreplyType the subscribeAutoreplyType to set
      */
-    public void setSubscribeAutoreplyType(String subscribeAutoreplyType) {
+    public void setSubscribeAutoreplyType(java.lang.String subscribeAutoreplyType) {
         this.subscribeAutoreplyType = subscribeAutoreplyType;
     }
 
     /**
      * @return the subscribeAutoreplyContent
      */
-    public String getSubscribeAutoreplyContent() {
+    public java.lang.String getSubscribeAutoreplyContent() {
         return subscribeAutoreplyContent;
     }
 
     /**
      * @param subscribeAutoreplyContent the subscribeAutoreplyContent to set
      */
-    public void setSubscribeAutoreplyContent(String subscribeAutoreplyContent) {
+    public void setSubscribeAutoreplyContent(java.lang.String subscribeAutoreplyContent) {
         this.subscribeAutoreplyContent = subscribeAutoreplyContent;
     }
 
     /**
      * @return the defaultAutoreplyType
      */
-    public String getDefaultAutoreplyType() {
+    public java.lang.String getDefaultAutoreplyType() {
         return defaultAutoreplyType;
     }
 
     /**
      * @param defaultAutoreplyType the defaultAutoreplyType to set
      */
-    public void setDefaultAutoreplyType(String defaultAutoreplyType) {
+    public void setDefaultAutoreplyType(java.lang.String defaultAutoreplyType) {
         this.defaultAutoreplyType = defaultAutoreplyType;
     }
 
     /**
      * @return the defaultAutoreplyContent
      */
-    public String getDefaultAutoreplyContent() {
+    public java.lang.String getDefaultAutoreplyContent() {
         return defaultAutoreplyContent;
     }
 
     /**
      * @param defaultAutoreplyContent the defaultAutoreplyContent to set
      */
-    public void setDefaultAutoreplyContent(String defaultAutoreplyContent) {
+    public void setDefaultAutoreplyContent(java.lang.String defaultAutoreplyContent) {
         this.defaultAutoreplyContent = defaultAutoreplyContent;
     }
 
     /**
      * @return the siteId
      */
-    public String getSiteId() {
+    public java.lang.String getSiteId() {
         return siteId;
     }
 
     /**
      * @param siteId the siteId to set
      */
-    public void setSiteId(String siteId) {
+    public void setSiteId(java.lang.String siteId) {
         this.siteId = siteId;
     }
 
     /**
      * @return the lastModifyTime
      */
-    public Long getLastModifyTime() {
+    public java.lang.Long getLastModifyTime() {
         return lastModifyTime;
     }
 
     /**
      * @param lastModifyTime the lastModifyTime to set
      */
-    public void setLastModifyTime(Long lastModifyTime) {
+    public void setLastModifyTime(java.lang.Long lastModifyTime) {
         this.lastModifyTime = lastModifyTime;
     }
 
@@ -272,92 +272,92 @@ public class WechatAutoreply extends BaseEntity<WechatAutoreply, String> {
             return _model;
         }
 
-        public String id() {
+        public java.lang.String id() {
             return _model.getId();
         }
 
-        public WechatAutoreplyBuilder id(String id) {
+        public WechatAutoreplyBuilder id(java.lang.String id) {
             _model.setId(id);
             return this;
         }
 
-        public String accountId() {
+        public java.lang.String accountId() {
             return _model.getAccountId();
         }
 
-        public WechatAutoreplyBuilder accountId(String accountId) {
+        public WechatAutoreplyBuilder accountId(java.lang.String accountId) {
             _model.setAccountId(accountId);
             return this;
         }
 
-        public Integer isAutoreplyOpen() {
+        public java.lang.Integer isAutoreplyOpen() {
             return _model.getIsAutoreplyOpen();
         }
 
-        public WechatAutoreplyBuilder isAutoreplyOpen(Integer isAutoreplyOpen) {
+        public WechatAutoreplyBuilder isAutoreplyOpen(java.lang.Integer isAutoreplyOpen) {
             _model.setIsAutoreplyOpen(isAutoreplyOpen);
             return this;
         }
 
-        public Integer isSubscribeReplyOpen() {
+        public java.lang.Integer isSubscribeReplyOpen() {
             return _model.getIsSubscribeReplyOpen();
         }
 
-        public WechatAutoreplyBuilder isSubscribeReplyOpen(Integer isSubscribeReplyOpen) {
+        public WechatAutoreplyBuilder isSubscribeReplyOpen(java.lang.Integer isSubscribeReplyOpen) {
             _model.setIsSubscribeReplyOpen(isSubscribeReplyOpen);
             return this;
         }
 
-        public String subscribeAutoreplyType() {
+        public java.lang.String subscribeAutoreplyType() {
             return _model.getSubscribeAutoreplyType();
         }
 
-        public WechatAutoreplyBuilder subscribeAutoreplyType(String subscribeAutoreplyType) {
+        public WechatAutoreplyBuilder subscribeAutoreplyType(java.lang.String subscribeAutoreplyType) {
             _model.setSubscribeAutoreplyType(subscribeAutoreplyType);
             return this;
         }
 
-        public String subscribeAutoreplyContent() {
+        public java.lang.String subscribeAutoreplyContent() {
             return _model.getSubscribeAutoreplyContent();
         }
 
-        public WechatAutoreplyBuilder subscribeAutoreplyContent(String subscribeAutoreplyContent) {
+        public WechatAutoreplyBuilder subscribeAutoreplyContent(java.lang.String subscribeAutoreplyContent) {
             _model.setSubscribeAutoreplyContent(subscribeAutoreplyContent);
             return this;
         }
 
-        public String defaultAutoreplyType() {
+        public java.lang.String defaultAutoreplyType() {
             return _model.getDefaultAutoreplyType();
         }
 
-        public WechatAutoreplyBuilder defaultAutoreplyType(String defaultAutoreplyType) {
+        public WechatAutoreplyBuilder defaultAutoreplyType(java.lang.String defaultAutoreplyType) {
             _model.setDefaultAutoreplyType(defaultAutoreplyType);
             return this;
         }
 
-        public String defaultAutoreplyContent() {
+        public java.lang.String defaultAutoreplyContent() {
             return _model.getDefaultAutoreplyContent();
         }
 
-        public WechatAutoreplyBuilder defaultAutoreplyContent(String defaultAutoreplyContent) {
+        public WechatAutoreplyBuilder defaultAutoreplyContent(java.lang.String defaultAutoreplyContent) {
             _model.setDefaultAutoreplyContent(defaultAutoreplyContent);
             return this;
         }
 
-        public String siteId() {
+        public java.lang.String siteId() {
             return _model.getSiteId();
         }
 
-        public WechatAutoreplyBuilder siteId(String siteId) {
+        public WechatAutoreplyBuilder siteId(java.lang.String siteId) {
             _model.setSiteId(siteId);
             return this;
         }
 
-        public Long lastModifyTime() {
+        public java.lang.Long lastModifyTime() {
             return _model.getLastModifyTime();
         }
 
-        public WechatAutoreplyBuilder lastModifyTime(Long lastModifyTime) {
+        public WechatAutoreplyBuilder lastModifyTime(java.lang.Long lastModifyTime) {
             _model.setLastModifyTime(lastModifyTime);
             return this;
         }

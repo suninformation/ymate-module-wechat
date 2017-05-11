@@ -14,43 +14,43 @@ import net.ymate.platform.persistence.jdbc.support.BaseEntity;
  * @version 1.0
  */
 @Entity("wechat_autoreply_rule")
-public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, String> {
+public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, java.lang.String> {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Property(name = "id", nullable = false, length = 32)
     @PropertyState(propertyName = "id")
-    private String id;
+    private java.lang.String id;
 
     @Property(name = "account_id", nullable = false, length = 32)
     @PropertyState(propertyName = "account_id")
-    private String accountId;
+    private java.lang.String accountId;
 
     @Property(name = "rule_name", nullable = false, length = 60)
     @PropertyState(propertyName = "rule_name")
-    private String ruleName;
+    private java.lang.String ruleName;
 
     @Property(name = "reply_mode", length = 10)
     @PropertyState(propertyName = "reply_mode")
-    private String replyMode;
+    private java.lang.String replyMode;
 
     @Property(name = "keyword_info", length = 16383)
     @PropertyState(propertyName = "keyword_info")
-    private String keywordInfo;
+    private java.lang.String keywordInfo;
 
     @Property(name = "reply_info", length = 16383)
     @PropertyState(propertyName = "reply_info")
-    private String replyInfo;
+    private java.lang.String replyInfo;
 
     @Property(name = "site_id", nullable = false, length = 32)
     @PropertyState(propertyName = "site_id")
-    private String siteId;
+    private java.lang.String siteId;
 
     @Property(name = "last_modify_time", length = 13)
     @Default("0")
     @PropertyState(propertyName = "last_modify_time")
-    private Long lastModifyTime;
+    private java.lang.Long lastModifyTime;
 
     /**
      * 构造器
@@ -66,7 +66,7 @@ public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, String>
      * @param ruleName
      * @param siteId
      */
-    public WechatAutoreplyRule(String id, String accountId, String ruleName, String siteId) {
+    public WechatAutoreplyRule(java.lang.String id, java.lang.String accountId, java.lang.String ruleName, java.lang.String siteId) {
         this.id = id;
         this.accountId = accountId;
         this.ruleName = ruleName;
@@ -85,7 +85,7 @@ public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, String>
      * @param siteId
      * @param lastModifyTime
      */
-    public WechatAutoreplyRule(String id, String accountId, String ruleName, String replyMode, String keywordInfo, String replyInfo, String siteId, Long lastModifyTime) {
+    public WechatAutoreplyRule(java.lang.String id, java.lang.String accountId, java.lang.String ruleName, java.lang.String replyMode, java.lang.String keywordInfo, java.lang.String replyInfo, java.lang.String siteId, java.lang.Long lastModifyTime) {
         this.id = id;
         this.accountId = accountId;
         this.ruleName = ruleName;
@@ -96,11 +96,11 @@ public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, String>
         this.lastModifyTime = lastModifyTime;
     }
 
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
@@ -108,98 +108,98 @@ public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, String>
     /**
      * @return the accountId
      */
-    public String getAccountId() {
+    public java.lang.String getAccountId() {
         return accountId;
     }
 
     /**
      * @param accountId the accountId to set
      */
-    public void setAccountId(String accountId) {
+    public void setAccountId(java.lang.String accountId) {
         this.accountId = accountId;
     }
 
     /**
      * @return the ruleName
      */
-    public String getRuleName() {
+    public java.lang.String getRuleName() {
         return ruleName;
     }
 
     /**
      * @param ruleName the ruleName to set
      */
-    public void setRuleName(String ruleName) {
+    public void setRuleName(java.lang.String ruleName) {
         this.ruleName = ruleName;
     }
 
     /**
      * @return the replyMode
      */
-    public String getReplyMode() {
+    public java.lang.String getReplyMode() {
         return replyMode;
     }
 
     /**
      * @param replyMode the replyMode to set
      */
-    public void setReplyMode(String replyMode) {
+    public void setReplyMode(java.lang.String replyMode) {
         this.replyMode = replyMode;
     }
 
     /**
      * @return the keywordInfo
      */
-    public String getKeywordInfo() {
+    public java.lang.String getKeywordInfo() {
         return keywordInfo;
     }
 
     /**
      * @param keywordInfo the keywordInfo to set
      */
-    public void setKeywordInfo(String keywordInfo) {
+    public void setKeywordInfo(java.lang.String keywordInfo) {
         this.keywordInfo = keywordInfo;
     }
 
     /**
      * @return the replyInfo
      */
-    public String getReplyInfo() {
+    public java.lang.String getReplyInfo() {
         return replyInfo;
     }
 
     /**
      * @param replyInfo the replyInfo to set
      */
-    public void setReplyInfo(String replyInfo) {
+    public void setReplyInfo(java.lang.String replyInfo) {
         this.replyInfo = replyInfo;
     }
 
     /**
      * @return the siteId
      */
-    public String getSiteId() {
+    public java.lang.String getSiteId() {
         return siteId;
     }
 
     /**
      * @param siteId the siteId to set
      */
-    public void setSiteId(String siteId) {
+    public void setSiteId(java.lang.String siteId) {
         this.siteId = siteId;
     }
 
     /**
      * @return the lastModifyTime
      */
-    public Long getLastModifyTime() {
+    public java.lang.Long getLastModifyTime() {
         return lastModifyTime;
     }
 
     /**
      * @param lastModifyTime the lastModifyTime to set
      */
-    public void setLastModifyTime(Long lastModifyTime) {
+    public void setLastModifyTime(java.lang.Long lastModifyTime) {
         this.lastModifyTime = lastModifyTime;
     }
 
@@ -232,74 +232,74 @@ public class WechatAutoreplyRule extends BaseEntity<WechatAutoreplyRule, String>
             return _model;
         }
 
-        public String id() {
+        public java.lang.String id() {
             return _model.getId();
         }
 
-        public WechatAutoreplyRuleBuilder id(String id) {
+        public WechatAutoreplyRuleBuilder id(java.lang.String id) {
             _model.setId(id);
             return this;
         }
 
-        public String accountId() {
+        public java.lang.String accountId() {
             return _model.getAccountId();
         }
 
-        public WechatAutoreplyRuleBuilder accountId(String accountId) {
+        public WechatAutoreplyRuleBuilder accountId(java.lang.String accountId) {
             _model.setAccountId(accountId);
             return this;
         }
 
-        public String ruleName() {
+        public java.lang.String ruleName() {
             return _model.getRuleName();
         }
 
-        public WechatAutoreplyRuleBuilder ruleName(String ruleName) {
+        public WechatAutoreplyRuleBuilder ruleName(java.lang.String ruleName) {
             _model.setRuleName(ruleName);
             return this;
         }
 
-        public String replyMode() {
+        public java.lang.String replyMode() {
             return _model.getReplyMode();
         }
 
-        public WechatAutoreplyRuleBuilder replyMode(String replyMode) {
+        public WechatAutoreplyRuleBuilder replyMode(java.lang.String replyMode) {
             _model.setReplyMode(replyMode);
             return this;
         }
 
-        public String keywordInfo() {
+        public java.lang.String keywordInfo() {
             return _model.getKeywordInfo();
         }
 
-        public WechatAutoreplyRuleBuilder keywordInfo(String keywordInfo) {
+        public WechatAutoreplyRuleBuilder keywordInfo(java.lang.String keywordInfo) {
             _model.setKeywordInfo(keywordInfo);
             return this;
         }
 
-        public String replyInfo() {
+        public java.lang.String replyInfo() {
             return _model.getReplyInfo();
         }
 
-        public WechatAutoreplyRuleBuilder replyInfo(String replyInfo) {
+        public WechatAutoreplyRuleBuilder replyInfo(java.lang.String replyInfo) {
             _model.setReplyInfo(replyInfo);
             return this;
         }
 
-        public String siteId() {
+        public java.lang.String siteId() {
             return _model.getSiteId();
         }
 
-        public WechatAutoreplyRuleBuilder siteId(String siteId) {
+        public WechatAutoreplyRuleBuilder siteId(java.lang.String siteId) {
             _model.setSiteId(siteId);
             return this;
         }
 
-        public Long lastModifyTime() {
+        public java.lang.Long lastModifyTime() {
             return _model.getLastModifyTime();
         }
 
-        public WechatAutoreplyRuleBuilder lastModifyTime(Long lastModifyTime) {
+        public WechatAutoreplyRuleBuilder lastModifyTime(java.lang.Long lastModifyTime) {
             _model.setLastModifyTime(lastModifyTime);
             return this;
         }

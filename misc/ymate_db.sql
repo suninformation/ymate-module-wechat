@@ -1,8 +1,8 @@
 -- ----------------------------
---  Table structure for `ymcms_wechat_account`
+--  Table structure for `ym_wechat_account`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_account`;
-CREATE TABLE `ymcms_wechat_account` (
+DROP TABLE IF EXISTS `ym_wechat_account`;
+CREATE TABLE `ym_wechat_account` (
   `id` varchar(32) NOT NULL,
   `name` varchar(50) NOT NULL,
   `wechat` varchar(50) NOT NULL,
@@ -41,10 +41,10 @@ CREATE TABLE `ymcms_wechat_account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
---  Table structure for `ymcms_wechat_autoreply`
+--  Table structure for `ym_wechat_autoreply`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_autoreply`;
-CREATE TABLE `ymcms_wechat_autoreply` (
+DROP TABLE IF EXISTS `ym_wechat_autoreply`;
+CREATE TABLE `ym_wechat_autoreply` (
   `id` varchar(32) NOT NULL,
   `account_id` varchar(32) NOT NULL,
   `is_autoreply_open` smallint(1) unsigned DEFAULT '1',
@@ -59,10 +59,10 @@ CREATE TABLE `ymcms_wechat_autoreply` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
---  Table structure for `ymcms_wechat_autoreply_rule`
+--  Table structure for `ym_wechat_autoreply_rule`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_autoreply_rule`;
-CREATE TABLE `ymcms_wechat_autoreply_rule` (
+DROP TABLE IF EXISTS `ym_wechat_autoreply_rule`;
+CREATE TABLE `ym_wechat_autoreply_rule` (
   `id` varchar(32) NOT NULL,
   `account_id` varchar(32) NOT NULL,
   `rule_name` varchar(60) NOT NULL,
@@ -75,28 +75,27 @@ CREATE TABLE `ymcms_wechat_autoreply_rule` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
---  Table structure for `ymcms_wechat_location`
+--  Table structure for `ym_wechat_location`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_location`;
-CREATE TABLE `ymcms_wechat_location` (
+DROP TABLE IF EXISTS `ym_wechat_location`;
+CREATE TABLE `ym_wechat_location` (
   `id` varchar(32) NOT NULL,
+  `account_id` varchar(32) NOT NULL,
   `wx_uid` varchar(32) NOT NULL,
   `location_lon` bigint(20) NOT NULL,
   `location_lat` bigint(20) NOT NULL,
   `precision` bigint(20) NOT NULL,
   `label` varchar(100) DEFAULT NULL,
-  `create_time` bigint(13) NOT NULL,
-  `account_id` varchar(32) NOT NULL,
   `site_id` varchar(32) NOT NULL,
-  `remark` varchar(200) DEFAULT NULL,
+  `create_time` bigint(13) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
---  Table structure for `ymcms_wechat_message`
+--  Table structure for `ym_wechat_message`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_message`;
-CREATE TABLE `ymcms_wechat_message` (
+DROP TABLE IF EXISTS `ym_wechat_message`;
+CREATE TABLE `ym_wechat_message` (
   `id` varchar(32) NOT NULL,
   `from_uid` varchar(32) NOT NULL,
   `to_uid` varchar(32) NOT NULL,
@@ -106,22 +105,20 @@ CREATE TABLE `ymcms_wechat_message` (
   `is_autoreply` smallint(1) unsigned DEFAULT '0',
   `is_read` smallint(1) unsigned DEFAULT '0',
   `is_deleted` smallint(1) unsigned DEFAULT '0',
-  `create_time` bigint(13) NOT NULL,
-  `create_by` varchar(100) DEFAULT NULL,
   `session_flag` varchar(32) DEFAULT NULL,
-  `idx_status` smallint(2) unsigned DEFAULT '0',
   `type` smallint(2) unsigned DEFAULT '0',
   `status` smallint(2) unsigned DEFAULT '0',
+  `idx_status` smallint(2) unsigned DEFAULT '0',
   `site_id` varchar(32) NOT NULL,
-  `remark` varchar(200) DEFAULT NULL,
+  `create_time` bigint(13) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
---  Table structure for `ymcms_wechat_token`
+--  Table structure for `ym_wechat_token`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_token`;
-CREATE TABLE `ymcms_wechat_token` (
+DROP TABLE IF EXISTS `ym_wechat_token`;
+CREATE TABLE `ym_wechat_token` (
   `id` varchar(32) NOT NULL,
   `account_id` varchar(32) NOT NULL,
   `site_id` varchar(32) NOT NULL,
@@ -129,16 +126,17 @@ CREATE TABLE `ymcms_wechat_token` (
   `access_token_expired_time` bigint(13) DEFAULT '0',
   `js_ticket` varchar(512) DEFAULT NULL,
   `js_ticket_expired_time` bigint(13) DEFAULT '0',
-  `last_modify_time` bigint(13) DEFAULT '0',
+  `last_modify_time` bigint(13) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
---  Table structure for `ymcms_wechat_user`
+--  Table structure for `ym_wechat_user`
 -- ----------------------------
-DROP TABLE IF EXISTS `ymcms_wechat_user`;
-CREATE TABLE `ymcms_wechat_user` (
+DROP TABLE IF EXISTS `ym_wechat_user`;
+CREATE TABLE `ym_wechat_user` (
   `id` varchar(32) NOT NULL,
+  `account_id` varchar(32) NOT NULL,
   `open_id` varchar(256) NOT NULL,
   `union_id` varchar(32) DEFAULT NULL,
   `nick_name` varchar(32) DEFAULT NULL,
@@ -149,19 +147,19 @@ CREATE TABLE `ymcms_wechat_user` (
   `province` varchar(32) DEFAULT NULL,
   `city` varchar(32) DEFAULT NULL,
   `language` varchar(10) DEFAULT NULL,
+  `remark` varchar(100) DEFAULT NULL,
   `is_subscribe` smallint(1) unsigned DEFAULT '0',
-  `subscribe_time` bigint(13) NOT NULL,
+  `subscribe_time` bigint(13) DEFAULT '0',
   `unsubscribe_time` bigint(13) DEFAULT '0',
   `tag_id_list` varchar(32) DEFAULT NULL,
-  `account_id` varchar(32) NOT NULL,
-  `last_active_time` bigint(13) NOT NULL DEFAULT '0',
-  `site_id` varchar(32) NOT NULL,
-  `status` smallint(2) unsigned DEFAULT '0',
-  `remark` varchar(100) DEFAULT NULL,
   `oauth_access_token` varchar(512) DEFAULT NULL,
   `oauth_refresh_token` varchar(512) DEFAULT NULL,
   `oauth_expired_time` bigint(13) DEFAULT '0',
+  `status` smallint(2) unsigned DEFAULT '0',
+  `site_id` varchar(32) NOT NULL,
   `oauth_scope` varchar(100) DEFAULT NULL,
+  `last_active_time` bigint(13) DEFAULT '0',
+  `create_time` bigint(13) NOT NULL,
   `last_modify_time` bigint(13) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

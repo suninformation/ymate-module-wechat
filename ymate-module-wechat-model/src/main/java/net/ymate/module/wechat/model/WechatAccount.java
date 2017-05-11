@@ -14,155 +14,155 @@ import net.ymate.platform.persistence.jdbc.support.BaseEntity;
  * @version 1.0
  */
 @Entity("wechat_account")
-public class WechatAccount extends BaseEntity<WechatAccount, String> {
+public class WechatAccount extends BaseEntity<WechatAccount, java.lang.String> {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Property(name = "id", nullable = false, length = 32)
     @PropertyState(propertyName = "id")
-    private String id;
+    private java.lang.String id;
 
     @Property(name = "name", nullable = false, length = 50)
     @PropertyState(propertyName = "name")
-    private String name;
+    private java.lang.String name;
 
     @Property(name = "wechat", nullable = false, length = 50)
     @PropertyState(propertyName = "wechat")
-    private String wechat;
+    private java.lang.String wechat;
 
     @Property(name = "account_id", nullable = false, length = 32)
     @PropertyState(propertyName = "account_id")
-    private String accountId;
+    private java.lang.String accountId;
 
     @Property(name = "app_id", nullable = false, length = 50)
     @PropertyState(propertyName = "app_id")
-    private String appId;
+    private java.lang.String appId;
 
     @Property(name = "app_secret", nullable = false, length = 100)
     @PropertyState(propertyName = "app_secret")
-    private String appSecret;
+    private java.lang.String appSecret;
 
     @Property(name = "app_aes_key", length = 50)
     @PropertyState(propertyName = "app_aes_key")
-    private String appAesKey;
+    private java.lang.String appAesKey;
 
     @Property(name = "last_app_aes_key", length = 50)
     @PropertyState(propertyName = "last_app_aes_key")
-    private String lastAppAesKey;
+    private java.lang.String lastAppAesKey;
 
     @Property(name = "host", length = 255)
     @PropertyState(propertyName = "host")
-    private String host;
+    private java.lang.String host;
 
     @Property(name = "redirect_uri", length = 255)
     @PropertyState(propertyName = "redirect_uri")
-    private String redirectUri;
+    private java.lang.String redirectUri;
 
     @Property(name = "icon_url", length = 255)
     @PropertyState(propertyName = "icon_url")
-    private String iconUrl;
+    private java.lang.String iconUrl;
 
     @Property(name = "qr_code", length = 255)
     @PropertyState(propertyName = "qr_code")
-    private String qrCode;
+    private java.lang.String qrCode;
 
     @Property(name = "token", nullable = false, length = 32)
     @PropertyState(propertyName = "token")
-    private String token;
+    private java.lang.String token;
 
     @Property(name = "type", unsigned = true, length = 2)
     @Default("0")
     @PropertyState(propertyName = "type")
-    private Integer type;
+    private java.lang.Integer type;
 
     @Property(name = "country", length = 32)
     @Default("")
     @PropertyState(propertyName = "country")
-    private String country;
+    private java.lang.String country;
 
     @Property(name = "province", length = 32)
     @PropertyState(propertyName = "province")
-    private String province;
+    private java.lang.String province;
 
     @Property(name = "city", length = 32)
     @PropertyState(propertyName = "city")
-    private String city;
+    private java.lang.String city;
 
     @Property(name = "location_addr", length = 200)
     @PropertyState(propertyName = "location_addr")
-    private String locationAddr;
+    private java.lang.String locationAddr;
 
     @Property(name = "location_lon", length = 20)
     @Default("0")
     @PropertyState(propertyName = "location_lon")
-    private Long locationLon;
+    private java.lang.Long locationLon;
 
     @Property(name = "location_lat", length = 20)
     @Default("0")
     @PropertyState(propertyName = "location_lat")
-    private Long locationLat;
+    private java.lang.Long locationLat;
 
     @Property(name = "menu", length = 16383)
     @PropertyState(propertyName = "menu")
-    private String menu;
+    private java.lang.String menu;
 
     @Property(name = "summary", length = 16383)
     @PropertyState(propertyName = "summary")
-    private String summary;
+    private java.lang.String summary;
 
     @Property(name = "is_verified", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_verified")
-    private Integer isVerified;
+    private java.lang.Integer isVerified;
 
     @Property(name = "is_deleted", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_deleted")
-    private Integer isDeleted;
+    private java.lang.Integer isDeleted;
 
     @Property(name = "is_msg_encrypted", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_msg_encrypted")
-    private Integer isMsgEncrypted;
+    private java.lang.Integer isMsgEncrypted;
 
     @Property(name = "mch_id", length = 32)
     @PropertyState(propertyName = "mch_id")
-    private String mchId;
+    private java.lang.String mchId;
 
     @Property(name = "mch_key", length = 32)
     @PropertyState(propertyName = "mch_key")
-    private String mchKey;
+    private java.lang.String mchKey;
 
     @Property(name = "notify_url", length = 255)
     @PropertyState(propertyName = "notify_url")
-    private String notifyUrl;
+    private java.lang.String notifyUrl;
 
     @Property(name = "cert_file_path", length = 255)
     @PropertyState(propertyName = "cert_file_path")
-    private String certFilePath;
+    private java.lang.String certFilePath;
 
     @Property(name = "status", unsigned = true, length = 2)
     @Default("0")
     @PropertyState(propertyName = "status")
-    private Integer status;
+    private java.lang.Integer status;
 
     @Property(name = "site_id", nullable = false, length = 32)
     @PropertyState(propertyName = "site_id")
-    private String siteId;
+    private java.lang.String siteId;
 
     @Property(name = "remark", length = 200)
     @PropertyState(propertyName = "remark")
-    private String remark;
+    private java.lang.String remark;
 
     @Property(name = "create_time", nullable = false, length = 13)
     @PropertyState(propertyName = "create_time")
-    private Long createTime;
+    private java.lang.Long createTime;
 
     @Property(name = "last_modify_time", length = 13)
     @Default("0")
     @PropertyState(propertyName = "last_modify_time")
-    private Long lastModifyTime;
+    private java.lang.Long lastModifyTime;
 
     /**
      * 构造器
@@ -183,7 +183,7 @@ public class WechatAccount extends BaseEntity<WechatAccount, String> {
      * @param siteId
      * @param createTime
      */
-    public WechatAccount(String id, String name, String wechat, String accountId, String appId, String appSecret, String token, String siteId, Long createTime) {
+    public WechatAccount(java.lang.String id, java.lang.String name, java.lang.String wechat, java.lang.String accountId, java.lang.String appId, java.lang.String appSecret, java.lang.String token, java.lang.String siteId, java.lang.Long createTime) {
         this.id = id;
         this.name = name;
         this.wechat = wechat;
@@ -233,7 +233,7 @@ public class WechatAccount extends BaseEntity<WechatAccount, String> {
      * @param createTime
      * @param lastModifyTime
      */
-    public WechatAccount(String id, String name, String wechat, String accountId, String appId, String appSecret, String appAesKey, String lastAppAesKey, String host, String redirectUri, String iconUrl, String qrCode, String token, Integer type, String country, String province, String city, String locationAddr, Long locationLon, Long locationLat, String menu, String summary, Integer isVerified, Integer isDeleted, Integer isMsgEncrypted, String mchId, String mchKey, String notifyUrl, String certFilePath, Integer status, String siteId, String remark, Long createTime, Long lastModifyTime) {
+    public WechatAccount(java.lang.String id, java.lang.String name, java.lang.String wechat, java.lang.String accountId, java.lang.String appId, java.lang.String appSecret, java.lang.String appAesKey, java.lang.String lastAppAesKey, java.lang.String host, java.lang.String redirectUri, java.lang.String iconUrl, java.lang.String qrCode, java.lang.String token, java.lang.Integer type, java.lang.String country, java.lang.String province, java.lang.String city, java.lang.String locationAddr, java.lang.Long locationLon, java.lang.Long locationLat, java.lang.String menu, java.lang.String summary, java.lang.Integer isVerified, java.lang.Integer isDeleted, java.lang.Integer isMsgEncrypted, java.lang.String mchId, java.lang.String mchKey, java.lang.String notifyUrl, java.lang.String certFilePath, java.lang.Integer status, java.lang.String siteId, java.lang.String remark, java.lang.Long createTime, java.lang.Long lastModifyTime) {
         this.id = id;
         this.name = name;
         this.wechat = wechat;
@@ -270,11 +270,11 @@ public class WechatAccount extends BaseEntity<WechatAccount, String> {
         this.lastModifyTime = lastModifyTime;
     }
 
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
@@ -282,462 +282,462 @@ public class WechatAccount extends BaseEntity<WechatAccount, String> {
     /**
      * @return the name
      */
-    public String getName() {
+    public java.lang.String getName() {
         return name;
     }
 
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public void setName(java.lang.String name) {
         this.name = name;
     }
 
     /**
      * @return the wechat
      */
-    public String getWechat() {
+    public java.lang.String getWechat() {
         return wechat;
     }
 
     /**
      * @param wechat the wechat to set
      */
-    public void setWechat(String wechat) {
+    public void setWechat(java.lang.String wechat) {
         this.wechat = wechat;
     }
 
     /**
      * @return the accountId
      */
-    public String getAccountId() {
+    public java.lang.String getAccountId() {
         return accountId;
     }
 
     /**
      * @param accountId the accountId to set
      */
-    public void setAccountId(String accountId) {
+    public void setAccountId(java.lang.String accountId) {
         this.accountId = accountId;
     }
 
     /**
      * @return the appId
      */
-    public String getAppId() {
+    public java.lang.String getAppId() {
         return appId;
     }
 
     /**
      * @param appId the appId to set
      */
-    public void setAppId(String appId) {
+    public void setAppId(java.lang.String appId) {
         this.appId = appId;
     }
 
     /**
      * @return the appSecret
      */
-    public String getAppSecret() {
+    public java.lang.String getAppSecret() {
         return appSecret;
     }
 
     /**
      * @param appSecret the appSecret to set
      */
-    public void setAppSecret(String appSecret) {
+    public void setAppSecret(java.lang.String appSecret) {
         this.appSecret = appSecret;
     }
 
     /**
      * @return the appAesKey
      */
-    public String getAppAesKey() {
+    public java.lang.String getAppAesKey() {
         return appAesKey;
     }
 
     /**
      * @param appAesKey the appAesKey to set
      */
-    public void setAppAesKey(String appAesKey) {
+    public void setAppAesKey(java.lang.String appAesKey) {
         this.appAesKey = appAesKey;
     }
 
     /**
      * @return the lastAppAesKey
      */
-    public String getLastAppAesKey() {
+    public java.lang.String getLastAppAesKey() {
         return lastAppAesKey;
     }
 
     /**
      * @param lastAppAesKey the lastAppAesKey to set
      */
-    public void setLastAppAesKey(String lastAppAesKey) {
+    public void setLastAppAesKey(java.lang.String lastAppAesKey) {
         this.lastAppAesKey = lastAppAesKey;
     }
 
     /**
      * @return the host
      */
-    public String getHost() {
+    public java.lang.String getHost() {
         return host;
     }
 
     /**
      * @param host the host to set
      */
-    public void setHost(String host) {
+    public void setHost(java.lang.String host) {
         this.host = host;
     }
 
     /**
      * @return the redirectUri
      */
-    public String getRedirectUri() {
+    public java.lang.String getRedirectUri() {
         return redirectUri;
     }
 
     /**
      * @param redirectUri the redirectUri to set
      */
-    public void setRedirectUri(String redirectUri) {
+    public void setRedirectUri(java.lang.String redirectUri) {
         this.redirectUri = redirectUri;
     }
 
     /**
      * @return the iconUrl
      */
-    public String getIconUrl() {
+    public java.lang.String getIconUrl() {
         return iconUrl;
     }
 
     /**
      * @param iconUrl the iconUrl to set
      */
-    public void setIconUrl(String iconUrl) {
+    public void setIconUrl(java.lang.String iconUrl) {
         this.iconUrl = iconUrl;
     }
 
     /**
      * @return the qrCode
      */
-    public String getQrCode() {
+    public java.lang.String getQrCode() {
         return qrCode;
     }
 
     /**
      * @param qrCode the qrCode to set
      */
-    public void setQrCode(String qrCode) {
+    public void setQrCode(java.lang.String qrCode) {
         this.qrCode = qrCode;
     }
 
     /**
      * @return the token
      */
-    public String getToken() {
+    public java.lang.String getToken() {
         return token;
     }
 
     /**
      * @param token the token to set
      */
-    public void setToken(String token) {
+    public void setToken(java.lang.String token) {
         this.token = token;
     }
 
     /**
      * @return the type
      */
-    public Integer getType() {
+    public java.lang.Integer getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(Integer type) {
+    public void setType(java.lang.Integer type) {
         this.type = type;
     }
 
     /**
      * @return the country
      */
-    public String getCountry() {
+    public java.lang.String getCountry() {
         return country;
     }
 
     /**
      * @param country the country to set
      */
-    public void setCountry(String country) {
+    public void setCountry(java.lang.String country) {
         this.country = country;
     }
 
     /**
      * @return the province
      */
-    public String getProvince() {
+    public java.lang.String getProvince() {
         return province;
     }
 
     /**
      * @param province the province to set
      */
-    public void setProvince(String province) {
+    public void setProvince(java.lang.String province) {
         this.province = province;
     }
 
     /**
      * @return the city
      */
-    public String getCity() {
+    public java.lang.String getCity() {
         return city;
     }
 
     /**
      * @param city the city to set
      */
-    public void setCity(String city) {
+    public void setCity(java.lang.String city) {
         this.city = city;
     }
 
     /**
      * @return the locationAddr
      */
-    public String getLocationAddr() {
+    public java.lang.String getLocationAddr() {
         return locationAddr;
     }
 
     /**
      * @param locationAddr the locationAddr to set
      */
-    public void setLocationAddr(String locationAddr) {
+    public void setLocationAddr(java.lang.String locationAddr) {
         this.locationAddr = locationAddr;
     }
 
     /**
      * @return the locationLon
      */
-    public Long getLocationLon() {
+    public java.lang.Long getLocationLon() {
         return locationLon;
     }
 
     /**
      * @param locationLon the locationLon to set
      */
-    public void setLocationLon(Long locationLon) {
+    public void setLocationLon(java.lang.Long locationLon) {
         this.locationLon = locationLon;
     }
 
     /**
      * @return the locationLat
      */
-    public Long getLocationLat() {
+    public java.lang.Long getLocationLat() {
         return locationLat;
     }
 
     /**
      * @param locationLat the locationLat to set
      */
-    public void setLocationLat(Long locationLat) {
+    public void setLocationLat(java.lang.Long locationLat) {
         this.locationLat = locationLat;
     }
 
     /**
      * @return the menu
      */
-    public String getMenu() {
+    public java.lang.String getMenu() {
         return menu;
     }
 
     /**
      * @param menu the menu to set
      */
-    public void setMenu(String menu) {
+    public void setMenu(java.lang.String menu) {
         this.menu = menu;
     }
 
     /**
      * @return the summary
      */
-    public String getSummary() {
+    public java.lang.String getSummary() {
         return summary;
     }
 
     /**
      * @param summary the summary to set
      */
-    public void setSummary(String summary) {
+    public void setSummary(java.lang.String summary) {
         this.summary = summary;
     }
 
     /**
      * @return the isVerified
      */
-    public Integer getIsVerified() {
+    public java.lang.Integer getIsVerified() {
         return isVerified;
     }
 
     /**
      * @param isVerified the isVerified to set
      */
-    public void setIsVerified(Integer isVerified) {
+    public void setIsVerified(java.lang.Integer isVerified) {
         this.isVerified = isVerified;
     }
 
     /**
      * @return the isDeleted
      */
-    public Integer getIsDeleted() {
+    public java.lang.Integer getIsDeleted() {
         return isDeleted;
     }
 
     /**
      * @param isDeleted the isDeleted to set
      */
-    public void setIsDeleted(Integer isDeleted) {
+    public void setIsDeleted(java.lang.Integer isDeleted) {
         this.isDeleted = isDeleted;
     }
 
     /**
      * @return the isMsgEncrypted
      */
-    public Integer getIsMsgEncrypted() {
+    public java.lang.Integer getIsMsgEncrypted() {
         return isMsgEncrypted;
     }
 
     /**
      * @param isMsgEncrypted the isMsgEncrypted to set
      */
-    public void setIsMsgEncrypted(Integer isMsgEncrypted) {
+    public void setIsMsgEncrypted(java.lang.Integer isMsgEncrypted) {
         this.isMsgEncrypted = isMsgEncrypted;
     }
 
     /**
      * @return the mchId
      */
-    public String getMchId() {
+    public java.lang.String getMchId() {
         return mchId;
     }
 
     /**
      * @param mchId the mchId to set
      */
-    public void setMchId(String mchId) {
+    public void setMchId(java.lang.String mchId) {
         this.mchId = mchId;
     }
 
     /**
      * @return the mchKey
      */
-    public String getMchKey() {
+    public java.lang.String getMchKey() {
         return mchKey;
     }
 
     /**
      * @param mchKey the mchKey to set
      */
-    public void setMchKey(String mchKey) {
+    public void setMchKey(java.lang.String mchKey) {
         this.mchKey = mchKey;
     }
 
     /**
      * @return the notifyUrl
      */
-    public String getNotifyUrl() {
+    public java.lang.String getNotifyUrl() {
         return notifyUrl;
     }
 
     /**
      * @param notifyUrl the notifyUrl to set
      */
-    public void setNotifyUrl(String notifyUrl) {
+    public void setNotifyUrl(java.lang.String notifyUrl) {
         this.notifyUrl = notifyUrl;
     }
 
     /**
      * @return the certFilePath
      */
-    public String getCertFilePath() {
+    public java.lang.String getCertFilePath() {
         return certFilePath;
     }
 
     /**
      * @param certFilePath the certFilePath to set
      */
-    public void setCertFilePath(String certFilePath) {
+    public void setCertFilePath(java.lang.String certFilePath) {
         this.certFilePath = certFilePath;
     }
 
     /**
      * @return the status
      */
-    public Integer getStatus() {
+    public java.lang.Integer getStatus() {
         return status;
     }
 
     /**
      * @param status the status to set
      */
-    public void setStatus(Integer status) {
+    public void setStatus(java.lang.Integer status) {
         this.status = status;
     }
 
     /**
      * @return the siteId
      */
-    public String getSiteId() {
+    public java.lang.String getSiteId() {
         return siteId;
     }
 
     /**
      * @param siteId the siteId to set
      */
-    public void setSiteId(String siteId) {
+    public void setSiteId(java.lang.String siteId) {
         this.siteId = siteId;
     }
 
     /**
      * @return the remark
      */
-    public String getRemark() {
+    public java.lang.String getRemark() {
         return remark;
     }
 
     /**
      * @param remark the remark to set
      */
-    public void setRemark(String remark) {
+    public void setRemark(java.lang.String remark) {
         this.remark = remark;
     }
 
     /**
      * @return the createTime
      */
-    public Long getCreateTime() {
+    public java.lang.Long getCreateTime() {
         return createTime;
     }
 
     /**
      * @param createTime the createTime to set
      */
-    public void setCreateTime(Long createTime) {
+    public void setCreateTime(java.lang.Long createTime) {
         this.createTime = createTime;
     }
 
     /**
      * @return the lastModifyTime
      */
-    public Long getLastModifyTime() {
+    public java.lang.Long getLastModifyTime() {
         return lastModifyTime;
     }
 
     /**
      * @param lastModifyTime the lastModifyTime to set
      */
-    public void setLastModifyTime(Long lastModifyTime) {
+    public void setLastModifyTime(java.lang.Long lastModifyTime) {
         this.lastModifyTime = lastModifyTime;
     }
 
@@ -770,308 +770,308 @@ public class WechatAccount extends BaseEntity<WechatAccount, String> {
             return _model;
         }
 
-        public String id() {
+        public java.lang.String id() {
             return _model.getId();
         }
 
-        public WechatAccountBuilder id(String id) {
+        public WechatAccountBuilder id(java.lang.String id) {
             _model.setId(id);
             return this;
         }
 
-        public String name() {
+        public java.lang.String name() {
             return _model.getName();
         }
 
-        public WechatAccountBuilder name(String name) {
+        public WechatAccountBuilder name(java.lang.String name) {
             _model.setName(name);
             return this;
         }
 
-        public String wechat() {
+        public java.lang.String wechat() {
             return _model.getWechat();
         }
 
-        public WechatAccountBuilder wechat(String wechat) {
+        public WechatAccountBuilder wechat(java.lang.String wechat) {
             _model.setWechat(wechat);
             return this;
         }
 
-        public String accountId() {
+        public java.lang.String accountId() {
             return _model.getAccountId();
         }
 
-        public WechatAccountBuilder accountId(String accountId) {
+        public WechatAccountBuilder accountId(java.lang.String accountId) {
             _model.setAccountId(accountId);
             return this;
         }
 
-        public String appId() {
+        public java.lang.String appId() {
             return _model.getAppId();
         }
 
-        public WechatAccountBuilder appId(String appId) {
+        public WechatAccountBuilder appId(java.lang.String appId) {
             _model.setAppId(appId);
             return this;
         }
 
-        public String appSecret() {
+        public java.lang.String appSecret() {
             return _model.getAppSecret();
         }
 
-        public WechatAccountBuilder appSecret(String appSecret) {
+        public WechatAccountBuilder appSecret(java.lang.String appSecret) {
             _model.setAppSecret(appSecret);
             return this;
         }
 
-        public String appAesKey() {
+        public java.lang.String appAesKey() {
             return _model.getAppAesKey();
         }
 
-        public WechatAccountBuilder appAesKey(String appAesKey) {
+        public WechatAccountBuilder appAesKey(java.lang.String appAesKey) {
             _model.setAppAesKey(appAesKey);
             return this;
         }
 
-        public String lastAppAesKey() {
+        public java.lang.String lastAppAesKey() {
             return _model.getLastAppAesKey();
         }
 
-        public WechatAccountBuilder lastAppAesKey(String lastAppAesKey) {
+        public WechatAccountBuilder lastAppAesKey(java.lang.String lastAppAesKey) {
             _model.setLastAppAesKey(lastAppAesKey);
             return this;
         }
 
-        public String host() {
+        public java.lang.String host() {
             return _model.getHost();
         }
 
-        public WechatAccountBuilder host(String host) {
+        public WechatAccountBuilder host(java.lang.String host) {
             _model.setHost(host);
             return this;
         }
 
-        public String redirectUri() {
+        public java.lang.String redirectUri() {
             return _model.getRedirectUri();
         }
 
-        public WechatAccountBuilder redirectUri(String redirectUri) {
+        public WechatAccountBuilder redirectUri(java.lang.String redirectUri) {
             _model.setRedirectUri(redirectUri);
             return this;
         }
 
-        public String iconUrl() {
+        public java.lang.String iconUrl() {
             return _model.getIconUrl();
         }
 
-        public WechatAccountBuilder iconUrl(String iconUrl) {
+        public WechatAccountBuilder iconUrl(java.lang.String iconUrl) {
             _model.setIconUrl(iconUrl);
             return this;
         }
 
-        public String qrCode() {
+        public java.lang.String qrCode() {
             return _model.getQrCode();
         }
 
-        public WechatAccountBuilder qrCode(String qrCode) {
+        public WechatAccountBuilder qrCode(java.lang.String qrCode) {
             _model.setQrCode(qrCode);
             return this;
         }
 
-        public String token() {
+        public java.lang.String token() {
             return _model.getToken();
         }
 
-        public WechatAccountBuilder token(String token) {
+        public WechatAccountBuilder token(java.lang.String token) {
             _model.setToken(token);
             return this;
         }
 
-        public Integer type() {
+        public java.lang.Integer type() {
             return _model.getType();
         }
 
-        public WechatAccountBuilder type(Integer type) {
+        public WechatAccountBuilder type(java.lang.Integer type) {
             _model.setType(type);
             return this;
         }
 
-        public String country() {
+        public java.lang.String country() {
             return _model.getCountry();
         }
 
-        public WechatAccountBuilder country(String country) {
+        public WechatAccountBuilder country(java.lang.String country) {
             _model.setCountry(country);
             return this;
         }
 
-        public String province() {
+        public java.lang.String province() {
             return _model.getProvince();
         }
 
-        public WechatAccountBuilder province(String province) {
+        public WechatAccountBuilder province(java.lang.String province) {
             _model.setProvince(province);
             return this;
         }
 
-        public String city() {
+        public java.lang.String city() {
             return _model.getCity();
         }
 
-        public WechatAccountBuilder city(String city) {
+        public WechatAccountBuilder city(java.lang.String city) {
             _model.setCity(city);
             return this;
         }
 
-        public String locationAddr() {
+        public java.lang.String locationAddr() {
             return _model.getLocationAddr();
         }
 
-        public WechatAccountBuilder locationAddr(String locationAddr) {
+        public WechatAccountBuilder locationAddr(java.lang.String locationAddr) {
             _model.setLocationAddr(locationAddr);
             return this;
         }
 
-        public Long locationLon() {
+        public java.lang.Long locationLon() {
             return _model.getLocationLon();
         }
 
-        public WechatAccountBuilder locationLon(Long locationLon) {
+        public WechatAccountBuilder locationLon(java.lang.Long locationLon) {
             _model.setLocationLon(locationLon);
             return this;
         }
 
-        public Long locationLat() {
+        public java.lang.Long locationLat() {
             return _model.getLocationLat();
         }
 
-        public WechatAccountBuilder locationLat(Long locationLat) {
+        public WechatAccountBuilder locationLat(java.lang.Long locationLat) {
             _model.setLocationLat(locationLat);
             return this;
         }
 
-        public String menu() {
+        public java.lang.String menu() {
             return _model.getMenu();
         }
 
-        public WechatAccountBuilder menu(String menu) {
+        public WechatAccountBuilder menu(java.lang.String menu) {
             _model.setMenu(menu);
             return this;
         }
 
-        public String summary() {
+        public java.lang.String summary() {
             return _model.getSummary();
         }
 
-        public WechatAccountBuilder summary(String summary) {
+        public WechatAccountBuilder summary(java.lang.String summary) {
             _model.setSummary(summary);
             return this;
         }
 
-        public Integer isVerified() {
+        public java.lang.Integer isVerified() {
             return _model.getIsVerified();
         }
 
-        public WechatAccountBuilder isVerified(Integer isVerified) {
+        public WechatAccountBuilder isVerified(java.lang.Integer isVerified) {
             _model.setIsVerified(isVerified);
             return this;
         }
 
-        public Integer isDeleted() {
+        public java.lang.Integer isDeleted() {
             return _model.getIsDeleted();
         }
 
-        public WechatAccountBuilder isDeleted(Integer isDeleted) {
+        public WechatAccountBuilder isDeleted(java.lang.Integer isDeleted) {
             _model.setIsDeleted(isDeleted);
             return this;
         }
 
-        public Integer isMsgEncrypted() {
+        public java.lang.Integer isMsgEncrypted() {
             return _model.getIsMsgEncrypted();
         }
 
-        public WechatAccountBuilder isMsgEncrypted(Integer isMsgEncrypted) {
+        public WechatAccountBuilder isMsgEncrypted(java.lang.Integer isMsgEncrypted) {
             _model.setIsMsgEncrypted(isMsgEncrypted);
             return this;
         }
 
-        public String mchId() {
+        public java.lang.String mchId() {
             return _model.getMchId();
         }
 
-        public WechatAccountBuilder mchId(String mchId) {
+        public WechatAccountBuilder mchId(java.lang.String mchId) {
             _model.setMchId(mchId);
             return this;
         }
 
-        public String mchKey() {
+        public java.lang.String mchKey() {
             return _model.getMchKey();
         }
 
-        public WechatAccountBuilder mchKey(String mchKey) {
+        public WechatAccountBuilder mchKey(java.lang.String mchKey) {
             _model.setMchKey(mchKey);
             return this;
         }
 
-        public String notifyUrl() {
+        public java.lang.String notifyUrl() {
             return _model.getNotifyUrl();
         }
 
-        public WechatAccountBuilder notifyUrl(String notifyUrl) {
+        public WechatAccountBuilder notifyUrl(java.lang.String notifyUrl) {
             _model.setNotifyUrl(notifyUrl);
             return this;
         }
 
-        public String certFilePath() {
+        public java.lang.String certFilePath() {
             return _model.getCertFilePath();
         }
 
-        public WechatAccountBuilder certFilePath(String certFilePath) {
+        public WechatAccountBuilder certFilePath(java.lang.String certFilePath) {
             _model.setCertFilePath(certFilePath);
             return this;
         }
 
-        public Integer status() {
+        public java.lang.Integer status() {
             return _model.getStatus();
         }
 
-        public WechatAccountBuilder status(Integer status) {
+        public WechatAccountBuilder status(java.lang.Integer status) {
             _model.setStatus(status);
             return this;
         }
 
-        public String siteId() {
+        public java.lang.String siteId() {
             return _model.getSiteId();
         }
 
-        public WechatAccountBuilder siteId(String siteId) {
+        public WechatAccountBuilder siteId(java.lang.String siteId) {
             _model.setSiteId(siteId);
             return this;
         }
 
-        public String remark() {
+        public java.lang.String remark() {
             return _model.getRemark();
         }
 
-        public WechatAccountBuilder remark(String remark) {
+        public WechatAccountBuilder remark(java.lang.String remark) {
             _model.setRemark(remark);
             return this;
         }
 
-        public Long createTime() {
+        public java.lang.Long createTime() {
             return _model.getCreateTime();
         }
 
-        public WechatAccountBuilder createTime(Long createTime) {
+        public WechatAccountBuilder createTime(java.lang.Long createTime) {
             _model.setCreateTime(createTime);
             return this;
         }
 
-        public Long lastModifyTime() {
+        public java.lang.Long lastModifyTime() {
             return _model.getLastModifyTime();
         }
 
-        public WechatAccountBuilder lastModifyTime(Long lastModifyTime) {
+        public WechatAccountBuilder lastModifyTime(java.lang.Long lastModifyTime) {
             _model.setLastModifyTime(lastModifyTime);
             return this;
         }

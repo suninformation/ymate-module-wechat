@@ -1,6 +1,7 @@
 package net.ymate.module.wechat.model;
 
 import net.ymate.platform.core.beans.annotation.PropertyState;
+import net.ymate.platform.persistence.annotation.Default;
 import net.ymate.platform.persistence.annotation.Entity;
 import net.ymate.platform.persistence.annotation.Id;
 import net.ymate.platform.persistence.annotation.Property;
@@ -13,50 +14,46 @@ import net.ymate.platform.persistence.jdbc.support.BaseEntity;
  * @version 1.0
  */
 @Entity("wechat_location")
-public class WechatLocation extends BaseEntity<WechatLocation, String> {
+public class WechatLocation extends BaseEntity<WechatLocation, java.lang.String> {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Property(name = "id", nullable = false, length = 32)
     @PropertyState(propertyName = "id")
-    private String id;
-
-    @Property(name = "wx_uid", nullable = false, length = 32)
-    @PropertyState(propertyName = "wx_uid")
-    private String wxUid;
-
-    @Property(name = "location_lon", nullable = false, length = 20)
-    @PropertyState(propertyName = "location_lon")
-    private Long locationLon;
-
-    @Property(name = "location_lat", nullable = false, length = 20)
-    @PropertyState(propertyName = "location_lat")
-    private Long locationLat;
-
-    @Property(name = "precision", nullable = false, length = 20)
-    @PropertyState(propertyName = "precision")
-    private Long precision;
-
-    @Property(name = "label", length = 100)
-    @PropertyState(propertyName = "label")
-    private String label;
-
-    @Property(name = "create_time", nullable = false, length = 13)
-    @PropertyState(propertyName = "create_time")
-    private Long createTime;
+    private java.lang.String id;
 
     @Property(name = "account_id", nullable = false, length = 32)
     @PropertyState(propertyName = "account_id")
-    private String accountId;
+    private java.lang.String accountId;
+
+    @Property(name = "wx_uid", nullable = false, length = 32)
+    @PropertyState(propertyName = "wx_uid")
+    private java.lang.String wxUid;
+
+    @Property(name = "location_lon", nullable = false, length = 20)
+    @PropertyState(propertyName = "location_lon")
+    private java.lang.Long locationLon;
+
+    @Property(name = "location_lat", nullable = false, length = 20)
+    @PropertyState(propertyName = "location_lat")
+    private java.lang.Long locationLat;
+
+    @Property(name = "precision", nullable = false, length = 20)
+    @PropertyState(propertyName = "precision")
+    private java.lang.Long precision;
+
+    @Property(name = "label", length = 100)
+    @PropertyState(propertyName = "label")
+    private java.lang.String label;
 
     @Property(name = "site_id", nullable = false, length = 32)
     @PropertyState(propertyName = "site_id")
-    private String siteId;
+    private java.lang.String siteId;
 
-    @Property(name = "remark", length = 200)
-    @PropertyState(propertyName = "remark")
-    private String remark;
+    @Property(name = "create_time", nullable = false, length = 13)
+    @PropertyState(propertyName = "create_time")
+    private java.lang.Long createTime;
 
     /**
      * 构造器
@@ -68,185 +65,169 @@ public class WechatLocation extends BaseEntity<WechatLocation, String> {
      * 构造器
      *
      * @param id
+     * @param accountId
      * @param wxUid
      * @param locationLon
      * @param locationLat
      * @param precision
-     * @param createTime
-     * @param accountId
      * @param siteId
+     * @param createTime
      */
-    public WechatLocation(String id, String wxUid, Long locationLon, Long locationLat, Long precision, Long createTime, String accountId, String siteId) {
+    public WechatLocation(java.lang.String id, java.lang.String accountId, java.lang.String wxUid, java.lang.Long locationLon, java.lang.Long locationLat, java.lang.Long precision, java.lang.String siteId, java.lang.Long createTime) {
         this.id = id;
+        this.accountId = accountId;
         this.wxUid = wxUid;
         this.locationLon = locationLon;
         this.locationLat = locationLat;
         this.precision = precision;
-        this.createTime = createTime;
-        this.accountId = accountId;
         this.siteId = siteId;
+        this.createTime = createTime;
     }
 
     /**
      * 构造器
      *
      * @param id
+     * @param accountId
      * @param wxUid
      * @param locationLon
      * @param locationLat
      * @param precision
      * @param label
-     * @param createTime
-     * @param accountId
      * @param siteId
-     * @param remark
+     * @param createTime
      */
-    public WechatLocation(String id, String wxUid, Long locationLon, Long locationLat, Long precision, String label, Long createTime, String accountId, String siteId, String remark) {
+    public WechatLocation(java.lang.String id, java.lang.String accountId, java.lang.String wxUid, java.lang.Long locationLon, java.lang.Long locationLat, java.lang.Long precision, java.lang.String label, java.lang.String siteId, java.lang.Long createTime) {
         this.id = id;
+        this.accountId = accountId;
         this.wxUid = wxUid;
         this.locationLon = locationLon;
         this.locationLat = locationLat;
         this.precision = precision;
         this.label = label;
-        this.createTime = createTime;
-        this.accountId = accountId;
         this.siteId = siteId;
-        this.remark = remark;
+        this.createTime = createTime;
     }
 
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
-
-    /**
-     * @return the wxUid
-     */
-    public String getWxUid() {
-        return wxUid;
-    }
-
-    /**
-     * @param wxUid the wxUid to set
-     */
-    public void setWxUid(String wxUid) {
-        this.wxUid = wxUid;
-    }
-
-    /**
-     * @return the locationLon
-     */
-    public Long getLocationLon() {
-        return locationLon;
-    }
-
-    /**
-     * @param locationLon the locationLon to set
-     */
-    public void setLocationLon(Long locationLon) {
-        this.locationLon = locationLon;
-    }
-
-    /**
-     * @return the locationLat
-     */
-    public Long getLocationLat() {
-        return locationLat;
-    }
-
-    /**
-     * @param locationLat the locationLat to set
-     */
-    public void setLocationLat(Long locationLat) {
-        this.locationLat = locationLat;
-    }
-
-    /**
-     * @return the precision
-     */
-    public Long getPrecision() {
-        return precision;
-    }
-
-    /**
-     * @param precision the precision to set
-     */
-    public void setPrecision(Long precision) {
-        this.precision = precision;
-    }
-
-    /**
-     * @return the label
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * @param label the label to set
-     */
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    /**
-     * @return the createTime
-     */
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * @param createTime the createTime to set
-     */
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
-    }
 
     /**
      * @return the accountId
      */
-    public String getAccountId() {
+    public java.lang.String getAccountId() {
         return accountId;
     }
 
     /**
      * @param accountId the accountId to set
      */
-    public void setAccountId(String accountId) {
+    public void setAccountId(java.lang.String accountId) {
         this.accountId = accountId;
+    }
+
+    /**
+     * @return the wxUid
+     */
+    public java.lang.String getWxUid() {
+        return wxUid;
+    }
+
+    /**
+     * @param wxUid the wxUid to set
+     */
+    public void setWxUid(java.lang.String wxUid) {
+        this.wxUid = wxUid;
+    }
+
+    /**
+     * @return the locationLon
+     */
+    public java.lang.Long getLocationLon() {
+        return locationLon;
+    }
+
+    /**
+     * @param locationLon the locationLon to set
+     */
+    public void setLocationLon(java.lang.Long locationLon) {
+        this.locationLon = locationLon;
+    }
+
+    /**
+     * @return the locationLat
+     */
+    public java.lang.Long getLocationLat() {
+        return locationLat;
+    }
+
+    /**
+     * @param locationLat the locationLat to set
+     */
+    public void setLocationLat(java.lang.Long locationLat) {
+        this.locationLat = locationLat;
+    }
+
+    /**
+     * @return the precision
+     */
+    public java.lang.Long getPrecision() {
+        return precision;
+    }
+
+    /**
+     * @param precision the precision to set
+     */
+    public void setPrecision(java.lang.Long precision) {
+        this.precision = precision;
+    }
+
+    /**
+     * @return the label
+     */
+    public java.lang.String getLabel() {
+        return label;
+    }
+
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(java.lang.String label) {
+        this.label = label;
     }
 
     /**
      * @return the siteId
      */
-    public String getSiteId() {
+    public java.lang.String getSiteId() {
         return siteId;
     }
 
     /**
      * @param siteId the siteId to set
      */
-    public void setSiteId(String siteId) {
+    public void setSiteId(java.lang.String siteId) {
         this.siteId = siteId;
     }
 
     /**
-     * @return the remark
+     * @return the createTime
      */
-    public String getRemark() {
-        return remark;
+    public java.lang.Long getCreateTime() {
+        return createTime;
     }
 
     /**
-     * @param remark the remark to set
+     * @param createTime the createTime to set
      */
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setCreateTime(java.lang.Long createTime) {
+        this.createTime = createTime;
     }
 
 
@@ -278,93 +259,84 @@ public class WechatLocation extends BaseEntity<WechatLocation, String> {
             return _model;
         }
 
-        public String id() {
+        public java.lang.String id() {
             return _model.getId();
         }
 
-        public WechatLocationBuilder id(String id) {
+        public WechatLocationBuilder id(java.lang.String id) {
             _model.setId(id);
             return this;
         }
 
-        public String wxUid() {
-            return _model.getWxUid();
-        }
-
-        public WechatLocationBuilder wxUid(String wxUid) {
-            _model.setWxUid(wxUid);
-            return this;
-        }
-
-        public Long locationLon() {
-            return _model.getLocationLon();
-        }
-
-        public WechatLocationBuilder locationLon(Long locationLon) {
-            _model.setLocationLon(locationLon);
-            return this;
-        }
-
-        public Long locationLat() {
-            return _model.getLocationLat();
-        }
-
-        public WechatLocationBuilder locationLat(Long locationLat) {
-            _model.setLocationLat(locationLat);
-            return this;
-        }
-
-        public Long precision() {
-            return _model.getPrecision();
-        }
-
-        public WechatLocationBuilder precision(Long precision) {
-            _model.setPrecision(precision);
-            return this;
-        }
-
-        public String label() {
-            return _model.getLabel();
-        }
-
-        public WechatLocationBuilder label(String label) {
-            _model.setLabel(label);
-            return this;
-        }
-
-        public Long createTime() {
-            return _model.getCreateTime();
-        }
-
-        public WechatLocationBuilder createTime(Long createTime) {
-            _model.setCreateTime(createTime);
-            return this;
-        }
-
-        public String accountId() {
+        public java.lang.String accountId() {
             return _model.getAccountId();
         }
 
-        public WechatLocationBuilder accountId(String accountId) {
+        public WechatLocationBuilder accountId(java.lang.String accountId) {
             _model.setAccountId(accountId);
             return this;
         }
 
-        public String siteId() {
+        public java.lang.String wxUid() {
+            return _model.getWxUid();
+        }
+
+        public WechatLocationBuilder wxUid(java.lang.String wxUid) {
+            _model.setWxUid(wxUid);
+            return this;
+        }
+
+        public java.lang.Long locationLon() {
+            return _model.getLocationLon();
+        }
+
+        public WechatLocationBuilder locationLon(java.lang.Long locationLon) {
+            _model.setLocationLon(locationLon);
+            return this;
+        }
+
+        public java.lang.Long locationLat() {
+            return _model.getLocationLat();
+        }
+
+        public WechatLocationBuilder locationLat(java.lang.Long locationLat) {
+            _model.setLocationLat(locationLat);
+            return this;
+        }
+
+        public java.lang.Long precision() {
+            return _model.getPrecision();
+        }
+
+        public WechatLocationBuilder precision(java.lang.Long precision) {
+            _model.setPrecision(precision);
+            return this;
+        }
+
+        public java.lang.String label() {
+            return _model.getLabel();
+        }
+
+        public WechatLocationBuilder label(java.lang.String label) {
+            _model.setLabel(label);
+            return this;
+        }
+
+        public java.lang.String siteId() {
             return _model.getSiteId();
         }
 
-        public WechatLocationBuilder siteId(String siteId) {
+        public WechatLocationBuilder siteId(java.lang.String siteId) {
             _model.setSiteId(siteId);
             return this;
         }
 
-        public String remark() {
-            return _model.getRemark();
+        public java.lang.Long createTime() {
+            return _model.getCreateTime();
         }
 
-        public WechatLocationBuilder remark(String remark) {
-            _model.setRemark(remark);
+        public WechatLocationBuilder createTime(java.lang.Long createTime) {
+            _model.setCreateTime(createTime);
             return this;
         }
 
@@ -375,15 +347,14 @@ public class WechatLocation extends BaseEntity<WechatLocation, String> {
      */
     public class FIELDS {
         public static final String ID = "id";
+        public static final String ACCOUNT_ID = "account_id";
         public static final String WX_UID = "wx_uid";
         public static final String LOCATION_LON = "location_lon";
         public static final String LOCATION_LAT = "location_lat";
         public static final String PRECISION = "precision";
         public static final String LABEL = "label";
-        public static final String CREATE_TIME = "create_time";
-        public static final String ACCOUNT_ID = "account_id";
         public static final String SITE_ID = "site_id";
-        public static final String REMARK = "remark";
+        public static final String CREATE_TIME = "create_time";
     }
 
     public static final String TABLE_NAME = "wechat_location";

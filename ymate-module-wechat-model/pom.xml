@@ -41,7 +41,7 @@
                         <archive>
                             <manifestSections>
                                 <manifestSection>
-                                    <name>net/ymate/cms/base/</name>
+                                    <name>net/ymate/module/wechat/model/</name>
                                 </manifestSection>
                             </manifestSections>
                             <manifestEntries>

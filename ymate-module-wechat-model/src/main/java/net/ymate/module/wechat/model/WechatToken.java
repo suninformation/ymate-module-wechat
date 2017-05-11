@@ -14,45 +14,44 @@ import net.ymate.platform.persistence.jdbc.support.BaseEntity;
  * @version 1.0
  */
 @Entity("wechat_token")
-public class WechatToken extends BaseEntity<WechatToken, String> {
+public class WechatToken extends BaseEntity<WechatToken, java.lang.String> {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Property(name = "id", nullable = false, length = 32)
     @PropertyState(propertyName = "id")
-    private String id;
+    private java.lang.String id;
 
     @Property(name = "account_id", nullable = false, length = 32)
     @PropertyState(propertyName = "account_id")
-    private String accountId;
+    private java.lang.String accountId;
 
     @Property(name = "site_id", nullable = false, length = 32)
     @PropertyState(propertyName = "site_id")
-    private String siteId;
+    private java.lang.String siteId;
 
     @Property(name = "access_token", length = 512)
     @PropertyState(propertyName = "access_token")
-    private String accessToken;
+    private java.lang.String accessToken;
 
     @Property(name = "access_token_expired_time", length = 13)
     @Default("0")
     @PropertyState(propertyName = "access_token_expired_time")
-    private Long accessTokenExpiredTime;
+    private java.lang.Long accessTokenExpiredTime;
 
     @Property(name = "js_ticket", length = 512)
     @PropertyState(propertyName = "js_ticket")
-    private String jsTicket;
+    private java.lang.String jsTicket;
 
     @Property(name = "js_ticket_expired_time", length = 13)
     @Default("0")
     @PropertyState(propertyName = "js_ticket_expired_time")
-    private Long jsTicketExpiredTime;
+    private java.lang.Long jsTicketExpiredTime;
 
-    @Property(name = "last_modify_time", length = 13)
-    @Default("0")
+    @Property(name = "last_modify_time", nullable = false, length = 13)
     @PropertyState(propertyName = "last_modify_time")
-    private Long lastModifyTime;
+    private java.lang.Long lastModifyTime;
 
     /**
      * 构造器
@@ -66,11 +65,13 @@ public class WechatToken extends BaseEntity<WechatToken, String> {
      * @param id
      * @param accountId
      * @param siteId
+     * @param lastModifyTime
      */
-    public WechatToken(String id, String accountId, String siteId) {
+    public WechatToken(java.lang.String id, java.lang.String accountId, java.lang.String siteId, java.lang.Long lastModifyTime) {
         this.id = id;
         this.accountId = accountId;
         this.siteId = siteId;
+        this.lastModifyTime = lastModifyTime;
     }
 
     /**
@@ -85,7 +86,7 @@ public class WechatToken extends BaseEntity<WechatToken, String> {
      * @param jsTicketExpiredTime
      * @param lastModifyTime
      */
-    public WechatToken(String id, String accountId, String siteId, String accessToken, Long accessTokenExpiredTime, String jsTicket, Long jsTicketExpiredTime, Long lastModifyTime) {
+    public WechatToken(java.lang.String id, java.lang.String accountId, java.lang.String siteId, java.lang.String accessToken, java.lang.Long accessTokenExpiredTime, java.lang.String jsTicket, java.lang.Long jsTicketExpiredTime, java.lang.Long lastModifyTime) {
         this.id = id;
         this.accountId = accountId;
         this.siteId = siteId;
@@ -96,11 +97,11 @@ public class WechatToken extends BaseEntity<WechatToken, String> {
         this.lastModifyTime = lastModifyTime;
     }
 
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
@@ -108,98 +109,98 @@ public class WechatToken extends BaseEntity<WechatToken, String> {
     /**
      * @return the accountId
      */
-    public String getAccountId() {
+    public java.lang.String getAccountId() {
         return accountId;
     }
 
     /**
      * @param accountId the accountId to set
      */
-    public void setAccountId(String accountId) {
+    public void setAccountId(java.lang.String accountId) {
         this.accountId = accountId;
     }
 
     /**
      * @return the siteId
      */
-    public String getSiteId() {
+    public java.lang.String getSiteId() {
         return siteId;
     }
 
     /**
      * @param siteId the siteId to set
      */
-    public void setSiteId(String siteId) {
+    public void setSiteId(java.lang.String siteId) {
         this.siteId = siteId;
     }
 
     /**
      * @return the accessToken
      */
-    public String getAccessToken() {
+    public java.lang.String getAccessToken() {
         return accessToken;
     }
 
     /**
      * @param accessToken the accessToken to set
      */
-    public void setAccessToken(String accessToken) {
+    public void setAccessToken(java.lang.String accessToken) {
         this.accessToken = accessToken;
     }
 
     /**
      * @return the accessTokenExpiredTime
      */
-    public Long getAccessTokenExpiredTime() {
+    public java.lang.Long getAccessTokenExpiredTime() {
         return accessTokenExpiredTime;
     }
 
     /**
      * @param accessTokenExpiredTime the accessTokenExpiredTime to set
      */
-    public void setAccessTokenExpiredTime(Long accessTokenExpiredTime) {
+    public void setAccessTokenExpiredTime(java.lang.Long accessTokenExpiredTime) {
         this.accessTokenExpiredTime = accessTokenExpiredTime;
     }
 
     /**
      * @return the jsTicket
      */
-    public String getJsTicket() {
+    public java.lang.String getJsTicket() {
         return jsTicket;
     }
 
     /**
      * @param jsTicket the jsTicket to set
      */
-    public void setJsTicket(String jsTicket) {
+    public void setJsTicket(java.lang.String jsTicket) {
         this.jsTicket = jsTicket;
     }
 
     /**
      * @return the jsTicketExpiredTime
      */
-    public Long getJsTicketExpiredTime() {
+    public java.lang.Long getJsTicketExpiredTime() {
         return jsTicketExpiredTime;
     }
 
     /**
      * @param jsTicketExpiredTime the jsTicketExpiredTime to set
      */
-    public void setJsTicketExpiredTime(Long jsTicketExpiredTime) {
+    public void setJsTicketExpiredTime(java.lang.Long jsTicketExpiredTime) {
         this.jsTicketExpiredTime = jsTicketExpiredTime;
     }
 
     /**
      * @return the lastModifyTime
      */
-    public Long getLastModifyTime() {
+    public java.lang.Long getLastModifyTime() {
         return lastModifyTime;
     }
 
     /**
      * @param lastModifyTime the lastModifyTime to set
      */
-    public void setLastModifyTime(Long lastModifyTime) {
+    public void setLastModifyTime(java.lang.Long lastModifyTime) {
         this.lastModifyTime = lastModifyTime;
     }
 
@@ -232,74 +233,74 @@ public class WechatToken extends BaseEntity<WechatToken, String> {
             return _model;
         }
 
-        public String id() {
+        public java.lang.String id() {
             return _model.getId();
         }
 
-        public WechatTokenBuilder id(String id) {
+        public WechatTokenBuilder id(java.lang.String id) {
             _model.setId(id);
             return this;
         }
 
-        public String accountId() {
+        public java.lang.String accountId() {
             return _model.getAccountId();
         }
 
-        public WechatTokenBuilder accountId(String accountId) {
+        public WechatTokenBuilder accountId(java.lang.String accountId) {
             _model.setAccountId(accountId);
             return this;
         }
 
-        public String siteId() {
+        public java.lang.String siteId() {
             return _model.getSiteId();
         }
 
-        public WechatTokenBuilder siteId(String siteId) {
+        public WechatTokenBuilder siteId(java.lang.String siteId) {
             _model.setSiteId(siteId);
             return this;
         }
 
-        public String accessToken() {
+        public java.lang.String accessToken() {
             return _model.getAccessToken();
         }
 
-        public WechatTokenBuilder accessToken(String accessToken) {
+        public WechatTokenBuilder accessToken(java.lang.String accessToken) {
             _model.setAccessToken(accessToken);
             return this;
         }
 
-        public Long accessTokenExpiredTime() {
+        public java.lang.Long accessTokenExpiredTime() {
             return _model.getAccessTokenExpiredTime();
         }
 
-        public WechatTokenBuilder accessTokenExpiredTime(Long accessTokenExpiredTime) {
+        public WechatTokenBuilder accessTokenExpiredTime(java.lang.Long accessTokenExpiredTime) {
             _model.setAccessTokenExpiredTime(accessTokenExpiredTime);
             return this;
         }
 
-        public String jsTicket() {
+        public java.lang.String jsTicket() {
             return _model.getJsTicket();
         }
 
-        public WechatTokenBuilder jsTicket(String jsTicket) {
+        public WechatTokenBuilder jsTicket(java.lang.String jsTicket) {
             _model.setJsTicket(jsTicket);
             return this;
         }
 
-        public Long jsTicketExpiredTime() {
+        public java.lang.Long jsTicketExpiredTime() {
             return _model.getJsTicketExpiredTime();
         }
 
-        public WechatTokenBuilder jsTicketExpiredTime(Long jsTicketExpiredTime) {
+        public WechatTokenBuilder jsTicketExpiredTime(java.lang.Long jsTicketExpiredTime) {
             _model.setJsTicketExpiredTime(jsTicketExpiredTime);
             return this;
         }
 
-        public Long lastModifyTime() {
+        public java.lang.Long lastModifyTime() {
             return _model.getLastModifyTime();
         }
 
-        public WechatTokenBuilder lastModifyTime(Long lastModifyTime) {
+        public WechatTokenBuilder lastModifyTime(java.lang.Long lastModifyTime) {
             _model.setLastModifyTime(lastModifyTime);
             return this;
         }

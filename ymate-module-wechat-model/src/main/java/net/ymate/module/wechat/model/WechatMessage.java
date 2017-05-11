@@ -14,86 +14,78 @@ import net.ymate.platform.persistence.jdbc.support.BaseEntity;
  * @version 1.0
  */
 @Entity("wechat_message")
-public class WechatMessage extends BaseEntity<WechatMessage, String> {
+public class WechatMessage extends BaseEntity<WechatMessage, java.lang.String> {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Property(name = "id", nullable = false, length = 32)
     @PropertyState(propertyName = "id")
-    private String id;
+    private java.lang.String id;
 
     @Property(name = "from_uid", nullable = false, length = 32)
     @PropertyState(propertyName = "from_uid")
-    private String fromUid;
+    private java.lang.String fromUid;
 
     @Property(name = "to_uid", nullable = false, length = 32)
     @PropertyState(propertyName = "to_uid")
-    private String toUid;
+    private java.lang.String toUid;
 
     @Property(name = "content", nullable = false, length = 4194303)
     @PropertyState(propertyName = "content")
-    private String content;
+    private java.lang.String content;
 
     @Property(name = "is_star", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_star")
-    private Integer isStar;
+    private java.lang.Integer isStar;
 
     @Property(name = "is_replied", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_replied")
-    private Integer isReplied;
+    private java.lang.Integer isReplied;
 
     @Property(name = "is_autoreply", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_autoreply")
-    private Integer isAutoreply;
+    private java.lang.Integer isAutoreply;
 
     @Property(name = "is_read", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_read")
-    private Integer isRead;
+    private java.lang.Integer isRead;
 
     @Property(name = "is_deleted", unsigned = true, length = 1)
     @Default("0")
     @PropertyState(propertyName = "is_deleted")
-    private Integer isDeleted;
-
-    @Property(name = "create_time", nullable = false, length = 13)
-    @PropertyState(propertyName = "create_time")
-    private Long createTime;
-
-    @Property(name = "create_by", length = 100)
-    @PropertyState(propertyName = "create_by")
-    private String createBy;
+    private java.lang.Integer isDeleted;
 
     @Property(name = "session_flag", length = 32)
     @PropertyState(propertyName = "session_flag")
-    private String sessionFlag;
-
-    @Property(name = "idx_status", unsigned = true, length = 2)
-    @Default("0")
-    @PropertyState(propertyName = "idx_status")
-    private Integer idxStatus;
+    private java.lang.String sessionFlag;
 
     @Property(name = "type", unsigned = true, length = 2)
     @Default("0")
     @PropertyState(propertyName = "type")
-    private Integer type;
+    private java.lang.Integer type;
 
     @Property(name = "status", unsigned = true, length = 2)
     @Default("0")
     @PropertyState(propertyName = "status")
-    private Integer status;
+    private java.lang.Integer status;
+
+    @Property(name = "idx_status", unsigned = true, length = 2)
+    @Default("0")
+    @PropertyState(propertyName = "idx_status")
+    private java.lang.Integer idxStatus;
 
     @Property(name = "site_id", nullable = false, length = 32)
     @PropertyState(propertyName = "site_id")
-    private String siteId;
+    private java.lang.String siteId;
 
-    @Property(name = "remark", length = 200)
-    @PropertyState(propertyName = "remark")
-    private String remark;
+    @Property(name = "create_time", nullable = false, length = 13)
+    @PropertyState(propertyName = "create_time")
+    private java.lang.Long createTime;
 
     /**
      * 构造器
@@ -108,16 +100,16 @@ public class WechatMessage extends BaseEntity<WechatMessage, String> {
      * @param fromUid
      * @param toUid
      * @param content
-     * @param createTime
      * @param siteId
+     * @param createTime
      */
-    public WechatMessage(String id, String fromUid, String toUid, String content, Long createTime, String siteId) {
+    public WechatMessage(java.lang.String id, java.lang.String fromUid, java.lang.String toUid, java.lang.String content, java.lang.String siteId, java.lang.Long createTime) {
         this.id = id;
         this.fromUid = fromUid;
         this.toUid = toUid;
         this.content = content;
-        this.createTime = createTime;
         this.siteId = siteId;
+        this.createTime = createTime;
     }
 
     /**
@@ -132,16 +124,14 @@ public class WechatMessage extends BaseEntity<WechatMessage, String> {
      * @param isAutoreply
      * @param isRead
      * @param isDeleted
-     * @param createTime
-     * @param createBy
      * @param sessionFlag
-     * @param idxStatus
      * @param type
      * @param status
+     * @param idxStatus
      * @param siteId
-     * @param remark
+     * @param createTime
      */
-    public WechatMessage(String id, String fromUid, String toUid, String content, Integer isStar, Integer isReplied, Integer isAutoreply, Integer isRead, Integer isDeleted, Long createTime, String createBy, String sessionFlag, Integer idxStatus, Integer type, Integer status, String siteId, String remark) {
+    public WechatMessage(java.lang.String id, java.lang.String fromUid, java.lang.String toUid, java.lang.String content, java.lang.Integer isStar, java.lang.Integer isReplied, java.lang.Integer isAutoreply, java.lang.Integer isRead, java.lang.Integer isDeleted, java.lang.String sessionFlag, java.lang.Integer type, java.lang.Integer status, java.lang.Integer idxStatus, java.lang.String siteId, java.lang.Long createTime) {
         this.id = id;
         this.fromUid = fromUid;
         this.toUid = toUid;
@@ -151,21 +141,19 @@ public class WechatMessage extends BaseEntity<WechatMessage, String> {
         this.isAutoreply = isAutoreply;
         this.isRead = isRead;
         this.isDeleted = isDeleted;
-        this.createTime = createTime;
-        this.createBy = createBy;
         this.sessionFlag = sessionFlag;
-        this.idxStatus = idxStatus;
         this.type = type;
         this.status = status;
+        this.idxStatus = idxStatus;
         this.siteId = siteId;
-        this.remark = remark;
+        this.createTime = createTime;
     }
 
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
@@ -173,225 +161,197 @@ public class WechatMessage extends BaseEntity<WechatMessage, String> {
     /**
      * @return the fromUid
      */
-    public String getFromUid() {
+    public java.lang.String getFromUid() {
         return fromUid;
     }
 
     /**
      * @param fromUid the fromUid to set
      */
-    public void setFromUid(String fromUid) {
+    public void setFromUid(java.lang.String fromUid) {
         this.fromUid = fromUid;
     }
 
     /**
      * @return the toUid
      */
-    public String getToUid() {
+    public java.lang.String getToUid() {
         return toUid;
     }
 
     /**
      * @param toUid the toUid to set
      */
-    public void setToUid(String toUid) {
+    public void setToUid(java.lang.String toUid) {
         this.toUid = toUid;
     }
 
     /**
      * @return the content
      */
-    public String getContent() {
+    public java.lang.String getContent() {
         return content;
     }
 
     /**
      * @param content the content to set
      */
-    public void setContent(String content) {
+    public void setContent(java.lang.String content) {
         this.content = content;
     }
 
     /**
      * @return the isStar
      */
-    public Integer getIsStar() {
+    public java.lang.Integer getIsStar() {
         return isStar;
     }
 
     /**
      * @param isStar the isStar to set
      */
-    public void setIsStar(Integer isStar) {
+    public void setIsStar(java.lang.Integer isStar) {
         this.isStar = isStar;
     }
 
     /**
      * @return the isReplied
      */
-    public Integer getIsReplied() {
+    public java.lang.Integer getIsReplied() {
         return isReplied;
     }
 
     /**
      * @param isReplied the isReplied to set
      */
-    public void setIsReplied(Integer isReplied) {
+    public void setIsReplied(java.lang.Integer isReplied) {
         this.isReplied = isReplied;
     }
 
     /**
      * @return the isAutoreply
      */
-    public Integer getIsAutoreply() {
+    public java.lang.Integer getIsAutoreply() {
         return isAutoreply;
     }
 
     /**
      * @param isAutoreply the isAutoreply to set
      */
-    public void setIsAutoreply(Integer isAutoreply) {
+    public void setIsAutoreply(java.lang.Integer isAutoreply) {
         this.isAutoreply = isAutoreply;
     }
 
     /**
      * @return the isRead
      */
-    public Integer getIsRead() {
+    public java.lang.Integer getIsRead() {
         return isRead;
     }
 
     /**
      * @param isRead the isRead to set
      */
-    public void setIsRead(Integer isRead) {
+    public void setIsRead(java.lang.Integer isRead) {
         this.isRead = isRead;
     }
 
     /**
      * @return the isDeleted
      */
-    public Integer getIsDeleted() {
+    public java.lang.Integer getIsDeleted() {
         return isDeleted;
     }
 
     /**
      * @param isDeleted the isDeleted to set
      */
-    public void setIsDeleted(Integer isDeleted) {
+    public void setIsDeleted(java.lang.Integer isDeleted) {
         this.isDeleted = isDeleted;
-    }
-
-    /**
-     * @return the createTime
-     */
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * @param createTime the createTime to set
-     */
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
-     * @return the createBy
-     */
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    /**
-     * @param createBy the createBy to set
-     */
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
     }
 
     /**
      * @return the sessionFlag
      */
-    public String getSessionFlag() {
+    public java.lang.String getSessionFlag() {
         return sessionFlag;
     }
 
     /**
      * @param sessionFlag the sessionFlag to set
      */
-    public void setSessionFlag(String sessionFlag) {
+    public void setSessionFlag(java.lang.String sessionFlag) {
         this.sessionFlag = sessionFlag;
-    }
-
-    /**
-     * @return the idxStatus
-     */
-    public Integer getIdxStatus() {
-        return idxStatus;
-    }
-
-    /**
-     * @param idxStatus the idxStatus to set
-     */
-    public void setIdxStatus(Integer idxStatus) {
-        this.idxStatus = idxStatus;
     }
 
     /**
      * @return the type
      */
-    public Integer getType() {
+    public java.lang.Integer getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(Integer type) {
+    public void setType(java.lang.Integer type) {
         this.type = type;
     }
 
     /**
      * @return the status
      */
-    public Integer getStatus() {
+    public java.lang.Integer getStatus() {
         return status;
     }
 
     /**
      * @param status the status to set
      */
-    public void setStatus(Integer status) {
+    public void setStatus(java.lang.Integer status) {
         this.status = status;
+    }
+
+    /**
+     * @return the idxStatus
+     */
+    public java.lang.Integer getIdxStatus() {
+        return idxStatus;
+    }
+
+    /**
+     * @param idxStatus the idxStatus to set
+     */
+    public void setIdxStatus(java.lang.Integer idxStatus) {
+        this.idxStatus = idxStatus;
     }
 
     /**
      * @return the siteId
      */
-    public String getSiteId() {
+    public java.lang.String getSiteId() {
         return siteId;
     }
 
     /**
      * @param siteId the siteId to set
      */
-    public void setSiteId(String siteId) {
+    public void setSiteId(java.lang.String siteId) {
         this.siteId = siteId;
     }
 
     /**
-     * @return the remark
+     * @return the createTime
      */
-    public String getRemark() {
-        return remark;
+    public java.lang.Long getCreateTime() {
+        return createTime;
     }
 
     /**
-     * @param remark the remark to set
+     * @param createTime the createTime to set
      */
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setCreateTime(java.lang.Long createTime) {
+        this.createTime = createTime;
     }
 
 
@@ -423,156 +383,138 @@ public class WechatMessage extends BaseEntity<WechatMessage, String> {
             return _model;
         }
 
-        public String id() {
+        public java.lang.String id() {
             return _model.getId();
         }
 
-        public WechatMessageBuilder id(String id) {
+        public WechatMessageBuilder id(java.lang.String id) {
             _model.setId(id);
             return this;
         }
 
-        public String fromUid() {
+        public java.lang.String fromUid() {
             return _model.getFromUid();
         }
 
-        public WechatMessageBuilder fromUid(String fromUid) {
+        public WechatMessageBuilder fromUid(java.lang.String fromUid) {
             _model.setFromUid(fromUid);
             return this;
         }
 
-        public String toUid() {
+        public java.lang.String toUid() {
             return _model.getToUid();
         }
 
-        public WechatMessageBuilder toUid(String toUid) {
+        public WechatMessageBuilder toUid(java.lang.String toUid) {
             _model.setToUid(toUid);
             return this;
         }
 
-        public String content() {
+        public java.lang.String content() {
             return _model.getContent();
         }
 
-        public WechatMessageBuilder content(String content) {
+        public WechatMessageBuilder content(java.lang.String content) {
             _model.setContent(content);
             return this;
         }
 
-        public Integer isStar() {
+        public java.lang.Integer isStar() {
             return _model.getIsStar();
         }
 
-        public WechatMessageBuilder isStar(Integer isStar) {
+        public WechatMessageBuilder isStar(java.lang.Integer isStar) {
             _model.setIsStar(isStar);
             return this;
         }
 
-        public Integer isReplied() {
+        public java.lang.Integer isReplied() {
             return _model.getIsReplied();
         }
 
-        public WechatMessageBuilder isReplied(Integer isReplied) {
+        public WechatMessageBuilder isReplied(java.lang.Integer isReplied) {
             _model.setIsReplied(isReplied);
             return this;
         }
 
-        public Integer isAutoreply() {
+        public java.lang.Integer isAutoreply() {
             return _model.getIsAutoreply();
         }
 
-        public WechatMessageBuilder isAutoreply(Integer isAutoreply) {
+        public WechatMessageBuilder isAutoreply(java.lang.Integer isAutoreply) {
             _model.setIsAutoreply(isAutoreply);
             return this;
         }
 
-        public Integer isRead() {
+        public java.lang.Integer isRead() {
             return _model.getIsRead();
         }
 
-        public WechatMessageBuilder isRead(Integer isRead) {
+        public WechatMessageBuilder isRead(java.lang.Integer isRead) {
             _model.setIsRead(isRead);
             return this;
         }
 
-        public Integer isDeleted() {
+        public java.lang.Integer isDeleted() {
             return _model.getIsDeleted();
         }
 
-        public WechatMessageBuilder isDeleted(Integer isDeleted) {
+        public WechatMessageBuilder isDeleted(java.lang.Integer isDeleted) {
             _model.setIsDeleted(isDeleted);
             return this;
         }
 
-        public Long createTime() {
-            return _model.getCreateTime();
-        }
-
-        public WechatMessageBuilder createTime(Long createTime) {
-            _model.setCreateTime(createTime);
-            return this;
-        }
-
-        public String createBy() {
-            return _model.getCreateBy();
-        }
-
-        public WechatMessageBuilder createBy(String createBy) {
-            _model.setCreateBy(createBy);
-            return this;
-        }
-
-        public String sessionFlag() {
+        public java.lang.String sessionFlag() {
             return _model.getSessionFlag();
         }
 
-        public WechatMessageBuilder sessionFlag(String sessionFlag) {
+        public WechatMessageBuilder sessionFlag(java.lang.String sessionFlag) {
             _model.setSessionFlag(sessionFlag);
             return this;
         }
 
-        public Integer idxStatus() {
-            return _model.getIdxStatus();
-        }
-
-        public WechatMessageBuilder idxStatus(Integer idxStatus) {
-            _model.setIdxStatus(idxStatus);
-            return this;
-        }
-
-        public Integer type() {
+        public java.lang.Integer type() {
             return _model.getType();
         }
 
-        public WechatMessageBuilder type(Integer type) {
+        public WechatMessageBuilder type(java.lang.Integer type) {
             _model.setType(type);
             return this;
         }
 
-        public Integer status() {
+        public java.lang.Integer status() {
             return _model.getStatus();
         }
 
-        public WechatMessageBuilder status(Integer status) {
+        public WechatMessageBuilder status(java.lang.Integer status) {
             _model.setStatus(status);
             return this;
         }
 
-        public String siteId() {
+        public java.lang.Integer idxStatus() {
+            return _model.getIdxStatus();
+        }
+
+        public WechatMessageBuilder idxStatus(java.lang.Integer idxStatus) {
+            _model.setIdxStatus(idxStatus);
+            return this;
+        }
+
+        public java.lang.String siteId() {
             return _model.getSiteId();
         }
 
-        public WechatMessageBuilder siteId(String siteId) {
+        public WechatMessageBuilder siteId(java.lang.String siteId) {
             _model.setSiteId(siteId);
             return this;
         }
 
-        public String remark() {
-            return _model.getRemark();
+        public java.lang.Long createTime() {
+            return _model.getCreateTime();
         }
 
-        public WechatMessageBuilder remark(String remark) {
-            _model.setRemark(remark);
+        public WechatMessageBuilder createTime(java.lang.Long createTime) {
+            _model.setCreateTime(createTime);
             return this;
         }
 
@@ -591,14 +533,12 @@ public class WechatMessage extends BaseEntity<WechatMessage, String> {
         public static final String IS_AUTOREPLY = "is_autoreply";
         public static final String IS_READ = "is_read";
         public static final String IS_DELETED = "is_deleted";
-        public static final String CREATE_TIME = "create_time";
-        public static final String CREATE_BY = "create_by";
         public static final String SESSION_FLAG = "session_flag";
-        public static final String IDX_STATUS = "idx_status";
         public static final String TYPE = "type";
         public static final String STATUS = "status";
+        public static final String IDX_STATUS = "idx_status";
         public static final String SITE_ID = "site_id";
-        public static final String REMARK = "remark";
+        public static final String CREATE_TIME = "create_time";
     }
 
     public static final String TABLE_NAME = "wechat_message";

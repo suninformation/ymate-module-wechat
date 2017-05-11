@@ -88,7 +88,7 @@ public class SubscribeEventListener implements IEventListener<WechatEvent> {
                                         WechatUser.FIELDS.IS_SUBSCRIBE,
                                         WechatUser.FIELDS.UNSUBSCRIBE_TIME,
                                         WechatUser.FIELDS.LANGUAGE));
-                                if (_isNew) {
+                                if (_isNew || _wxUser.getSubscribeTime() == null || _wxUser.getSubscribeTime() == 0) {
                                     _wxUser.setSubscribeTime(_currentTime);
                                     _fields.add(WechatUser.FIELDS.SUBSCRIBE_TIME);
                                 }
