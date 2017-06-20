@@ -15,18 +15,18 @@
  */
 package net.ymate.platform.module.wechat.base;
 
-import java.util.List;
-
 import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.List;
 
 /**
  * <p>
  * WxOAuthUser
  * </p>
  * <p>
- * 
+ *
  * </p>
- * 
+ *
  * @author 刘镇(suninformation@163.com)
  * @version 0.0.0
  *          <table style="border:1px solid gray;">
@@ -48,6 +48,9 @@ public class WxOAuthUser {
 	@JSONField(name = "openid")
 	private String openId;
 
+    @JSONField(name = "unionid")
+	private String unionId;
+
 	private String nickname;
 
 	private Integer sex;
@@ -64,9 +67,23 @@ public class WxOAuthUser {
 	private List<String> privilege;
 
 	public WxOAuthUser(String openId, String nickname, Integer sex,
+					   String city, String province, String country, String headImgUrl,
+					   List<String> privilege) {
+		this.openId = openId;
+		this.nickname = nickname;
+		this.sex = sex;
+		this.city = city;
+		this.province = province;
+		this.country = country;
+		this.headImgUrl = headImgUrl;
+		this.privilege = privilege;
+	}
+
+	public WxOAuthUser(String openId, String unionId, String nickname, Integer sex,
 			String city, String province, String country, String headImgUrl,
 			List<String> privilege) {
 		this.openId = openId;
+		this.unionId = unionId;
 		this.nickname = nickname;
 		this.sex = sex;
 		this.city = city;
@@ -78,6 +95,10 @@ public class WxOAuthUser {
 
 	public String getOpenId() {
 		return openId;
+	}
+
+	public String getUnionId() {
+		return unionId;
 	}
 
 	public String getNickname() {
