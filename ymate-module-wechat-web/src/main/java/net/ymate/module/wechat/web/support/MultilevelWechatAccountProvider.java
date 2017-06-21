@@ -76,10 +76,6 @@ public class MultilevelWechatAccountProvider implements IWechatAccountProvider {
                     _account.getToken(),
                     BlurObject.bind(_account.getIsMsgEncrypted()).toBooleanValue());
             _meta.setLastAppAesKey(_account.getLastAppAesKey());
-            _meta.setMchId(_account.getMchId());
-            _meta.setMchKey(_account.getMchKey());
-            _meta.setCertFilePath(_account.getCertFilePath());
-            _meta.setNotifyUrl(_account.getNotifyUrl());
             _meta.addAttribute("site_id", _account.getSiteId());
             //
             registerAccount(_meta);

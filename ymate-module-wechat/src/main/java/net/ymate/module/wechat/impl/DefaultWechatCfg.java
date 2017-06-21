@@ -55,10 +55,6 @@ public class DefaultWechatCfg implements IWechatCfg {
                     _moduleCfgs.get("token"),
                     new BlurObject(_moduleCfgs.get("is_msg_encrypted")).toBooleanValue());
             _meta.setLastAppAesKey(_moduleCfgs.get("last_app_aes_key"));
-            _meta.setMchId(_moduleCfgs.get("mch_id"));
-            _meta.setMchKey(_moduleCfgs.get("mch_key"));
-            _meta.setCertFilePath(_moduleCfgs.get("cert_file_path"));
-            _meta.setNotifyUrl(_moduleCfgs.get("notify_url"));
             //
             for (Map.Entry<String, String> _item : _moduleCfgs.entrySet()) {
                 if (_item.getKey().startsWith("params.")) {

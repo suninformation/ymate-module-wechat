@@ -19,14 +19,8 @@ import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
 
-import javax.net.ssl.SSLContext;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,22 +63,6 @@ public class WechatAccountMeta implements Serializable {
      * 微信接入唯一标识
      */
     private String token;
-
-    // 支付相关参数------
-
-    // 商户号
-    private String mchId;
-
-    // 商号密钥
-    private String mchKey;
-
-    // 证书文件路径
-    private String certFilePath;
-
-    private SSLConnectionSocketFactory connectionSocketFactory;
-
-    // 异步通知URL
-    private String notifyUrl;
 
     // 自定义扩展属性映射
     private Map<String, String> attributes = new HashMap<String, String>();
@@ -196,70 +174,6 @@ public class WechatAccountMeta implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getMchId() {
-        return mchId;
-    }
-
-    public void setMchId(String mchId) {
-        this.mchId = mchId;
-    }
-
-    public String getMchKey() {
-        return mchKey;
-    }
-
-    public void setMchKey(String mchKey) {
-        this.mchKey = mchKey;
-    }
-
-    public String getCertFilePath() {
-        return certFilePath;
-    }
-
-    public void setCertFilePath(String certFilePath) {
-        this.certFilePath = certFilePath;
-    }
-
-    public SSLConnectionSocketFactory getConnectionSocketFactory() {
-        if (StringUtils.isNotBlank(this.mchId)
-                && StringUtils.isNotBlank(this.certFilePath) && this.connectionSocketFactory == null) {
-            try {
-                // 指定读取证书格式为PKCS12
-                KeyStore _keyStore = KeyStore.getInstance("PKCS12");
-                // 读取PKCS12证书文件流
-                InputStream _certFileStream = new URL(this.certFilePath).openStream();
-                //
-                char[] _mchIdChars = this.mchId.toCharArray();
-                try {
-                    // 指定PKCS12的密码(商户ID)
-                    _keyStore.load(_certFileStream, _mchIdChars);
-                } finally {
-                    _certFileStream.close();
-                }
-                SSLContext _sslContext = SSLContexts.custom().loadKeyMaterial(_keyStore, _mchIdChars).build();
-                // 指定TLS版本
-                connectionSocketFactory = new SSLConnectionSocketFactory(
-                        _sslContext, new String[]{"TLSv1"}, null,
-                        SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-            } catch (Exception e) {
-                _LOG.warn("", e);
-            }
-        }
-        return connectionSocketFactory;
-    }
-
-    public void setConnectionSocketFactory(SSLConnectionSocketFactory connectionSocketFactory) {
-        this.connectionSocketFactory = connectionSocketFactory;
-    }
-
-    public String getNotifyUrl() {
-        return notifyUrl;
-    }
-
-    public void setNotifyUrl(String notifyUrl) {
-        this.notifyUrl = notifyUrl;
     }
 
     public Map<String, String> getAttributes() {
