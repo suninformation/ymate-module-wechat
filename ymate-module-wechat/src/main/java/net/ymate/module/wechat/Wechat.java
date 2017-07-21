@@ -129,6 +129,10 @@ public class Wechat implements IModule, IWechat {
         return __moduleCfg.getAccountProvider().getAccountMetaByAccountId(accountId);
     }
 
+    public WechatAccountMeta getAccountByAppId(String appId) {
+        return __moduleCfg.getAccountProvider().getAccountMetaByAppId(appId);
+    }
+
     // ----------
 
     public String wxGetAccessToken(WechatAccountMeta accountMeta) {

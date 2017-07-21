@@ -41,6 +41,8 @@ public interface IWechat {
 
     WechatAccountMeta getAccountById(String accountId);
 
+    WechatAccountMeta getAccountByAppId(String appId);
+
     // ----------
 
     String wxGetAccessToken(WechatAccountMeta accountMeta);
