@@ -38,4 +38,6 @@ public interface IWechatAccountProvider {
     WechatAccountMeta getAccountMetaByToken(String token);
 
     WechatAccountMeta getAccountMetaByAccountId(String accountId);
+
+    WechatAccountMeta getAccountMetaByAppId(String appId);
 }

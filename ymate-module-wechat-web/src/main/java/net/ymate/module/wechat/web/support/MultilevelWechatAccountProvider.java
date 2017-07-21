@@ -55,12 +55,14 @@ public class MultilevelWechatAccountProvider implements IWechatAccountProvider {
     public void registerAccount(WechatAccountMeta accountMeta) {
         __caches.put(__ACCOUNT_CACHE_NAME, accountMeta.getAccountId(), accountMeta);
         __caches.put(__ACCOUNT_CACHE_NAME.concat("_TOKEN"), accountMeta.getToken(), accountMeta.getAccountId());
+        __caches.put(__ACCOUNT_CACHE_NAME.concat("_APPID"), accountMeta.getAppId(), accountMeta.getAccountId());
     }
 
     public WechatAccountMeta unregisterAccount(String accountId) {
         WechatAccountMeta _meta = (WechatAccountMeta) __caches.get(__ACCOUNT_CACHE_NAME, accountId);
         __caches.remove(__ACCOUNT_CACHE_NAME, accountId);
         __caches.remove(__ACCOUNT_CACHE_NAME.concat("_TOKEN"), _meta.getToken());
+        __caches.remove(__ACCOUNT_CACHE_NAME.concat("_APPID"), _meta.getAppId());
         return _meta;
     }
 
@@ -119,6 +121,42 @@ public class MultilevelWechatAccountProvider implements IWechatAccountProvider {
         return _meta;
     }
 
+    private WechatAccountMeta __doLoadAccountByAppIdIfNeed(String appId) {
+        String _accountId = (String) __caches.get(__ACCOUNT_CACHE_NAME.concat("_APPID"), appId);
+        if (_accountId != null) {
+            return __doLoadAccountByIdIfNeed(_accountId);
+        }
+        ReentrantLock _locker = __LOCKS.getLocker(appId);
+        _locker.lock();
+        try {
+            _accountId = (String) __caches.get(__ACCOUNT_CACHE_NAME.concat("_APPID"), appId);
+            if (_accountId != null) {
+                return __doLoadAccountByIdIfNeed(_accountId);
+            }
+            WechatAccount _account = WechatAccount.builder().appId(appId).build()
+                    .findFirst(Fields.create(WechatAccount.FIELDS.ACCOUNT_ID,
+                            WechatAccount.FIELDS.APP_ID,
+                            WechatAccount.FIELDS.APP_SECRET,
+                            WechatAccount.FIELDS.APP_AES_KEY,
+                            WechatAccount.FIELDS.LAST_APP_AES_KEY,
+                            WechatAccount.FIELDS.REDIRECT_URI,
+                            WechatAccount.FIELDS.TYPE,
+                            WechatAccount.FIELDS.IS_VERIFIED,
+                            WechatAccount.FIELDS.TOKEN,
+                            WechatAccount.FIELDS.IS_MSG_ENCRYPTED,
+                            WechatAccount.FIELDS.MCH_ID,
+                            WechatAccount.FIELDS.MCH_KEY,
+                            WechatAccount.FIELDS.CERT_FILE_PATH,
+                            WechatAccount.FIELDS.NOTIFY_URL, WechatAccount.FIELDS.SITE_ID));
+            return __doBuildAccountMeta(_account);
+        } catch (Exception e) {
+            _LOG.warn("", RuntimeUtils.unwrapThrow(e));
+        } finally {
+            _locker.unlock();
+        }
+        return null;
+    }
+
     private WechatAccountMeta __doLoadAccountByTokenIfNeed(String token) {
         String _accountId = (String) __caches.get(__ACCOUNT_CACHE_NAME.concat("_TOKEN"), token);
         if (_accountId != null) {
@@ -170,5 +208,9 @@ public class MultilevelWechatAccountProvider implements IWechatAccountProvider {
 
     public WechatAccountMeta getAccountMetaByAccountId(String accountId) {
         return __doLoadAccountByIdIfNeed(accountId);
+    }
+
+    public WechatAccountMeta getAccountMetaByAppId(String appId) {
+        return __doLoadAccountByAppIdIfNeed(appId);
     }
 }

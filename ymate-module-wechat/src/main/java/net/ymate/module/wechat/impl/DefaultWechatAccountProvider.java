@@ -31,6 +31,8 @@ public class DefaultWechatAccountProvider implements IWechatAccountProvider {
 
     private static Map<String, WechatAccountMeta> __CACHES = new ConcurrentHashMap<String, WechatAccountMeta>();
 
+    private static Map<String, WechatAccountMeta> __APPID_CACHES = new ConcurrentHashMap<String, WechatAccountMeta>();
+
     private static Map<String, WechatAccountMeta> __TOKEN_CACHES = new ConcurrentHashMap<String, WechatAccountMeta>();
 
     public void init(IWechat owner) throws Exception {
@@ -38,11 +40,13 @@ public class DefaultWechatAccountProvider implements IWechatAccountProvider {
 
     public void registerAccount(WechatAccountMeta accountMeta) {
         __CACHES.put(accountMeta.getAccountId(), accountMeta);
+        __APPID_CACHES.put(accountMeta.getAppId(), accountMeta);
         __TOKEN_CACHES.put(accountMeta.getToken(), accountMeta);
     }
 
     public WechatAccountMeta unregisterAccount(String accountId) {
         WechatAccountMeta _meta = __CACHES.remove(accountId);
+        __APPID_CACHES.remove(_meta.getAppId());
         __TOKEN_CACHES.remove(_meta.getToken());
         return _meta;
     }
@@ -61,5 +65,9 @@ public class DefaultWechatAccountProvider implements IWechatAccountProvider {
 
     public WechatAccountMeta getAccountMetaByAccountId(String accountId) {
         return __CACHES.get(accountId);
+    }
+
+    public WechatAccountMeta getAccountMetaByAppId(String appId) {
+        return __APPID_CACHES.get(appId);
     }
 }
