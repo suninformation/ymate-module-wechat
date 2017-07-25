@@ -15,6 +15,7 @@
  */
 package net.ymate.module.wechat.web.base;
 
+import net.ymate.module.wechat.IWechat;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
@@ -117,7 +118,7 @@ public class WechatUserSession implements Serializable {
     public boolean checkOauthScope(String needOauthScope) {
         if (this.oauthScope.equals(needOauthScope)) {
             return true;
-        } else if ((this.oauthScope.equals("snsapi_userinfo") && needOauthScope.equals("snsapi_base"))) {
+        } else if ((this.oauthScope.equals(IWechat.OAuthScope.SNSAPI_USERINFO) && needOauthScope.equals(IWechat.OAuthScope.SNSAPI_BASE))) {
             return true;
         }
         return false;

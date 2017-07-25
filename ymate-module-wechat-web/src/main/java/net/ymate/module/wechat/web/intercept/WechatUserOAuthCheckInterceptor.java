@@ -17,6 +17,7 @@ package net.ymate.module.wechat.web.intercept;
 
 import net.ymate.framework.core.util.WebUtils;
 import net.ymate.framework.webmvc.support.UserSessionBean;
+import net.ymate.module.wechat.IWechat;
 import net.ymate.module.wechat.web.base.WechatUserSession;
 import net.ymate.platform.core.beans.intercept.IInterceptor;
 import net.ymate.platform.core.beans.intercept.InterceptContext;
@@ -52,7 +53,7 @@ public class WechatUserOAuthCheckInterceptor implements IInterceptor {
                 _flag = true;
             } else if (_checkStatus && !_wxSession.checkStatus()) {
                 _flag = true;
-            } else if (!_baseScope && _wxSession.getOauthScope().equals("snsapi_info")) {
+            } else if (!_baseScope && _wxSession.getOauthScope().equals(IWechat.OAuthScope.SNSAPI_USERINFO)) {
                 _flag = true;
             }
         }
@@ -76,7 +77,7 @@ public class WechatUserOAuthCheckInterceptor implements IInterceptor {
                     _redirectUri = WebUtils.buildURL(WebContext.getRequest(), _redirectUri, true);
                 }
                 return View.redirectView(WebUtils.buildURL(WebContext.getRequest(), "/wechat/oauth/".concat(_accountId), true))
-                        .addAttribute("scope", _baseScope ? "snsapi_base" : "snsapi_info")
+                        .addAttribute("scope", _baseScope ? IWechat.OAuthScope.SNSAPI_BASE : IWechat.OAuthScope.SNSAPI_USERINFO)
                         .addAttribute("redirect_uri", _redirectUri);
             } else {
                 _returnView = View.httpStatusView(HttpServletResponse.SC_BAD_REQUEST);

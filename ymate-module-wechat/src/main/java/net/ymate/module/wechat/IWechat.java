@@ -195,7 +195,6 @@ public interface IWechat {
 
     // ------
 
-
     interface WX_API {
         // base
         String WX_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential";
@@ -267,48 +266,6 @@ public interface IWechat {
         String MATERIAL_UPDATE_NEWS = "https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=";
         String MATERIAL_GET_COUNT = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=";
         String MATERIAL_BATCH_GET = "https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=";
-    }
-
-    interface WX_PAY_API {
-        // 统一支付接口
-        String PAY_UNIFIED_ORDER = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-
-        // 订单查询接口
-        String PAY_ORDER_QUERY = "https://api.mch.weixin.qq.com/pay/orderquery";
-
-        // 关闭订单接口
-        String PAY_CLOSE_ORDER = "https://api.mch.weixin.qq.com/pay/closeorder";
-
-        // 退款申请接口
-        String PAY_REFUND = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-
-        // 退款查询接口
-        String PAY_REFUND_QUERY = "https://api.mch.weixin.qq.com/pay/refundquery";
-
-        // 对帐单接口
-        String PAY_DOWNLOAD_BILL = "https://api.mch.weixin.qq.com/pay/downloadbill";
-
-        // 短链接转换接口
-        String PAY_SHORT_URL = "https://api.mch.weixin.qq.com/tools/shorturl";
-
-        //////////
-
-        // 现金红包发放接口
-        String REDPACK_SEND_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack";
-
-        // 裂变红包发放接口
-        String REDPACK_SEND_GROUP_URL = " https://api.mch.weixin.qq.com/mmpaymkttransfers/sendgroupredpack";
-
-        // 微信红包查询接口
-        String REDPACK_GET_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gethbinfo";
-
-        //////////
-
-        // 企业付款接口
-        String MCH_PAY_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";
-
-        // 企业付款查询接口
-        String MCH_PAY_GET_URL = "https://api.mch.weixin.qq.com/mmpaymkttransfers/gettransferinfo";
     }
 
     enum WxLangType {
@@ -404,5 +361,12 @@ public interface IWechat {
         public String toString() {
             return type;
         }
+    }
+
+    interface OAuthScope {
+
+        String SNSAPI_BASE = "snsapi_base";
+
+        String SNSAPI_USERINFO = "snsapi_userinfo";
     }
 }

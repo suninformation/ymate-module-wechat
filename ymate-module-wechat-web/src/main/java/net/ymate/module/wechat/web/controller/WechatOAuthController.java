@@ -48,15 +48,15 @@ import org.apache.commons.lang.StringUtils;
 public class WechatOAuthController {
 
     private String __doBuildOauthScope(String currOauthScope, String needOauthScope) {
-        currOauthScope = StringUtils.trimToEmpty(currOauthScope);
-        needOauthScope = StringUtils.trimToEmpty(needOauthScope);
-        if (currOauthScope.equals(needOauthScope)) {
-            return needOauthScope;
-        } else if ((currOauthScope.equals("snsapi_userinfo") && needOauthScope.equals("snsapi_base"))
-                || (currOauthScope.equals("snsapi_base") && needOauthScope.equals("snsapi_userinfo"))) {
-            return "snsapi_userinfo";
+        if (StringUtils.isNotBlank(needOauthScope)) {
+            if (StringUtils.isBlank(currOauthScope) || StringUtils.equalsIgnoreCase(currOauthScope, needOauthScope)) {
+                return needOauthScope;
+            } else if (StringUtils.equalsIgnoreCase(currOauthScope, IWechat.OAuthScope.SNSAPI_USERINFO)
+                    || StringUtils.equalsIgnoreCase(needOauthScope, IWechat.OAuthScope.SNSAPI_USERINFO)) {
+                return IWechat.OAuthScope.SNSAPI_USERINFO;
+            }
         }
-        return "snsapi_base";
+        return IWechat.OAuthScope.SNSAPI_BASE;
     }
 
     @Transaction
@@ -112,7 +112,7 @@ public class WechatOAuthController {
 
     @RequestMapping("/oauth/{account_id}")
     public IView __doOAuthGET(@PathVariable("account_id") String accountId,
-                              @RequestParam(defaultValue = "snsapi_base") String scope,
+                              @RequestParam(defaultValue = IWechat.OAuthScope.SNSAPI_BASE) String scope,
                               @RequestParam("redirect_uri") String redirectUri) throws Exception {
         WechatAccountMeta _accountMeta = Wechat.get().getAccountById(accountId);
         if (_accountMeta == null || StringUtils.isBlank(redirectUri)) {
@@ -141,7 +141,7 @@ public class WechatOAuthController {
             if (StringUtils.isBlank(_redirectUri)) {
                 _redirectUri = WebUtils.buildURL(WebContext.getRequest(), "/wechat/redirect/".concat(accountId), true).concat("?redirect_uri=".concat(redirectUri));
             }
-            _returnView = View.redirectView(Wechat.get().wxOAuthGetCodeUrl(_accountMeta, __doBuildOauthScope(_currScope, scope).equals("snsapi_base"), _state, _redirectUri));
+            _returnView = View.redirectView(Wechat.get().wxOAuthGetCodeUrl(_accountMeta, __doBuildOauthScope(_currScope, scope).equals(IWechat.OAuthScope.SNSAPI_BASE), _state, _redirectUri));
         }
         return _returnView == null ? View.redirectView(redirectUri) : _returnView;
     }
@@ -159,14 +159,14 @@ public class WechatOAuthController {
                 if (StringUtils.isBlank(state)) {
                     state = DigestUtils.md5Hex(_token.getOpenId());
                 }
-                boolean _needInfo = _token.getScope().equals("snsapi_info");
+                boolean _needInfo = _token.getScope().equals(IWechat.OAuthScope.SNSAPI_USERINFO);
                 long _currentTime = System.currentTimeMillis();
                 boolean _isNew = false;
                 WechatUser _wxUser = WechatUser.builder().id(state).build().load(Fields.create(WechatUser.FIELDS.ID, WechatUser.FIELDS.OAUTH_SCOPE), IDBLocker.MYSQL);
                 Fields _fields = Fields.create();
                 if (_wxUser != null) {
                     // 未订阅的用户且当前授权为snsapi_base时才去获取用户资料
-                    _needInfo = _needInfo && (_wxUser.getIsSubscribe() != null && _wxUser.getIsSubscribe() != 1) && StringUtils.trimToEmpty(_wxUser.getOauthScope()).equals("snsapi_base");
+                    _needInfo = _needInfo && (_wxUser.getIsSubscribe() != null && _wxUser.getIsSubscribe() != 1) && StringUtils.trimToEmpty(_wxUser.getOauthScope()).equals(IWechat.OAuthScope.SNSAPI_BASE);
                 } else {
                     _wxUser = new WechatUser();
                     _wxUser.setId(state);
