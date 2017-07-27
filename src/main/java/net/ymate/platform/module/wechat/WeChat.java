@@ -773,7 +773,7 @@ public class WeChat {
         return new WxOAuthUser(_json.getString("openid"),
                 _json.getString("unionid"),
                 _json.getString("nickname"), _json.getInteger("sex"),
-                _json.getString("province"), _json.getString("city"),
+                _json.getString("city"), _json.getString("province"),
                 _json.getString("country"), _json.getString("headimgurl"),
                 JSON.parseArray(_json.getJSONArray("privilege").toJSONString(), String.class));
     }
