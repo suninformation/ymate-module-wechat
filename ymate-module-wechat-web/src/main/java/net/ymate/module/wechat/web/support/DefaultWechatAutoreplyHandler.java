@@ -55,7 +55,7 @@ public class DefaultWechatAutoreplyHandler implements IWechatAutoreplyHandler {
     public void init(IWechat owner) throws Exception {
         __owner = owner;
         __caches = Caches.get(owner.getOwner());
-        __AUTOREPLY_CACHE_NAME = StringUtils.trimToEmpty(owner.getOwner().getConfig().getParam(IWechat.MODULE_NAME.concat(".cache_name_prefix"))).concat("_WECHAT_AUTOREPLY_CACHE");
+        __AUTOREPLY_CACHE_NAME = StringUtils.trimToEmpty(owner.getOwner().getConfig().getParam(IWechat.MODULE_NAME.concat(".cache_name_prefix"))).concat("_wechat_autoreply_cache");
     }
 
     public OutMessage onSubscribe(SubscribeEvent event) throws Exception {

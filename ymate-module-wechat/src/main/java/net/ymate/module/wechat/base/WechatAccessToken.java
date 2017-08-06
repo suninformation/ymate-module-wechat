@@ -41,6 +41,6 @@ public class WechatAccessToken implements Serializable {
     }
 
     public boolean isExpired() {
-        return System.currentTimeMillis() < expiredTime;
+        return System.currentTimeMillis() >= expiredTime;
     }
 }

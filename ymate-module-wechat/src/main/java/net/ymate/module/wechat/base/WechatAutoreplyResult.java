@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,7 +154,7 @@ public class WechatAutoreplyResult extends WechatResult {
         return _confMeta;
     }
 
-    public static class KeywordAutoreplyInfo {
+    public static class KeywordAutoreplyInfo implements Serializable {
         @JSONField(name = "list")
         private List<KeywordAutoreplyItem> items;
 
@@ -166,7 +167,7 @@ public class WechatAutoreplyResult extends WechatResult {
         }
     }
 
-    public static class KeywordAutoreplyItem {
+    public static class KeywordAutoreplyItem implements Serializable {
 
         private String id;
 
@@ -247,7 +248,7 @@ public class WechatAutoreplyResult extends WechatResult {
         }
     }
 
-    public static class ContentInfo {
+    public static class ContentInfo implements Serializable {
 
         private String type;
         private String content;
@@ -317,7 +318,7 @@ public class WechatAutoreplyResult extends WechatResult {
         }
     }
 
-    public static class NewsInfo {
+    public static class NewsInfo implements Serializable {
         @JSONField(name = "list")
         private List<NewsItem> items;
 
@@ -330,7 +331,7 @@ public class WechatAutoreplyResult extends WechatResult {
         }
     }
 
-    public static class NewsItem {
+    public static class NewsItem implements Serializable {
         private String title;
         private String digest;
         private String author;
