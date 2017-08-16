@@ -162,7 +162,7 @@ public class WechatOAuthController {
                 boolean _needInfo = _token.getScope().equals(IWechat.OAuthScope.SNSAPI_USERINFO);
                 long _currentTime = System.currentTimeMillis();
                 boolean _isNew = false;
-                WechatUser _wxUser = WechatUser.builder().id(state).build().load(Fields.create(WechatUser.FIELDS.ID, WechatUser.FIELDS.OAUTH_SCOPE), IDBLocker.MYSQL);
+                WechatUser _wxUser = WechatUser.builder().id(state).build().load(Fields.create(WechatUser.FIELDS.ID, WechatUser.FIELDS.IS_SUBSCRIBE, WechatUser.FIELDS.OAUTH_SCOPE), IDBLocker.MYSQL);
                 Fields _fields = Fields.create();
                 if (_wxUser != null) {
                     // 未订阅的用户且当前授权为snsapi_base时才去获取用户资料
